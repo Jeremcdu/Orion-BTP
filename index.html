@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orion BTP - M42 | Gestion de Plans & Logements</title>
+  <title>Orion BTP - M42 | Gestionnaire de chantier</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- PDF.js CDN (Pour le rendu natif des plans PDF) -->
+  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
@@ -76,21 +76,18 @@
 
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Report Configuration & Export Button -->
         <button id="openReportConfigBtn" class="hidden items-center space-x-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all duration-200 active:scale-95">
           <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
           <span class="hidden md:inline">Rapports & Exports</span>
           <span class="hidden sm:inline md:hidden">Rapports</span>
         </button>
 
-        <!-- Project Edit Button -->
         <button id="openEditProjectBtn" class="hidden items-center space-x-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-sm transition-all duration-200 active:scale-95">
           <i data-lucide="edit-3" class="w-3.5 h-3.5 text-blue-500"></i>
           <span class="hidden md:inline">Modifier le projet</span>
           <span class="hidden sm:inline md:hidden">Projet</span>
         </button>
 
-        <!-- Dark/Light mode switch -->
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
@@ -101,7 +98,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- ==================== HOME VIEW (PROJECT LIST) ==================== -->
+    <!-- HOME VIEW -->
     <div id="homeView" class="space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -110,7 +107,6 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
-          <!-- EXPORT & IMPORT PROJECTS BUTTONS -->
           <button id="exportProjectsBtn" title="Exporter tous les projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
             <i data-lucide="download" class="w-4 h-4 text-blue-500"></i>
             <span>Exporter</span>
@@ -129,13 +125,11 @@
         </div>
       </div>
       
-      <!-- Grille des projets -->
       <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
-    <!-- ==================== PROJECT VIEW (WORKSPACE) ==================== -->
+    <!-- PROJECT VIEW -->
     <div id="projectView" class="hidden flex-col space-y-6">
-      <!-- HERO CARD -->
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg shadow-slate-200/40 dark:shadow-black/20 transition-all duration-300">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div class="space-y-2">
@@ -162,25 +156,22 @@
         </div>
       </section>
 
-      <!-- SELECTION PAR MENU DEROULANT POUR LES ZONES / LOGEMENTS -->
+      <!-- ZONES SELECTOR -->
       <section class="p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Logement / Zone sélectionné</h2>
-            <span id="lotsCountBadge" class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full font-bold border border-slate-200 dark:border-slate-700"></span>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Zones</h2>
+            <span id="lotsCountBadge" class="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full font-bold border border-slate-200 dark:border-slate-700">0</span>
           </div>
 
-          <!-- Actions & Dropdown Container -->
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            <!-- Menu Déroulant -->
             <div class="relative flex-1 sm:w-80 min-w-[220px]">
-              <i id="selectLotIcon" data-lucide="home" class="w-4 h-4 text-blue-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
+              <i id="selectLotIcon" data-lucide="building-2" class="w-4 h-4 text-blue-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
               <select id="lotSelect" class="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500 appearance-none shadow-sm cursor-pointer transition-all">
               </select>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
             </div>
 
-            <!-- Boutons rapides sur la zone active -->
             <button id="quickEditLotBtn" title="Modifier la zone" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-all shadow-sm active:scale-95 shrink-0">
               <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
             </button>
@@ -191,13 +182,13 @@
 
             <button id="addNewLotBtn" class="px-3.5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center space-x-1.5 shrink-0">
               <i data-lucide="plus" class="w-4 h-4"></i>
-              <span>Nouveau logement</span>
+              <span>Nouvelle zone</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- WORKSPACE / PLAN -->
+      <!-- WORKSPACE / CANVAS -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div class="lg:col-span-3 space-y-4">
           <div id="canvasViewport" class="relative min-h-[400px] sm:min-h-[580px] rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/40 shadow-md shadow-slate-200/30 flex flex-col items-center justify-center">
@@ -258,7 +249,7 @@
           <div class="p-5 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-md space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div class="flex items-center space-x-2">
-                <i id="sidebarLotIcon" data-lucide="home" class="w-5 h-5 text-blue-500"></i>
+                <i id="sidebarLotIcon" data-lucide="building-2" class="w-5 h-5 text-blue-500"></i>
                 <h3 id="sidebarLotTitle" class="font-bold text-base tracking-tight truncate max-w-[160px]"></h3>
               </div>
               <button id="editActiveLotBtn" class="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
@@ -270,7 +261,7 @@
               </div>
               <div class="p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 text-xs">
                 <span class="text-slate-400 block truncate">Repère(s)</span>
-                <span id="sidebarPinsCount" class="text-sm font-semibold mt-0.5 block truncate"></span>
+                <span id="sidebarPinsCount" class="text-sm font-semibold mt-0.5 block truncate">0</span>
               </div>
             </div>
             <div class="space-y-3 pt-2">
@@ -330,7 +321,7 @@
           <div>
             <label class="block text-slate-500 font-medium mb-1.5">Mise en page des documents</label>
             <select id="reportLayoutSelect" class="w-full px-3 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-              <option value="standard">Standard & Détaillé</option>
+              <option value="standard">Standard Conforme Schéma</option>
               <option value="compact">Synthétique & Compact</option>
             </select>
           </div>
@@ -368,7 +359,7 @@
           <div id="modalPinBadge" class="w-8 h-8 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-sm shadow shrink-0">1</div>
           <div>
             <h3 class="text-base sm:text-lg font-bold leading-tight">Gestion du repère / réserve</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Saisissez les détails et ajoutez des photos</p>
+            <p class="text-[10px] sm:text-xs text-slate-400">Saisissez les détails et ajoutez/éditez vos photos</p>
           </div>
         </div>
         <button id="closePinModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -407,9 +398,9 @@
           </div>
         </div>
 
-        <!-- MULTIMEDIA & PHOTOS -->
+        <!-- MULTIMEDIA & PHOTOS DESSINABLES -->
         <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Photos de la réserve (Multimédia)</label>
+          <label class="block text-slate-500 font-medium mb-1.5">Photos de la réserve (Annotables avec dessin)</label>
           <div class="flex flex-wrap items-center gap-2 mb-2">
             <label class="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-medium text-[11px] sm:text-xs cursor-pointer hover:bg-blue-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm">
               <i data-lucide="image" class="w-3.5 h-3.5 shrink-0"></i>
@@ -422,7 +413,7 @@
               <input type="file" id="pinCameraInput" accept="image/*" capture="environment" class="hidden" />
             </label>
           </div>
-          <div id="pinPhotosContainer" class="flex flex-wrap gap-2 max-h-36 overflow-y-auto p-2.5 border dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30"></div>
+          <div id="pinPhotosContainer" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2.5 border dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30"></div>
         </div>
 
         <div>
@@ -448,7 +439,96 @@
     </div>
   </div>
 
-  <!-- MODAL : PROJET (Création ou Édition) -->
+  <!-- MODAL : EDITEUR D'ANNOTATIONS SUR PHOTO -->
+  <div id="drawPhotoModal" class="hidden fixed inset-0 z-50 items-center justify-center p-3 sm:p-6 bg-slate-950/80 apple-glass">
+    <div class="w-full max-w-4xl rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-4 sm:p-6 flex flex-col max-h-[95vh] space-y-4">
+      
+      <!-- Toolbar dessin -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b dark:border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-bold text-sm sm:text-base">Annoter la photo</h3>
+        </div>
+
+        <!-- Selector outils -->
+        <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl text-xs">
+          <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-blue-600 text-white flex items-center space-x-1">
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Crayon</span>
+          </button>
+          <button type="button" id="toolLine" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
+            <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Ligne</span>
+          </button>
+          <button type="button" id="toolArrow" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Flèche</span>
+          </button>
+          <button type="button" id="toolCircle" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
+            <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Cercle</span>
+          </button>
+          <button type="button" id="toolRect" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
+            <i data-lucide="square" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Rectangle</span>
+          </button>
+          <button type="button" id="toolText" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
+            <i data-lucide="type" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Texte</span>
+          </button>
+        </div>
+
+        <!-- Couleurs & Épaisseur -->
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-1">
+            <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 border border-slate-300"></button>
+            <button type="button" data-color="#3b82f6" class="color-btn w-6 h-6 rounded-full bg-blue-500 border border-slate-300"></button>
+            <button type="button" data-color="#eab308" class="color-btn w-6 h-6 rounded-full bg-yellow-500 border border-slate-300"></button>
+            <button type="button" data-color="#22c55e" class="color-btn w-6 h-6 rounded-full bg-green-500 border border-slate-300"></button>
+            <button type="button" data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white border border-slate-300"></button>
+            <button type="button" data-color="#000000" class="color-btn w-6 h-6 rounded-full bg-black border border-slate-300"></button>
+          </div>
+          <select id="drawLineWidth" class="px-2 py-1 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
+            <option value="2">Fin</option>
+            <option value="4" selected>Moyen</option>
+            <option value="8">Épais</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="flex-1 relative flex items-center justify-center overflow-hidden bg-slate-950 rounded-2xl p-2 min-h-[300px]">
+        <canvas id="photoDrawCanvas" class="max-w-full max-h-[55vh] object-contain rounded-lg cursor-crosshair"></canvas>
+      </div>
+
+      <!-- Bottom Actions -->
+      <div class="flex items-center justify-between pt-2 border-t dark:border-slate-800">
+        <div class="flex items-center space-x-2">
+          <button type="button" id="undoDrawBtn" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium flex items-center space-x-1">
+            <i data-lucide="undo" class="w-3.5 h-3.5"></i>
+            <span>Annuler</span>
+          </button>
+          <button type="button" id="clearDrawBtn" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-xs font-medium flex items-center space-x-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>Tout effacer</span>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button type="button" id="closeDrawModalBtn" class="px-4 py-2 rounded-xl border text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Annuler</button>
+          <button type="button" id="saveDrawBtn" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs flex items-center space-x-1.5 shadow">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Valider la photo</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL : PROJET (CREATION & MODIFICATION) -->
   <div id="editProjectModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between">
@@ -456,7 +536,7 @@
           <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><i data-lucide="edit-3" class="w-4 h-4"></i></div>
           <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Modifier le projet</h3>
         </div>
-        <button id="closeProjectModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <form id="projectForm" class="space-y-4 text-xs">
@@ -480,6 +560,18 @@
             <option value="Livré / Achevé">Livré / Achevé</option>
           </select>
         </div>
+
+        <!-- REMARQUE : BOUTON PHOTOS DU PROJET -->
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Photos du projet</label>
+          <input type="file" id="projectPhotosInput" accept="image/*" multiple class="hidden" />
+          <button type="button" id="uploadProjectPhotosBtn" class="w-full px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-2 text-xs">
+            <i data-lucide="camera" class="w-4 h-4 text-blue-500"></i>
+            <span>Ajouter des photos du projet</span>
+          </button>
+          <div id="projectPhotosPreview" class="flex flex-wrap gap-2 mt-3"></div>
+        </div>
+
         <div class="flex items-center justify-end space-x-2 sm:space-x-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelProjectModalBtn" class="flex-1 sm:flex-none justify-center px-4 sm:px-5 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
           <button type="submit" class="flex-1 sm:flex-none justify-center px-5 sm:px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center space-x-1.5">
@@ -494,15 +586,24 @@
   <div id="editLotModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h3 class="text-base sm:text-lg font-bold">Personnaliser la zone / le logement</h3>
+        <h3 class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
         <button id="closeLotModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form id="lotForm" class="space-y-4 text-xs">
-        <div><label class="block text-slate-500 mb-1.5">Nom du logement / de la zone</label><input type="text" id="lotInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none" /></div>
-        <div><label class="block text-slate-500 mb-1.5">Surface estimée</label><input type="text" id="lotInputSurface" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none" /></div>
+        <div>
+          <label class="block text-slate-500 mb-1.5">Nom de la zone</label>
+          <input type="text" id="lotInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-500 mb-1.5">Surface estimée</label>
+          <div class="relative flex items-center">
+            <input type="number" step="any" id="lotInputSurface" placeholder="0" class="w-full pl-4 pr-12 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs" />
+            <span class="absolute right-4 text-slate-400 font-semibold text-xs pointer-events-none">m²</span>
+          </div>
+        </div>
         <div>
           <label class="block text-slate-500 mb-2">Choisir une icône</label>
-          <div id="iconGridContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[160px] overflow-y-auto p-1"></div>
+          <div id="iconGridContainer" class="grid grid-cols-3 sm:grid-cols-3 gap-2 max-h-[180px] overflow-y-auto p-1"></div>
         </div>
         <div class="flex flex-col sm:flex-row items-center justify-end pt-4 border-t gap-2 sm:space-x-3">
           <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-blue-600 text-white font-medium">Enregistrer</button>
@@ -513,26 +614,20 @@
 
   <script>
     const AVAILABLE_ICONS = [
-      { id: 'home', label: 'Maison' }, { id: 'bed', label: 'Chambre' }, { id: 'sofa', label: 'Salon' },
-      { id: 'building', label: 'Immeuble' }, { id: 'store', label: 'Commercial' }, { id: 'layers', label: 'Zone' },
-      { id: 'box', label: 'Espace' }, { id: 'map-pin', label: 'Emplacement' }, { id: 'grid', label: 'Surface' }
+      { id: 'building-2', label: 'Immeuble' },
+      { id: 'home', label: 'Maison' },
+      { id: 'building', label: 'Bâtiment' },
+      { id: 'layers', label: 'Appartement' },
+      { id: 'box', label: 'Espace' },
+      { id: 'trees', label: 'Espace vert' }
     ];
 
-    const DEFAULT_COMPANIES = [
-      "Lot 01 - Gros Œuvre / Maçonnerie",
-      "Lot 02 - Menuiseries Extérieures / Intérieures",
-      "Lot 03 - Électricité / CFO-CFA",
-      "Lot 04 - Plomberie / CVC / Sanitaire",
-      "Lot 05 - Plâtrerie / Peinture",
-      "Lot 06 - Carrelage / Revêtement de sol",
-      "Lot 07 - Serrurerie / Métallerie"
-    ];
+    const DEFAULT_COMPANIES = [];
 
-    // Global application state
     const state = {
       darkMode: false,
       currentView: 'home',
-      activeProjectId: 'proj_01',
+      activeProjectId: null,
       availableCompanies: [...DEFAULT_COMPANIES],
       editingPinId: null,
       reportConfig: {
@@ -541,22 +636,8 @@
         layoutStyle: 'standard',
         includePhotos: true
       },
-      projects: [
-        {
-          id: 'proj_01',
-          name: 'Résidence L\'Équilibre - Bâtiment A',
-          client: 'Groupe Immobilier Horizon',
-          location: '12 Avenue des Champs-Élysées, Paris',
-          surfaceTotal: 340,
-          status: 'En cours d\'aménagement',
-          activeLotId: 'lot_1',
-          lots: [
-            { id: 'lot_1', name: 'Logement T3 - A101', icon: 'home', surface: '78.5 m²', planImage: null, pins: [] },
-            { id: 'lot_2', name: 'Studio T1 - A102', icon: 'bed', surface: '32.0 m²', planImage: null, pins: [] }
-          ]
-        }
-      ],
-      selectedIconForModal: 'home',
+      projects: [],
+      selectedIconForModal: 'building-2',
       editingLotId: null,
       zoom: 1,
       pan: { x: 0, y: 0 },
@@ -566,13 +647,29 @@
       projectModalMode: 'edit'
     };
 
+    let currentProjectPhotosTemp = [];
+
+    // Global Drawing state
+    const drawState = {
+      activePhotoIndex: null,
+      currentTool: 'pen',
+      color: '#ef4444',
+      lineWidth: 4,
+      isDrawing: false,
+      startX: 0,
+      startY: 0,
+      history: [],
+      baseImage: null
+    };
+
     function getActiveProject() {
+      if (!state.projects || state.projects.length === 0) return null;
       return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
     }
     
     function getActiveLot() {
       const proj = getActiveProject();
-      if(!proj) return null;
+      if(!proj || !proj.lots || proj.lots.length === 0) return null;
       return proj.lots.find(l => l.id === proj.activeLotId) || proj.lots[0];
     }
 
@@ -597,7 +694,7 @@
       const editProjBtn = document.getElementById('openEditProjectBtn');
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
 
-      if (state.currentView === 'home') {
+      if (state.currentView === 'home' || !getActiveProject()) {
         homeView.classList.remove('hidden');
         projectView.classList.add('hidden');
         projectView.classList.remove('flex');
@@ -627,11 +724,26 @@
       const grid = document.getElementById('projectsGrid');
       grid.innerHTML = '';
       if(state.projects.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500">Aucun projet. Créez-en un nouveau ou importez un fichier de sauvegarde !</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500">
+          <i data-lucide="folder-plus" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
+          <p class="font-semibold text-slate-700 dark:text-slate-300">Aucun projet actif</p>
+          <p class="text-xs text-slate-400 mt-1">Créez votre premier projet ou importez une sauvegarde JSON pour commencer.</p>
+        </div>`;
         return;
       }
 
       state.projects.forEach(proj => {
+        let totalPins = 0;
+        let resolvedPins = 0;
+        if (proj.lots && Array.isArray(proj.lots)) {
+          proj.lots.forEach(lot => {
+            if (lot.pins && Array.isArray(lot.pins)) {
+              totalPins += lot.pins.length;
+              resolvedPins += lot.pins.filter(p => (p.progress || 0) == 100).length;
+            }
+          });
+        }
+
         const card = document.createElement('div');
         card.className = 'group relative p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer';
         card.innerHTML = `
@@ -649,21 +761,21 @@
           <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate">${proj.name}</h3>
           <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${proj.location || 'Aucune adresse'}</span></p>
           <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
-            <span>${proj.lots.length} Zone(s)</span>
+            <span>${proj.lots ? proj.lots.length : 0} Zone(s)</span>
+            <span class="font-medium"><span class="text-emerald-600 dark:text-emerald-400 font-bold">${resolvedPins}</span>/${totalPins} réserves</span>
             <span>${proj.surfaceTotal || 0} m²</span>
           </div>
         `;
 
         card.querySelector('.delete-project-btn').addEventListener('click', (e) => {
           e.stopPropagation();
-          if (state.projects.length <= 1) {
-            alert("Vous ne pouvez pas supprimer le seul projet restant.");
-            return;
-          }
           if (confirm(`Êtes-vous sûr de vouloir supprimer le projet "${proj.name}" ?`)) {
             state.projects = state.projects.filter(p => p.id !== proj.id);
             if (state.activeProjectId === proj.id) {
-              state.activeProjectId = state.projects[0].id;
+              state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
+              if (!state.activeProjectId) {
+                state.currentView = 'home';
+              }
             }
             render();
           }
@@ -684,34 +796,41 @@
       if(!proj) return;
 
       document.getElementById('projectNameDisplay').textContent = proj.name;
-      document.getElementById('projectLocationDisplay').textContent = proj.location;
-      document.getElementById('projectClientDisplay').textContent = proj.client;
-      document.getElementById('projectSurfaceDisplay').textContent = proj.surfaceTotal + ' m²';
-      document.getElementById('projectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status}</span>`;
+      document.getElementById('projectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
+      document.getElementById('projectClientDisplay').textContent = proj.client || 'Non renseigné';
+      document.getElementById('projectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
+      document.getElementById('projectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status || 'En cours'}</span>`;
 
-      // REMPLACEMENT : POPULATE LOGEMENTS / ZONES DROPDOWN
-      document.getElementById('lotsCountBadge').textContent = proj.lots.length;
+      document.getElementById('lotsCountBadge').textContent = proj.lots ? proj.lots.length : 0;
       const lotSelect = document.getElementById('lotSelect');
       lotSelect.innerHTML = '';
 
-      proj.lots.forEach((lot) => {
+      if (proj.lots && proj.lots.length > 0) {
+        proj.lots.forEach((lot) => {
+          const option = document.createElement('option');
+          option.value = lot.id;
+          const pinsCount = lot.pins ? lot.pins.length : 0;
+          const surfText = lot.surface ? ` - ${lot.surface}` : '';
+          option.textContent = `${lot.name}${surfText} (${pinsCount} réserve${pinsCount > 1 ? 's' : ''})`;
+          if (lot.id === proj.activeLotId) {
+            option.selected = true;
+          }
+          lotSelect.appendChild(option);
+        });
+      } else {
         const option = document.createElement('option');
-        option.value = lot.id;
-        const pinsCount = lot.pins ? lot.pins.length : 0;
-        const surfText = lot.surface ? ` - ${lot.surface}` : '';
-        option.textContent = `${lot.name}${surfText} (${pinsCount} réserve${pinsCount > 1 ? 's' : ''})`;
-        if (lot.id === proj.activeLotId) {
-          option.selected = true;
-        }
+        option.value = '';
+        option.textContent = 'Aucune zone créée';
         lotSelect.appendChild(option);
-      });
+      }
 
       const activeLot = getActiveLot();
       if (activeLot) {
-        document.getElementById('selectLotIcon').setAttribute('data-lucide', activeLot.icon || 'home');
+        document.getElementById('selectLotIcon').setAttribute('data-lucide', activeLot.icon || 'building-2');
+      } else {
+        document.getElementById('selectLotIcon').setAttribute('data-lucide', 'building-2');
       }
 
-      // CANVAS & SIDEBAR
       if(activeLot) {
         document.getElementById('emptyLotTitle').textContent = `Aucun plan pour ${activeLot.name}`;
         const activeCanvas = document.getElementById('activeCanvas');
@@ -745,19 +864,28 @@
           document.getElementById('replacePlanContainer').classList.add('hidden');
         }
 
-        // SIDEBAR
         document.getElementById('sidebarLotTitle').textContent = activeLot.name;
-        document.getElementById('sidebarLotIcon').setAttribute('data-lucide', activeLot.icon);
+        document.getElementById('sidebarLotIcon').setAttribute('data-lucide', activeLot.icon || 'building-2');
         document.getElementById('sidebarLotSurface').textContent = activeLot.surface || 'N/A';
-        document.getElementById('sidebarPinsCount').textContent = activeLot.pins.length;
+        document.getElementById('sidebarPinsCount').textContent = activeLot.pins ? activeLot.pins.length : 0;
         renderPinsList(activeLot);
+      } else {
+        document.getElementById('emptyLotTitle').textContent = "Aucune zone créée";
+        document.getElementById('emptyDropzone').classList.remove('hidden');
+        document.getElementById('activeCanvas').classList.add('hidden');
+        document.getElementById('canvasToolbar').classList.add('hidden');
+        document.getElementById('replacePlanContainer').classList.add('hidden');
+        document.getElementById('sidebarLotTitle').textContent = "Aucune zone";
+        document.getElementById('sidebarLotIcon').setAttribute('data-lucide', 'building-2');
+        document.getElementById('sidebarLotSurface').textContent = "-";
+        document.getElementById('sidebarPinsCount').textContent = "0";
+        document.getElementById('pinsListContainer').innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Créez une zone pour commencer.</div>`;
       }
     }
 
-    // LISTENER MENU DEROULANT & ACTIONS RAPIDES DE ZONE
     document.getElementById('lotSelect').addEventListener('change', (e) => {
       const proj = getActiveProject();
-      if(proj) {
+      if(proj && e.target.value) {
         proj.activeLotId = e.target.value;
         state.zoom = 1; 
         state.pan = { x: 0, y: 0 }; 
@@ -768,10 +896,12 @@
     document.getElementById('addNewLotBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if(!proj) return;
-      const newLot = { id: 'lot_' + Date.now(), name: `Logement T${proj.lots.length + 1}`, icon: 'home', surface: '0 m²', planImage: null, pins: [] };
+      if(!proj.lots) proj.lots = [];
+      const newLot = { id: 'lot_' + Date.now(), name: `Zone ${proj.lots.length + 1}`, icon: AVAILABLE_ICONS[0].id, surface: '', planImage: null, pins: [] };
       proj.lots.push(newLot); 
       proj.activeLotId = newLot.id; 
       render();
+      openEditLotModal(newLot);
     });
 
     document.getElementById('quickEditLotBtn').addEventListener('click', () => {
@@ -781,15 +911,13 @@
 
     document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
       const proj = getActiveProject();
-      if (!proj) return;
-      if (proj.lots.length <= 1) {
-        alert("Vous devez conserver au moins un logement ou une zone.");
-        return;
-      }
+      if (!proj || !proj.lots || proj.lots.length === 0) return;
       const activeLot = getActiveLot();
-      if (confirm(`Voulez-vous supprimer le logement "${activeLot.name}" ?`)) {
+      if (!activeLot) return;
+
+      if (confirm(`Voulez-vous supprimer la zone "${activeLot.name}" ?`)) {
         proj.lots = proj.lots.filter(l => l.id !== activeLot.id);
-        proj.activeLotId = proj.lots[0].id;
+        proj.activeLotId = proj.lots.length > 0 ? proj.lots[0].id : null;
         render();
       }
     });
@@ -797,6 +925,8 @@
     function renderPinsOverlay(lot) {
       const pinsOverlay = document.getElementById('pinsOverlay');
       pinsOverlay.innerHTML = '';
+
+      if(!lot.pins) return;
 
       lot.pins.forEach(pin => {
         const pinEl = document.createElement('div');
@@ -835,7 +965,7 @@
       const container = document.getElementById('pinsListContainer');
       container.innerHTML = '';
 
-      if (lot.pins.length === 0) {
+      if (!lot || !lot.pins || lot.pins.length === 0) {
         container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucun repère placé.</div>`;
         return;
       }
@@ -880,7 +1010,54 @@
       lucide.createIcons();
     }
 
-    // MODALE CONFIGURATION & EXPORT (PDF & Word)
+    // GENERATION DE L'IMAGE COMPOSITE DU PLAN AVEC REPERES (POUR RAPPORT PDF)
+    function generateCompositePlanImage(lot) {
+      return new Promise((resolve) => {
+        if (!lot || !lot.planImage) return resolve(null);
+        
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          
+          // Dessin du plan
+          ctx.drawImage(img, 0, 0);
+
+          // Dessin des pastilles de repères sur le plan
+          if (lot.pins && lot.pins.length > 0) {
+            lot.pins.forEach(pin => {
+              const px = (pin.x / 100) * img.width;
+              const py = (pin.y / 100) * img.height;
+              const radius = Math.max(14, Math.min(img.width, img.height) * 0.02);
+
+              // Cercles
+              ctx.beginPath();
+              ctx.arc(px, py, radius, 0, 2 * Math.PI);
+              ctx.fillStyle = (pin.progress == 100) ? '#10b981' : '#f43f5e';
+              ctx.fill();
+              ctx.lineWidth = radius * 0.25;
+              ctx.strokeStyle = '#ffffff';
+              ctx.stroke();
+
+              // Numéro
+              ctx.fillStyle = '#ffffff';
+              ctx.font = `bold ${radius * 1.1}px sans-serif`;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(pin.number || '1', px, py);
+            });
+          }
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => resolve(null);
+        img.src = lot.planImage;
+      });
+    }
+
+    // CONFIGURATION ET GENERATION RAPPORTS
     const reportConfigModal = document.getElementById('reportConfigModal');
     
     document.getElementById('openReportConfigBtn').addEventListener('click', () => {
@@ -940,8 +1117,8 @@
       state.reportConfig.includePhotos = e.target.checked;
     });
 
-    // EXPORT PDF RAPPORT
-    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
+    // EXPORT PDF RAPPORT AVEC REMARQUES DE MISE EN PAGE ET SANS CADRES NOIRS
+    document.getElementById('exportPdfReportBtn').addEventListener('click', async () => {
       const proj = getActiveProject();
       if(!proj) return;
       const config = state.reportConfig;
@@ -949,84 +1126,195 @@
       const printWin = window.open('', '_blank');
       if(!printWin) return alert('Veuillez autoriser les fenêtres surgissantes (popups) pour générer le rapport.');
 
+      const todayStr = '28/07/2026';
+
+      // Génération des vues composites des plans
+      const planComposites = {};
+      if(proj.lots && proj.lots.length > 0) {
+        for(let lot of proj.lots) {
+          planComposites[lot.id] = await generateCompositePlanImage(lot);
+        }
+      }
+
+      const totalPages = (proj.lots ? proj.lots.length : 0) + 1;
+
+      // REMARQUE : En-tête tout ce qui est au-dessus du trait marron/couleur inclus
+      const headerHtml = `
+        <table class="header-table">
+          <tr>
+            <td>
+              <h1 class="header-title">Rapport de Chantiers & Réserves</h1>
+            </td>
+            <td style="text-align: right;">
+              <div class="logo-box">
+                ${config.logoUrl ? `<img src="${config.logoUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" />` : ''}
+              </div>
+            </td>
+          </tr>
+        </table>
+      `;
+
+      // REMARQUE : Intitulé dans le pied de page
+      const footerHtml = (pageNum) => `
+        <div class="page-footer">
+          Généré via M42 (orion BTP) le ${todayStr}
+          <div class="page-num">${pageNum} / ${totalPages}</div>
+        </div>
+      `;
+
+      // REMARQUE : Première photo du projet
+      const firstProjectPhoto = (proj.photos && proj.photos.length > 0) ? proj.photos[0] : null;
+
       let html = `
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Rapport de Réserves - ${proj.name}</title>
+          <title>Rapport de Chantiers & Réserves - ${proj.name}</title>
           <style>
-            body { font-family: 'Segoe UI', Roboto, sans-serif; padding: 30px; color: #1e293b; line-height: 1.5; }
-            .header { border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-            .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 13px; }
-            .zone-title { font-size: 18px; color: ${config.primaryColor}; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-top: 24px; margin-bottom: 12px; font-weight: bold; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; }
-            th { background-color: #f1f5f9; font-weight: 600; color: #334155; }
-            .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; }
-            .badge-success { background-color: #dcfce7; color: #166534; }
-            .badge-danger { background-color: #ffe4e6; color: #991b1b; }
-            .photo-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 4px; margin-top: 4px; border: 1px solid #cbd5e1; }
-            @media print { body { padding: 0; } button { display: none; } }
+            @page { size: A4; margin: 15mm; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; color: #1e293b; line-height: 1.4; font-size: 12px; }
+            
+            /* REMARQUE : En-tête avec la ligne de couleur (primaryColor) */
+            .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 12px; }
+            .header-title { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; }
+            
+            /* REMARQUE : Suppression du cadre noir sur le logo */
+            .logo-box { width: 180px; height: 60px; display: flex; align-items: center; justify-content: flex-end; text-align: right; font-weight: bold; font-size: 12px; float: right; overflow: hidden; }
+            
+            .meta-card { background: #f8fafc; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+            .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; }
+            .meta-item { font-size: 11px; }
+            .meta-item strong { color: #334155; }
+
+            /* REMARQUE : Suppression du cadre noir sur la photo du projet */
+            .project-photo-box { width: 85%; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #000; background: transparent; text-align: center; }
+
+            .page-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 20px; margin-bottom: 10px; }
+            .page-footer .page-num { font-weight: bold; color: #0f172a; margin-top: 4px; }
+
+            .zone-header { font-size: 18px; color: ${config.primaryColor}; font-weight: 700; margin-top: 20px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+
+            table.reserves-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
+            table.reserves-table th, table.reserves-table td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
+            table.reserves-table th { background-color: #f1f5f9; font-weight: 700; color: #334155; text-align: left; }
+
+            .badge-progress { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; background-color: #ffe4e6; color: #e11d48; text-align: center; }
+            .badge-success { background-color: #dcfce7; color: #15803d; }
+
+            .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; margin-right: 4px; margin-bottom: 4px; }
+
+            /* REMARQUE : Suppression du cadre noir sur la photo de la zone / plan */
+            .plan-box { width: 90%; min-height: 220px; margin: 20px auto; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 16px; background: transparent; padding: 8px; }
+            .plan-box img { max-width: 100%; max-height: 380px; object-fit: contain; }
+
+            .page-break { page-break-after: always; }
+            @media print { button { display: none !important; } }
           </style>
         </head>
         <body>
-          <div class="header">
-            <div>
-              <h1>Rapport de Chantiers & Réserves</h1>
-              <p style="margin:0; font-size: 13px; color: #64748b;">Généré via M42 (Orion BTP) le ${new Date().toLocaleDateString('fr-FR')}</p>
+
+          <!-- PAGE 1 : COUVERTURE AVEC EN-TETE ET PIED DE PAGE -->
+          ${headerHtml}
+
+          <div class="meta-card">
+            <div class="meta-grid">
+              <div class="meta-item"><strong>Projet :</strong> ${proj.name}</div>
+              <div class="meta-item"><strong>Client :</strong> ${proj.client || 'Non renseigné'}</div>
+              <div class="meta-item"><strong>Adresse :</strong> ${proj.location || 'Non renseignée'}</div>
+              <div class="meta-item"><strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</div>
+              <div class="meta-item"><strong>Statut :</strong> ${proj.status || 'En cours'}</div>
+              <div class="meta-item"><strong>Total zones :</strong> ${proj.lots ? proj.lots.length : 0}</div>
             </div>
-            ${config.logoUrl ? `<div><img src="${config.logoUrl}" style="max-height: 60px; object-fit: contain;" /></div>` : ''}
           </div>
 
-          <div class="meta-grid">
-            <div><strong>Projet :</strong> ${proj.name}</div>
-            <div><strong>Client :</strong> ${proj.client || 'N/A'}</div>
-            <div><strong>Adresse :</strong> ${proj.location || 'N/A'}</div>
-            <div><strong>Surface :</strong> ${proj.surfaceTotal} m²</div>
-            <div><strong>Statut :</strong> ${proj.status}</div>
-            <div><strong>Total zones :</strong> ${proj.lots.length}</div>
+          <!-- REMARQUE : PREMIERE PHOTO DU PROJET SANS CADRE NOIR -->
+          <div class="project-photo-box">
+            ${firstProjectPhoto ? `<img src="${firstProjectPhoto}" style="max-width:100%; max-height:260px; object-fit:contain;" />` : ''}
           </div>
+
+          ${footerHtml(1)}
+
+          <div class="page-break"></div>
       `;
 
-      proj.lots.forEach(lot => {
-        html += `<div class="zone-title">${lot.name} (${lot.surface || 'N/A'}) - ${lot.pins.length} réserve(s)</div>`;
-        if (lot.pins.length === 0) {
-          html += `<p style="font-size: 12px; color: #94a3b8; font-style: italic;">Aucune réserve enregistrée pour cette zone.</p>`;
-        } else {
+      // PAGES PAR ZONE / LOGEMENT AVEC EN-TETE ET PIED DE PAGE REPETE
+      if (proj.lots && proj.lots.length > 0) {
+        proj.lots.forEach((lot, idx) => {
+          const pinsCount = lot.pins ? lot.pins.length : 0;
+          const compositeImg = planComposites[lot.id];
+
           html += `
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 40px;">N°</th>
-                  <th style="width: 160px;">Intitulé</th>
-                  <th>Description</th>
-                  <th style="width: 150px;">Entreprises</th>
-                  ${config.includePhotos ? '<th style="width: 130px;">Photos</th>' : ''}
-                  <th style="width: 80px;">Avancement</th>
-                </tr>
-              </thead>
-              <tbody>
+            ${headerHtml}
+
+            <div class="zone-header">${lot.name} (${lot.surface || 'N/A'}) - ${pinsCount} réserve(s)</div>
           `;
-          lot.pins.forEach(pin => {
-            const isDone = (pin.progress || 0) == 100;
+
+          if (!lot.pins || lot.pins.length === 0) {
+            html += `<p style="color: #94a3b8; font-style: italic; margin-bottom: 20px;">Aucune réserve enregistrée pour cette zone.</p>`;
+          } else {
             html += `
-              <tr>
-                <td style="text-align: center; font-weight: bold;">${pin.number}</td>
-                <td><strong>${pin.title}</strong></td>
-                <td>${pin.description || '-'}</td>
-                <td>${(pin.companies && pin.companies.length) ? pin.companies.join(', ') : '-'}</td>
-                ${config.includePhotos ? `<td>${(pin.photos && pin.photos.length) ? pin.photos.map(p => `<img src="${p}" class="photo-thumb" />`).join('') : '-'}</td>` : ''}
-                <td><span class="badge ${isDone ? 'badge-success' : 'badge-danger'}">${pin.progress || 0}%</span></td>
-              </tr>
+              <table class="reserves-table">
+                <thead>
+                  <tr>
+                    <th style="width: 18%;">Entreprises</th>
+                    <th style="width: 5%; text-align: center;">N°</th>
+                    <th style="width: 18%;">Intitulé</th>
+                    <th style="width: 24%;">Description</th>
+                    ${config.includePhotos ? '<th style="width: 15%;">Photos</th>' : ''}
+                    <th style="width: 12%;">Dates</th>
+                    <th style="width: 8%; text-align: center;">Avancement</th>
+                  </tr>
+                </thead>
+                <tbody>
             `;
-          });
-          html += `</tbody></table>`;
-        }
-      });
+
+            lot.pins.forEach(pin => {
+              const isDone = (pin.progress || 0) == 100;
+              const companiesText = (pin.companies && pin.companies.length) ? pin.companies.join(', ') : '-';
+              
+              html += `
+                <tr>
+                  <td>${companiesText}</td>
+                  <td style="text-align: center; font-weight: bold;">${pin.number}</td>
+                  <td><strong>${pin.title}</strong></td>
+                  <td>${pin.description || '-'}</td>
+                  ${config.includePhotos ? `
+                    <td>
+                      ${(pin.photos && pin.photos.length) ? pin.photos.map(p => `<img src="${p}" class="photo-thumb" />`).join('') : '-'}
+                    </td>
+                  ` : ''}
+                  <td style="font-size: 10px; line-height: 1.3;">
+                    <strong>posé le :</strong> ${todayStr}<br/>
+                    <strong>constaté le :</strong> ${todayStr}
+                  </td>
+                  <td style="text-align: center;">
+                    <span class="badge-progress ${isDone ? 'badge-success' : ''}">${pin.progress || 0}%</span>
+                  </td>
+                </tr>
+              `;
+            });
+
+            html += `</tbody></table>`;
+          }
+
+          // PLAN DU LOGEMENT SANS CADRE NOIR
+          html += `
+            <div class="plan-box">
+              ${compositeImg ? `<img src="${compositeImg}" />` : ''}
+            </div>
+
+            ${footerHtml(idx + 2)}
+          `;
+
+          if (idx < proj.lots.length - 1) {
+            html += `<div class="page-break"></div>`;
+          }
+        });
+      }
 
       html += `
           <div style="margin-top: 30px; text-align: center;">
-            <button onclick="window.print()" style="padding: 10px 20px; background: ${config.primaryColor}; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Imprimer / Enregistrer en PDF</button>
+            <button onclick="window.print()" style="padding: 12px 24px; background: ${config.primaryColor}; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">Imprimer / Enregistrer en PDF</button>
           </div>
         </body>
         </html>
@@ -1038,7 +1326,7 @@
       reportConfigModal.classList.remove('flex');
     });
 
-    // EXPORT WORD RAPPORT (.doc)
+    // EXPORT WORD (.doc)
     document.getElementById('exportWordReportBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if(!proj) return;
@@ -1048,36 +1336,38 @@
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
         <head><meta charset="utf-8"><title>Rapport - ${proj.name}</title></head>
         <body style="font-family: Arial, sans-serif; color: #1e293b; padding: 20px; line-height: 1.5;">
-          ${config.logoUrl ? `<div style="text-align:center; margin-bottom:20px;"><img src="${config.logoUrl}" style="max-height:80px;" /></div>` : ''}
-          <h1 style="color: ${config.primaryColor}; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 10px;">Rapport de Réserves & Chantiers</h1>
+          ${config.logoUrl ? `<div style="text-align:right; margin-bottom:20px;"><img src="${config.logoUrl}" style="max-height:80px;" /></div>` : ''}
+          <h1 style="color: ${config.primaryColor}; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 10px;">Rapport de Chantiers & Réserves</h1>
           <p><strong>Projet :</strong> ${proj.name} | <strong>Client :</strong> ${proj.client || 'N/A'}</p>
-          <p><strong>Adresse :</strong> ${proj.location || 'N/A'} | <strong>Surface :</strong> ${proj.surfaceTotal} m²</p>
+          <p><strong>Adresse :</strong> ${proj.location || 'N/A'} | <strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</p>
           <hr style="border:0; border-top:1px solid #ccc; margin: 20px 0;"/>
       `;
 
-      proj.lots.forEach(lot => {
-        wordHtml += `<h2 style="color: ${config.primaryColor}; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px;">${lot.name} (${lot.surface || 'N/A'})</h2>`;
-        if (lot.pins.length === 0) {
-          wordHtml += `<p style="color: #666; font-style: italic;">Aucune réserve enregistrée.</p>`;
-        } else {
-          lot.pins.forEach(pin => {
-            const isDone = (pin.progress || 0) == 100;
-            wordHtml += `
-              <div style="border: 1px solid #cbd5e1; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8fafc;">
-                <h3 style="margin: 0 0 8px 0; color: #0f172a;">N°${pin.number} - ${pin.title} <span style="font-size: 11px; font-weight: normal; color: ${isDone ? '#166534' : '#991b1b'};">(${pin.progress || 0}%)</span></h3>
-                <p style="margin: 4px 0;"><strong>Description :</strong> ${pin.description || 'Aucune'}</p>
-                <p style="margin: 4px 0;"><strong>Entreprises :</strong> ${(pin.companies && pin.companies.length) ? pin.companies.join(', ') : 'Aucune'}</p>
-                ${config.includePhotos && pin.photos && pin.photos.length > 0 ? `
-                  <div style="margin-top: 10px;">
-                    <strong>Photos :</strong><br/>
-                    ${pin.photos.map(p => `<img src="${p}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 6px; margin-top: 6px; border: 1px solid #ccc;" />`).join('')}
-                  </div>
-                ` : ''}
-              </div>
-            `;
-          });
-        }
-      });
+      if (proj.lots && proj.lots.length > 0) {
+        proj.lots.forEach(lot => {
+          wordHtml += `<h2 style="color: ${config.primaryColor}; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px;">${lot.name} (${lot.surface || 'N/A'})</h2>`;
+          if (!lot.pins || lot.pins.length === 0) {
+            wordHtml += `<p style="color: #666; font-style: italic;">Aucune réserve enregistrée.</p>`;
+          } else {
+            lot.pins.forEach(pin => {
+              const isDone = (pin.progress || 0) == 100;
+              wordHtml += `
+                <div style="border: 1px solid #cbd5e1; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8fafc;">
+                  <h3 style="margin: 0 0 8px 0; color: #0f172a;">N°${pin.number} - ${pin.title} <span style="font-size: 11px; font-weight: normal; color: ${isDone ? '#166534' : '#991b1b'};">(${pin.progress || 0}%)</span></h3>
+                  <p style="margin: 4px 0;"><strong>Description :</strong> ${pin.description || 'Aucune'}</p>
+                  <p style="margin: 4px 0;"><strong>Entreprises :</strong> ${(pin.companies && pin.companies.length) ? pin.companies.join(', ') : 'Aucune'}</p>
+                  ${config.includePhotos && pin.photos && pin.photos.length > 0 ? `
+                    <div style="margin-top: 10px;">
+                      <strong>Photos :</strong><br/>
+                      ${pin.photos.map(p => `<img src="${p}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 6px; margin-top: 6px; border: 1px solid #ccc;" />`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            });
+          }
+        });
+      }
 
       wordHtml += `</body></html>`;
 
@@ -1118,9 +1408,7 @@
           const imported = JSON.parse(evt.target.result);
           if (Array.isArray(imported)) {
             state.projects = imported;
-            if(state.projects.length > 0) {
-              state.activeProjectId = state.projects[0].id;
-            }
+            state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
             render();
             alert("Projets importés avec succès !");
           } else {
@@ -1134,7 +1422,7 @@
       e.target.value = '';
     });
 
-    // MODALE REPERE & MULTIMEDIA
+    // MODALE REPERE & MULTIMEDIA DESSIN
     const editPinModal = document.getElementById('editPinModal');
 
     function openPinModal(pin) {
@@ -1160,6 +1448,11 @@
       const container = document.getElementById('pinCompaniesList');
       container.innerHTML = '';
 
+      if (state.availableCompanies.length === 0) {
+        container.innerHTML = `<span class="text-[11px] text-slate-400 italic col-span-2">Aucun lot/entreprise défini. Saisissez-en un ci-dessous.</span>`;
+        return;
+      }
+
       state.availableCompanies.forEach((companyName) => {
         const isChecked = assignedCompanies.includes(companyName);
         const wrapper = document.createElement('label');
@@ -1183,17 +1476,30 @@
 
       photos.forEach((photoSrc, idx) => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'relative group w-16 h-16 rounded-xl overflow-hidden border dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0';
+        wrapper.className = 'relative group w-20 h-20 rounded-xl overflow-hidden border dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0';
         wrapper.innerHTML = `
           <img src="${photoSrc}" class="w-full h-full object-cover" />
-          <button type="button" class="absolute top-1 right-1 p-1 rounded-full bg-slate-900/80 text-white opacity-0 group-hover:opacity-100 transition-opacity remove-photo-btn" data-index="${idx}">
-            <i data-lucide="x" class="w-3 h-3"></i>
-          </button>
+          <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
+            <button type="button" class="p-1.5 rounded-lg bg-blue-600 text-white edit-photo-btn" title="Annoter / Dessiner">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" class="p-1.5 rounded-lg bg-rose-600 text-white remove-photo-btn" title="Supprimer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
         `;
-        wrapper.querySelector('.remove-photo-btn').addEventListener('click', () => {
+
+        wrapper.querySelector('.edit-photo-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openDrawModal(photoSrc, idx);
+        });
+
+        wrapper.querySelector('.remove-photo-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
           photos.splice(idx, 1);
           renderPinPhotos(photos);
         });
+
         container.appendChild(wrapper);
       });
       lucide.createIcons();
@@ -1201,7 +1507,7 @@
 
     function handlePhotoFiles(files) {
       const lot = getActiveLot();
-      const pin = lot && lot.pins.find(p => p.id === state.editingPinId);
+      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
       if(!pin) return;
       if(!pin.photos) pin.photos = [];
 
@@ -1256,7 +1562,7 @@
 
     document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
       const lot = getActiveLot();
-      if (lot && state.editingPinId) {
+      if (lot && lot.pins && state.editingPinId) {
         lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
         closePinModal();
         render();
@@ -1268,7 +1574,7 @@
       const lot = getActiveLot();
       if (!lot) return;
 
-      const pin = lot.pins.find(p => p.id === state.editingPinId);
+      const pin = lot.pins && lot.pins.find(p => p.id === state.editingPinId);
       if (pin) {
         pin.title = document.getElementById('pinInputTitle').value;
         pin.progress = Math.min(100, Math.max(0, parseInt(document.getElementById('pinInputProgress').value) || 0));
@@ -1281,9 +1587,223 @@
       render();
     });
 
+    // ==================== SYSTEME DE DESSIN SUR PHOTO ====================
+    const drawModal = document.getElementById('drawPhotoModal');
+    const drawCanvas = document.getElementById('photoDrawCanvas');
+    const drawCtx = drawCanvas.getContext('2d');
+
+    function openDrawModal(photoSrc, photoIdx) {
+      drawState.activePhotoIndex = photoIdx;
+      drawState.history = [];
+
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        drawState.baseImage = img;
+        drawCanvas.width = img.width;
+        drawCanvas.height = img.height;
+        
+        drawCtx.drawImage(img, 0, 0);
+        saveDrawHistory();
+
+        drawModal.classList.remove('hidden');
+        drawModal.classList.add('flex');
+      };
+      img.src = photoSrc;
+    }
+
+    function saveDrawHistory() {
+      drawState.history.push(drawCanvas.toDataURL());
+    }
+
+    document.getElementById('undoDrawBtn').addEventListener('click', () => {
+      if (drawState.history.length > 1) {
+        drawState.history.pop();
+        const prevImgSrc = drawState.history[drawState.history.length - 1];
+        const img = new Image();
+        img.onload = () => {
+          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+          drawCtx.drawImage(img, 0, 0);
+        };
+        img.src = prevImgSrc;
+      }
+    });
+
+    document.getElementById('clearDrawBtn').addEventListener('click', () => {
+      if (drawState.baseImage) {
+        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        drawCtx.drawImage(drawState.baseImage, 0, 0);
+        saveDrawHistory();
+      }
+    });
+
+    // Tool switching
+    document.querySelectorAll('.draw-tool-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.draw-tool-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-600', 'text-white');
+          b.classList.add('hover:bg-slate-200', 'dark:hover:bg-slate-700');
+        });
+        const target = e.currentTarget;
+        target.classList.add('active', 'bg-blue-600', 'text-white');
+        
+        const toolId = target.id;
+        if(toolId === 'toolPen') drawState.currentTool = 'pen';
+        else if(toolId === 'toolLine') drawState.currentTool = 'line';
+        else if(toolId === 'toolArrow') drawState.currentTool = 'arrow';
+        else if(toolId === 'toolCircle') drawState.currentTool = 'circle';
+        else if(toolId === 'toolRect') drawState.currentTool = 'rect';
+        else if(toolId === 'toolText') drawState.currentTool = 'text';
+      });
+    });
+
+    // Color & Line thickness
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        drawState.color = e.currentTarget.getAttribute('data-color');
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'dark:ring-slate-900'));
+        e.currentTarget.classList.add('ring-2', 'ring-white', 'dark:ring-slate-900');
+      });
+    });
+
+    document.getElementById('drawLineWidth').addEventListener('change', (e) => {
+      drawState.lineWidth = parseInt(e.target.value);
+    });
+
+    // Drawing Canvas Events
+    function getCanvasCoords(e) {
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDrawing(e) {
+      drawState.isDrawing = true;
+      const coords = getCanvasCoords(e);
+      drawState.startX = coords.x;
+      drawState.startY = coords.y;
+
+      if (drawState.currentTool === 'pen') {
+        drawCtx.beginPath();
+        drawCtx.moveTo(coords.x, coords.y);
+      } else if (drawState.currentTool === 'text') {
+        const text = prompt("Entrez votre texte :");
+        if (text) {
+          drawCtx.fillStyle = drawState.color;
+          drawCtx.font = `bold ${drawState.lineWidth * 6 + 12}px sans-serif`;
+          drawCtx.fillText(text, coords.x, coords.y);
+          saveDrawHistory();
+        }
+        drawState.isDrawing = false;
+      }
+    }
+
+    function draw(e) {
+      if (!drawState.isDrawing) return;
+      e.preventDefault();
+      const coords = getCanvasCoords(e);
+
+      if (drawState.currentTool === 'pen') {
+        drawCtx.strokeStyle = drawState.color;
+        drawCtx.lineWidth = drawState.lineWidth * 2;
+        drawCtx.lineCap = 'round';
+        drawCtx.lineTo(coords.x, coords.y);
+        drawCtx.stroke();
+      } else {
+        const lastImg = new Image();
+        lastImg.onload = () => {
+          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+          drawCtx.drawImage(lastImg, 0, 0);
+
+          drawCtx.strokeStyle = drawState.color;
+          drawCtx.fillStyle = drawState.color;
+          drawCtx.lineWidth = drawState.lineWidth * 2;
+
+          if (drawState.currentTool === 'line') {
+            drawCtx.beginPath();
+            drawCtx.moveTo(drawState.startX, drawState.startY);
+            drawCtx.lineTo(coords.x, coords.y);
+            drawCtx.stroke();
+          } else if (drawState.currentTool === 'arrow') {
+            drawArrow(drawState.startX, drawState.startY, coords.x, coords.y);
+          } else if (drawState.currentTool === 'circle') {
+            const radius = Math.hypot(coords.x - drawState.startX, coords.y - drawState.startY);
+            drawCtx.beginPath();
+            drawCtx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
+            drawCtx.stroke();
+          } else if (drawState.currentTool === 'rect') {
+            drawCtx.beginPath();
+            drawCtx.strokeRect(drawState.startX, drawState.startY, coords.x - drawState.startX, coords.y - drawState.startY);
+          }
+        };
+        lastImg.src = drawState.history[drawState.history.length - 1];
+      }
+    }
+
+    function stopDrawing() {
+      if (drawState.isDrawing) {
+        drawState.isDrawing = false;
+        saveDrawHistory();
+      }
+    }
+
+    function drawArrow(fromx, fromy, tox, toy) {
+      const headlen = drawState.lineWidth * 4 + 8;
+      const dx = tox - fromx;
+      const dy = toy - fromy;
+      const angle = Math.atan2(dy, dx);
+
+      drawCtx.beginPath();
+      drawCtx.moveTo(fromx, fromy);
+      drawCtx.lineTo(tox, toy);
+      drawCtx.stroke();
+
+      drawCtx.beginPath();
+      drawCtx.moveTo(tox, toy);
+      drawCtx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+      drawCtx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+      drawCtx.closePath();
+      drawCtx.fill();
+    }
+
+    drawCanvas.addEventListener('mousedown', startDrawing);
+    drawCanvas.addEventListener('mousemove', draw);
+    drawCanvas.addEventListener('mouseup', stopDrawing);
+
+    drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+    drawCanvas.addEventListener('touchmove', draw, { passive: false });
+    drawCanvas.addEventListener('touchend', stopDrawing);
+
+    const closeDrawModal = () => {
+      drawModal.classList.add('hidden');
+      drawModal.classList.remove('flex');
+    };
+
+    document.getElementById('closeDrawModalBtn').addEventListener('click', closeDrawModal);
+
+    document.getElementById('saveDrawBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
+      if (pin && pin.photos && drawState.activePhotoIndex !== null) {
+        pin.photos[drawState.activePhotoIndex] = drawCanvas.toDataURL('image/png');
+        renderPinPhotos(pin.photos);
+      }
+      closeDrawModal();
+    });
+
+    // IMPORT PLAN / CANVAS LOGIC
     async function handleFileImport(file) {
       if(!file) return;
       const activeLot = getActiveLot();
+      if(!activeLot) return alert("Veuillez d'abord créer une zone.");
       
       if (file.type === 'application/pdf') {
         const reader = new FileReader();
@@ -1323,7 +1843,10 @@
     }
 
     const fileInput = document.getElementById('fileInput');
-    document.getElementById('importPlanBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('importPlanBtn').addEventListener('click', () => {
+      if(!getActiveLot()) return alert("Veuillez d'abord créer une zone.");
+      fileInput.click();
+    });
     document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
     
     fileInput.addEventListener('change', (e) => {
@@ -1339,11 +1862,12 @@
       handleFileImport(e.dataTransfer.files && e.dataTransfer.files[0]);
     });
 
-    // ZOOM, MOLETTE DE SOURIS ET NAVIGATION CANVAS
     document.getElementById('toolSelectBtn').addEventListener('click', () => { state.activeTool = 'select'; render(); });
     document.getElementById('toolPinBtn').addEventListener('click', () => { state.activeTool = 'pin'; render(); });
     document.getElementById('addPinQuickBtn').addEventListener('click', () => {
-      const l = getActiveLot(); if(!l.planImage){ fileInput.click(); return; }
+      const l = getActiveLot(); 
+      if(!l) return alert("Veuillez d'abord créer une zone.");
+      if(!l.planImage){ fileInput.click(); return; }
       state.activeTool = 'pin'; render();
     });
 
@@ -1362,7 +1886,6 @@
 
     const activeCanvas = document.getElementById('activeCanvas');
     
-    // Zoom à la molette de la souris
     activeCanvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       const zoomIntensity = 0.15;
@@ -1395,12 +1918,14 @@
         const imageEl = document.getElementById('planImageView');
         const imgRect = imageEl.getBoundingClientRect();
         
-        // Vérifier si le clic est bien sur l'image du plan
         if (e.clientX >= imgRect.left && e.clientX <= imgRect.right && e.clientY >= imgRect.top && e.clientY <= imgRect.bottom) {
           const xPercent = Math.round(((e.clientX - imgRect.left) / imgRect.width) * 100);
           const yPercent = Math.round(((e.clientY - imgRect.top) / imgRect.height) * 100);
 
           const lot = getActiveLot();
+          if(!lot) return;
+          if(!lot.pins) lot.pins = [];
+
           const nextNum = lot.pins.length > 0 ? Math.max(...lot.pins.map(p => p.number || 0)) + 1 : 1;
           
           const newPin = {
@@ -1423,13 +1948,14 @@
       }
     });
 
-    // NAVIGATION TOPBAR
     document.getElementById('navLogoBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
     document.getElementById('backToHomeBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
     document.getElementById('themeToggleBtn').addEventListener('click', () => { state.darkMode = !state.darkMode; render(); });
 
-    // MODALE PROJET
+    // MODALE PROJET ET GESTION DES PHOTOS
     const editProjectModal = document.getElementById('editProjectModal');
+    const projectPhotosInput = document.getElementById('projectPhotosInput');
+    const uploadProjectPhotosBtn = document.getElementById('uploadProjectPhotosBtn');
     
     function openProjectModal(mode) {
       state.projectModalMode = mode;
@@ -1439,92 +1965,171 @@
         document.getElementById('projectInputClient').value = '';
         document.getElementById('projectInputSurface').value = '';
         document.getElementById('projectInputLocation').value = '';
+        currentProjectPhotosTemp = [];
       } else {
         const p = getActiveProject();
+        if(!p) return;
         document.getElementById('projectModalTitle').textContent = 'Modifier le projet';
-        document.getElementById('projectInputName').value = p.name;
-        document.getElementById('projectInputClient').value = p.client;
-        document.getElementById('projectInputSurface').value = p.surfaceTotal;
-        document.getElementById('projectInputLocation').value = p.location;
-        document.getElementById('projectInputStatus').value = p.status;
+        document.getElementById('projectInputName').value = p.name || '';
+        document.getElementById('projectInputClient').value = p.client || '';
+        document.getElementById('projectInputSurface').value = p.surfaceTotal || '';
+        document.getElementById('projectInputLocation').value = p.location || '';
+        document.getElementById('projectInputStatus').value = p.status || 'En cours d\'aménagement';
+        currentProjectPhotosTemp = p.photos ? [...p.photos] : [];
       }
-      editProjectModal.classList.remove('hidden'); editProjectModal.classList.add('flex');
+      renderProjectPhotosPreview();
+      editProjectModal.classList.remove('hidden');
+      editProjectModal.classList.add('flex');
     }
 
     document.getElementById('createNewProjectBtn').addEventListener('click', () => openProjectModal('create'));
     document.getElementById('openEditProjectBtn').addEventListener('click', () => openProjectModal('edit'));
-    
-    const closeProjModal = () => { editProjectModal.classList.add('hidden'); editProjectModal.classList.remove('flex'); };
-    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjModal);
-    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjModal);
+
+    if (uploadProjectPhotosBtn && projectPhotosInput) {
+      uploadProjectPhotosBtn.addEventListener('click', () => projectPhotosInput.click());
+
+      projectPhotosInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        files.forEach(file => {
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              currentProjectPhotosTemp.push(evt.target.result);
+              renderProjectPhotosPreview();
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        e.target.value = '';
+      });
+    }
+
+    function renderProjectPhotosPreview() {
+      const container = document.getElementById('projectPhotosPreview');
+      if (!container) return;
+      container.innerHTML = '';
+      currentProjectPhotosTemp.forEach((src, idx) => {
+        const imgWrap = document.createElement('div');
+        imgWrap.className = 'relative w-16 h-16 rounded-2xl border dark:border-slate-700 overflow-hidden bg-slate-100 group';
+        imgWrap.innerHTML = `
+          <img src="${src}" class="w-full h-full object-cover" />
+          <button type="button" class="absolute top-1 right-1 p-1 bg-rose-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" title="Supprimer">
+            <i data-lucide="x" class="w-3 h-3"></i>
+          </button>
+        `;
+        imgWrap.querySelector('button').addEventListener('click', () => {
+          currentProjectPhotosTemp.splice(idx, 1);
+          renderProjectPhotosPreview();
+        });
+        container.appendChild(imgWrap);
+      });
+      lucide.createIcons();
+    }
+
+    const closeProjectModal = () => {
+      editProjectModal.classList.add('hidden');
+      editProjectModal.classList.remove('flex');
+    };
+
+    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjectModal);
+    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjectModal);
 
     document.getElementById('projectForm').addEventListener('submit', (e) => {
       e.preventDefault();
+      const name = document.getElementById('projectInputName').value;
+      const client = document.getElementById('projectInputClient').value;
+      const surfaceTotal = document.getElementById('projectInputSurface').value;
+      const location = document.getElementById('projectInputLocation').value;
+      const status = document.getElementById('projectInputStatus').value;
+
       if (state.projectModalMode === 'create') {
         const newProj = {
           id: 'proj_' + Date.now(),
-          name: document.getElementById('projectInputName').value || 'Nouveau Projet',
-          client: document.getElementById('projectInputClient').value,
-          surfaceTotal: Number(document.getElementById('projectInputSurface').value),
-          location: document.getElementById('projectInputLocation').value,
-          status: document.getElementById('projectInputStatus').value,
-          activeLotId: 'lot_init',
-          lots: [{ id: 'lot_init', name: 'Logement T2 - A101', icon: 'home', surface: '', planImage: null, pins: [] }]
+          name: name,
+          client: client,
+          surfaceTotal: surfaceTotal,
+          location: location,
+          status: status,
+          lots: [],
+          photos: [...currentProjectPhotosTemp],
+          activeLotId: null
         };
         state.projects.push(newProj);
         state.activeProjectId = newProj.id;
         state.currentView = 'project';
       } else {
         const p = getActiveProject();
-        p.name = document.getElementById('projectInputName').value;
-        p.client = document.getElementById('projectInputClient').value;
-        p.surfaceTotal = Number(document.getElementById('projectInputSurface').value);
-        p.location = document.getElementById('projectInputLocation').value;
-        p.status = document.getElementById('projectInputStatus').value;
+        if (p) {
+          p.name = name;
+          p.client = client;
+          p.surfaceTotal = surfaceTotal;
+          p.location = location;
+          p.status = status;
+          p.photos = [...currentProjectPhotosTemp];
+        }
       }
-      closeProjModal(); render();
+
+      closeProjectModal();
+      render();
     });
 
-    // MODALE LOT / ZONE
+    // MODALE ZONE / LOT
     const editLotModal = document.getElementById('editLotModal');
+
     function openEditLotModal(lot) {
-      state.editingLotId = lot.id; state.selectedIconForModal = lot.icon;
-      document.getElementById('lotInputName').value = lot.name;
-      document.getElementById('lotInputSurface').value = lot.surface || '';
+      state.editingLotId = lot ? lot.id : null;
+      document.getElementById('lotInputName').value = lot ? lot.name : '';
+      document.getElementById('lotInputSurface').value = lot ? lot.surface || '' : '';
+      state.selectedIconForModal = lot ? (lot.icon || AVAILABLE_ICONS[0].id) : AVAILABLE_ICONS[0].id;
+
       renderIconGrid();
-      editLotModal.classList.remove('hidden'); editLotModal.classList.add('flex');
+      editLotModal.classList.remove('hidden');
+      editLotModal.classList.add('flex');
     }
-    const closeLotModal = () => { editLotModal.classList.add('hidden'); editLotModal.classList.remove('flex'); state.editingLotId = null; };
-    document.getElementById('closeLotModalBtn').addEventListener('click', closeLotModal);
-    document.getElementById('editActiveLotBtn').addEventListener('click', () => openEditLotModal(getActiveLot()));
 
     function renderIconGrid() {
-      const grid = document.getElementById('iconGridContainer');
-      grid.innerHTML = '';
-      AVAILABLE_ICONS.forEach(item => {
-        const isSel = item.id === state.selectedIconForModal;
+      const container = document.getElementById('iconGridContainer');
+      container.innerHTML = '';
+      AVAILABLE_ICONS.forEach(icon => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `flex flex-col items-center p-3 rounded-2xl border transition-all ${isSel ? 'bg-blue-600 text-white shadow-md scale-105' : 'bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100'}`;
-        btn.innerHTML = `<i data-lucide="${item.id}" class="w-5 h-5 shrink-0"></i><span class="text-[10px] mt-1 truncate max-w-full">${item.label}</span>`;
-        btn.addEventListener('click', () => { state.selectedIconForModal = item.id; renderIconGrid(); lucide.createIcons(); });
-        grid.appendChild(btn);
+        const isSelected = icon.id === state.selectedIconForModal;
+        btn.className = `p-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all ${isSelected ? 'border-blue-500 bg-blue-50 dark:bg-slate-800 text-blue-600' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`;
+        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] truncate max-w-full">${icon.label}</span>`;
+        btn.addEventListener('click', () => {
+          state.selectedIconForModal = icon.id;
+          renderIconGrid();
+        });
+        container.appendChild(btn);
       });
+      lucide.createIcons();
     }
+
+    document.getElementById('closeLotModalBtn').addEventListener('click', () => {
+      editLotModal.classList.add('hidden');
+      editLotModal.classList.remove('flex');
+    });
 
     document.getElementById('lotForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const p = getActiveProject();
-      const lot = p.lots.find(l => l.id === state.editingLotId);
+      const lot = getActiveLot();
       if (lot) {
         lot.name = document.getElementById('lotInputName').value;
-        lot.surface = document.getElementById('lotInputSurface').value;
+        lot.surface = document.getElementById('lotInputSurface').value ? document.getElementById('lotInputSurface').value + ' m²' : '';
         lot.icon = state.selectedIconForModal;
       }
-      closeLotModal(); render();
+      editLotModal.classList.add('hidden');
+      editLotModal.classList.remove('flex');
+      render();
     });
 
-    window.addEventListener('DOMContentLoaded', () => { render(); });
+    document.getElementById('editActiveLotBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      if(lot) openEditLotModal(lot);
+    });
+
+    // INITIALISATION
+    render();
   </script>
 </body>
 </html>
