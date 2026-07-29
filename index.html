@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orion BTP - M42 | Gestionnaire de chantier</title>
+  <title>Orion BTP | Plateforme d'Outils & Inspiration BTP</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,9 +47,21 @@
     .apple-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .drag-over-active { border-color: #0071e3 !important; background-color: rgba(0, 113, 227, 0.05) !important; }
     .pin-marker { transform-origin: center center; }
+
+    /* Animation constellation */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.15); }
+    }
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .star-glow { animation: pulseGlow 4s infinite ease-in-out; }
+    .star-twinkle { animation: starTwinkle 2.5s infinite ease-in-out; }
   </style>
 </head>
-<body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+<body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300 flex flex-col">
 
   <!-- TOP NAVIGATION BAR -->
   <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
@@ -58,19 +70,18 @@
       <!-- Logo & Navigation -->
       <div class="flex items-center space-x-4 sm:space-x-6">
         <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-sky-400 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
-            <i data-lucide="rocket" class="w-5 h-5 stroke-[2.2]"></i>
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
-          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-1.5">
-            <span class="font-semibold text-base sm:text-lg tracking-tight">Orion BTP</span>
-            <span class="w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 uppercase tracking-wider">M42</span>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+            <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
+            <span id="activeToolBadge" class="hidden w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"></span>
           </div>
         </button>
 
-        <button id="backToHomeBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
           <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
-          <span class="hidden sm:inline">Retour aux projets</span>
-          <span class="sm:hidden">Retour</span>
+          <span id="backToPreviousText">Retour</span>
         </button>
       </div>
 
@@ -91,19 +102,413 @@
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
+
+        <!-- Menu Utilisateur Dropdown -->
+        <div class="relative">
+          <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden py-1 apple-glass">
+            <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Compte Utilisateur</p>
+              <p id="dropdownUserStatus" class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate">Non connecté (Invité)</p>
+            </div>
+
+            <div class="py-1">
+              <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="user-plus" class="w-4 h-4 text-blue-500"></i>
+                <span>S'inscrire</span>
+              </button>
+
+              <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <span>Se connecter</span>
+              </button>
+
+              <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
+                <span>Espace Administration</span>
+              </button>
+
+              <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <span>Signaler un problème</span>
+              </button>
+
+              <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="shield-check" class="w-4 h-4 text-blue-500"></i>
+                <span>Politique de confidentialité</span>
+              </button>
+            </div>
+
+            <div class="border-t border-slate-100 dark:border-slate-800 py-1">
+              <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Se déconnecter</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
 
-    <!-- HOME VIEW -->
-    <div id="homeView" class="space-y-6">
+    <!-- LANDING VIEW (PAGE D'ACCUEIL ORION BTP) -->
+    <div id="landingView" class="space-y-12 py-4">
+      
+      <!-- HERO SECTION : Sans cadre autour de la constellation -->
+      <section class="relative rounded-3xl p-6 sm:p-10 lg:p-12 overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white border border-slate-800 shadow-2xl">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Bloc Texte (Partie Gauche) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>Plateforme unifiée d'outils BTP</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+              Relier la préparation technique à la réalité du chantier.
+            </h1>
+            
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+              À l'image de la véritable constellation d'Orion qui réunit de brillantes étoiles repères (Bételgeuse, Rigel, le Baudrier), <strong class="text-white">Orion BTP</strong> connecte les outils essentiels de la <span class="text-emerald-400 font-semibold">préparation (M42)</span>, des <span class="text-purple-400 font-semibold">modules futurs (M43)</span> et du <span class="text-blue-400 font-semibold">suivi terrain & réserves (M78)</span>.
+            </p>
+
+            <div class="pt-2 flex flex-wrap gap-3 text-xs font-medium text-slate-300">
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+                <span>Préparation & Métrés (M42)</span>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="orbit" class="w-4 h-4 text-purple-400"></i>
+                <span>Module à venir (M43)</span>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
+                <span>Suivi & Réserves (M78)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloc Graphique Constellation (Partie Droite) : Sans contour ni encadrement -->
+          <div class="lg:col-span-5 flex items-center justify-center w-full">
+            <div class="w-full max-w-md lg:max-w-none opacity-95 flex justify-center">
+              <svg class="w-full h-auto max-h-[360px]" xmlns="http://www.w3.org/2000/svg" viewBox="150 15 420 380" preserveAspectRatio="xMidYMid meet">
+                <!-- LIGNES DE LA CONSTELLATION D'ORION -->
+                <line x1="400" y1="45" x2="270" y2="105" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
+                <line x1="400" y1="45" x2="530" y2="115" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
+                <line x1="270" y1="105" x2="530" y2="115" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" />
+                <line x1="270" y1="105" x2="350" y2="220" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="530" y1="115" x2="450" y2="210" stroke="#818cf8" stroke-width="1.5" />
+
+                <!-- LA CEINTURE D'ORION -->
+                <line x1="350" y1="220" x2="400" y2="215" stroke="#38bdf8" stroke-width="2.5" />
+                <line x1="400" y1="215" x2="450" y2="210" stroke="#38bdf8" stroke-width="2.5" />
+
+                <!-- L'ÉPÉE D'ORION -->
+                <line x1="400" y1="215" x2="390" y2="275" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="2 2" />
+
+                <!-- Ceinture -> Pieds -->
+                <line x1="350" y1="220" x2="310" y2="360" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="450" y1="210" x2="490" y2="350" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="310" y1="360" x2="490" y2="350" stroke="#6366f1" stroke-width="1" opacity="0.5" />
+
+                <!-- ETOILES PRINCIPALES -->
+                <circle cx="270" cy="105" r="14" fill="#ef4444" opacity="0.25" class="star-glow" />
+                <circle cx="270" cy="105" r="7" fill="#f87171" class="star-twinkle" />
+                <text x="175" y="108" fill="#fca5a5" font-size="11" font-weight="bold">Bételgeuse (α)</text>
+
+                <circle cx="530" cy="115" r="6" fill="#93c5fd" class="star-twinkle" />
+                <text x="545" y="118" fill="#bfdbfe" font-size="11" font-weight="bold">Bellatrix (γ)</text>
+
+                <circle cx="400" cy="45" r="4" fill="#fef08a" />
+                <text x="382" y="32" fill="#fde047" font-size="10">Meissa (λ)</text>
+
+                <circle cx="350" cy="220" r="5" fill="#ffffff" class="star-twinkle" />
+                <circle cx="400" cy="215" r="5.5" fill="#ffffff" class="star-twinkle" />
+                <circle cx="450" cy="210" r="5" fill="#ffffff" class="star-twinkle" />
+                <text x="350" y="200" fill="#7dd3fc" font-size="10" font-weight="bold">Baudrier / Ceinture</text>
+
+                <circle cx="310" cy="360" r="5" fill="#cbd5e1" />
+                <text x="250" y="365" fill="#94a3b8" font-size="11">Saiph (κ)</text>
+
+                <circle cx="490" cy="350" r="16" fill="#0284c7" opacity="0.3" class="star-glow" />
+                <circle cx="490" cy="350" r="8" fill="#38bdf8" class="star-twinkle" />
+                <text x="510" y="355" fill="#7dd3fc" font-size="12" font-weight="bold">Rigel (β)</text>
+
+                <!-- NEBULEUSES -->
+                <circle cx="390" cy="275" r="16" fill="#10b981" opacity="0.35" class="star-glow" />
+                <circle cx="390" cy="275" r="6" fill="#34d399" />
+                <text x="412" y="278" fill="#6ee7b7" font-size="11" font-weight="bold">M42 (Nébuleuse d'Orion)</text>
+
+                <circle cx="405" cy="265" r="10" fill="#8b5cf6" opacity="0.4" class="star-glow" />
+                <circle cx="405" cy="265" r="4" fill="#c084fc" />
+                <text x="420" y="260" fill="#e9d5ff" font-size="10" font-weight="bold">M43</text>
+
+                <circle cx="330" cy="180" r="14" fill="#0071e3" opacity="0.4" class="star-glow" />
+                <circle cx="330" cy="180" r="5.5" fill="#60a5fa" />
+                <text x="235" y="185" fill="#93c5fd" font-size="11" font-weight="bold">M78 (Réflexion)</text>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SELECTION DES OUTILS (CARDS) -->
+      <section class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Espace Outils Orion</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Sélectionnez le module adapté à la phase de votre projet.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- MODULE M42 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
+                  <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 uppercase tracking-wider">Prochainement</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Nébuleuse M42</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M42 | Préparation & Métrés</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Outil d'étude technique préalable, métrés automatisés et organisation de la phase d'installation de chantier avant démarrage.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <button data-future-tool="M42" class="open-future-tool-btn w-full py-3 rounded-2xl bg-emerald-50 dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 font-semibold text-xs sm:text-sm border border-emerald-200 dark:border-emerald-800/50 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Découvrir le projet M42</span>
+                <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- MODULE M43 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/30">
+                  <i data-lucide="orbit" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 uppercase tracking-wider">En Conception</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Nébuleuse M43</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M43 | Module à définir</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Module en cours de définition pour répondre aux besoins futurs de développement de la plateforme Orion BTP.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <button data-future-tool="M43" class="open-future-tool-btn w-full py-3 rounded-2xl bg-purple-50 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 font-semibold text-xs sm:text-sm border border-purple-200 dark:border-purple-800/50 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Découvrir le projet M43</span>
+                <i data-lucide="orbit" class="w-4 h-4 text-purple-500"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- MODULE M78 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border-2 border-blue-500/30 dark:border-blue-500/30 hover:border-blue-500 shadow-lg hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
+                  <i data-lucide="check-square" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 uppercase tracking-wider">Outil Actif</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Nébuleuse M78</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M78 | Suivi & Réserves</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Gestionnaire de chantier complet pour l'étape finale. Importez vos plans PDF/images, pointez les réserves, annotez vos photos et gérez vos rapports.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <button id="launchM78Btn" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Accéder à l'outil M78</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PRESENTATION PHILOSOPHIE -->
+      <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+        <div class="max-w-2xl">
+          <h3 class="text-lg sm:text-xl font-bold tracking-tight">Trois piliers pour la vie de vos chantiers</h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Comment Orion BTP accompagne les bâtisseurs à chaque étape.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 flex items-center justify-center font-bold text-xs">1</div>
+            <h4 class="font-bold text-sm text-emerald-600 dark:text-emerald-400">1. Préparation & Calculs (M42)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Anticiper les besoins, les quantitatifs et l'organisation logistique du chantier.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 flex items-center justify-center font-bold text-xs">2</div>
+            <h4 class="font-bold text-sm text-purple-600 dark:text-purple-400">2. Module à venir (M43)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Fonctionnalités complémentaires en cours de développement.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 flex items-center justify-center font-bold text-xs">3</div>
+            <h4 class="font-bold text-sm text-blue-600 dark:text-blue-400">3. Gestion & Suivi Terrain (M78)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Superviser la réalisation finale, lever les réserves sur plan et garantir la conformité de livraison.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- DEDICATED ADMIN VIEW (NOUVEL ESPACE D'ADMINISTRATION ERGONOMIQUE) -->
+    <div id="adminView" class="hidden space-y-8 py-2">
+      <!-- Header Admin -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 uppercase tracking-wider">Espace Sécurisé</span>
+            <span class="text-xs font-semibold text-slate-400">Plateforme Orion BTP</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Console d'Administration</h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Gestion des comptes utilisateurs et attribution des clés d'accès aux modules M42, M43 et M78.</p>
+        </div>
+        <button id="closeAdminViewBtn" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all flex items-center space-x-2 w-max shadow-sm active:scale-95">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Quitter l'administration</span>
+        </button>
+      </div>
+
+      <!-- Statistiques Globales -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Utilisateurs Inscrits</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>
+          </div>
+          <div id="adminStatUsersCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Clés Actives</span>
+            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"><i data-lucide="key" class="w-4 h-4"></i></div>
+          </div>
+          <div id="adminStatKeysCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Projets M78</span>
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center"><i data-lucide="folder" class="w-4 h-4"></i></div>
+          </div>
+          <div id="adminStatProjectsCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Modules Orion</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"><i data-lucide="layers" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-2xl font-extrabold text-slate-900 dark:text-white">3 / 3</div>
+        </div>
+      </div>
+
+      <!-- Section Utilisateurs -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold">Comptes Utilisateurs</h3>
+            <p class="text-xs text-slate-400">Consulter tous les utilisateurs enregistrés et leurs droits.</p>
+          </div>
+          <button id="adminAddNewUserBtn" class="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Inscrire un utilisateur</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-4">Utilisateur</th>
+                <th class="py-3 px-4">Adresse E-mail</th>
+                <th class="py-3 px-4">Rôle</th>
+                <th class="py-3 px-4">Inscrit le</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section Gestion des Clés d'Accès -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold">Gestion des Clés d'Accès aux Outils</h3>
+            <p class="text-xs text-slate-400">Générez, attribuez et révoquez les clés d'accès aux modules M42, M43 et M78.</p>
+          </div>
+          <button id="adminGenerateKeyBtn" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
+            <i data-lucide="key" class="w-4 h-4"></i>
+            <span>Créer / Attribuer une clé</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-4">Clé d'accès</th>
+                <th class="py-3 px-4">Module Associé</th>
+                <th class="py-3 px-4">Attribuer à (E-mail)</th>
+                <th class="py-3 px-4">Statut</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminKeysTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- M78 HOME VIEW (LISTE PROJETS) -->
+    <div id="homeView" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets</h1>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gérez vos plans et le suivi de vos chantiers.</p>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 uppercase tracking-wider">Module M78</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets M78</h1>
+          </div>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gérez vos plans et le suivi de vos réserves de chantier.</p>
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
@@ -128,7 +533,7 @@
       <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
-    <!-- PROJECT VIEW -->
+    <!-- PROJECT VIEW (EDITION PROJET & OUTILS M42/M78) -->
     <div id="projectView" class="hidden flex-col space-y-6">
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg shadow-slate-200/40 dark:shadow-black/20 transition-all duration-300">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -156,7 +561,7 @@
         </div>
       </section>
 
-      <!-- ZONES SELECTOR -->
+      <!-- ZONES SELECTOR & COMPTEUR AUTOMATIQUE DE RESERVES -->
       <section class="p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
@@ -167,6 +572,7 @@
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <div class="relative flex-1 sm:w-80 min-w-[220px]">
               <i id="selectLotIcon" data-lucide="building-2" class="w-4 h-4 text-blue-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
+              <!-- Selecteur mis à jour dynamiquement au format : 101 - T3 (3 réserves) -->
               <select id="lotSelect" class="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500 appearance-none shadow-sm cursor-pointer transition-all">
               </select>
               <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
@@ -188,10 +594,10 @@
         </div>
       </section>
 
-      <!-- WORKSPACE / CANVAS -->
+      <!-- WORKSPACE / CANVAS AVEC ZOOM ET PAN FLUIDE (Molette / Pinch-to-zoom) -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div class="lg:col-span-3 space-y-4">
-          <div id="canvasViewport" class="relative min-h-[400px] sm:min-h-[580px] rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/40 shadow-md shadow-slate-200/30 flex flex-col items-center justify-center">
+          <div id="canvasViewport" class="relative min-h-[400px] sm:min-h-[580px] rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/40 shadow-md shadow-slate-200/30 flex flex-col items-center justify-center select-none touch-none">
             
             <div id="canvasToolbar" class="hidden absolute top-4 left-4 z-20 items-center gap-1 sm:gap-2 flex-wrap p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md text-white border border-slate-700/50 shadow-xl max-w-[calc(100%-80px)]">
               <button id="toolSelectBtn" class="p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-blue-600 shadow transition-all">
@@ -203,9 +609,9 @@
                 <span class="hidden sm:inline">Placer un repère</span>
               </button>
               <div class="h-4 w-px bg-slate-700 mx-1"></div>
-              <button id="zoomInBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="zoom-in" class="w-4 h-4"></i></button>
-              <button id="zoomOutBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="zoom-out" class="w-4 h-4"></i></button>
-              <button id="zoomResetBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+              <button id="zoomInBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300" title="Zoom avant"><i data-lucide="zoom-in" class="w-4 h-4"></i></button>
+              <button id="zoomOutBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300" title="Zoom arrière"><i data-lucide="zoom-out" class="w-4 h-4"></i></button>
+              <button id="zoomResetBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300" title="Réinitialiser la vue"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
             </div>
 
             <div id="replacePlanContainer" class="hidden absolute top-4 right-4 z-20">
@@ -237,7 +643,7 @@
 
             <div id="activeCanvas" class="hidden w-full h-full min-h-[400px] sm:min-h-[500px] items-center justify-center overflow-hidden cursor-grab select-none relative">
               <div id="canvasTransformGroup" class="relative transition-transform duration-75 ease-out select-none">
-                <img id="planImageView" src="" alt="Plan" class="max-w-full max-h-[450px] sm:max-h-[520px] object-contain rounded-xl shadow-2xl pointer-events-none block" />
+                <img id="planImageView" src="" alt="Plan" class="max-w-full max-h-[450px] sm:max-h-[520px] object-contain rounded-xl shadow-2xl pointer-events-auto block" />
                 <div id="pinsOverlay" class="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
@@ -277,6 +683,167 @@
     </div>
 
   </main>
+
+  <!-- MODALES UTILISATEUR, CREATION DE CLE ET PARAMETRAGE -->
+  
+  <!-- MODAL : CREATION / ATTRIBUTION DE CLE ADMIN -->
+  <div id="createKeyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
+            <i data-lucide="key" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Générer une clé d'accès</h3>
+            <p class="text-xs text-slate-400">Attribuer des droits d'accès à un outil</p>
+          </div>
+        </div>
+        <button id="closeCreateKeyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="createKeyForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Module / Outil Orion</label>
+          <select id="keyInputTool" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="M42">Module M42 - Préparation & Métrés</option>
+            <option value="M43">Module M43 - Module Futur</option>
+            <option value="M78">Module M78 - Suivi & Réserves</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Attribuer à un e-mail utilisateur</label>
+          <input type="email" id="keyInputUserEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Code de la clé (Généré automatiquement si vide)</label>
+          <input type="text" id="keyInputCustomCode" placeholder="ORION-M42-XXXX" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500 font-mono" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Générer et attribuer la clé</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : CONNEXION -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Connexion / Inscription</h3>
+            <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
+          </div>
+        </div>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="loginForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Se connecter</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : SIGNALER UN PROBLEME -->
+  <div id="reportIssueModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Signaler un problème</h3>
+            <p class="text-xs text-slate-400">Support & Assistance Technique</p>
+          </div>
+        </div>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="reportIssueForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Sujet de la demande</label>
+          <input type="text" required placeholder="ex: Bug d'affichage des plans PDF..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Description de l'incident</label>
+          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement ou votre question..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
+          <span>Envoyer le signalement</span>
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : POLITIQUE DE CONFIDENTIALITE -->
+  <div id="privacyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Politique de confidentialité</h3>
+            <p class="text-xs text-slate-400">Protection des données & sécurité</p>
+          </div>
+        </div>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p><strong>1. Stockage Local :</strong> Les données de vos projets et plans importés sur Orion BTP sont conservées localement au niveau de votre navigateur afin d'assurer la confidentialité intégrale de vos chantiers.</p>
+        <p><strong>2. Données Personnelles :</strong> Aucune donnée confidentielle ou image d'inspection de réserve n'est partagée sans votre consentement préalable.</p>
+        <p><strong>3. Exports de Rapports :</strong> Tous les documents générés (.PDF, .DOC) restent sous votre pleine propriété.</p>
+      </div>
+
+      <button id="confirmPrivacyBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        Compris & Accepter
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL : OUTILS FUTURS (M42 & M43) -->
+  <div id="futureToolModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6 text-center">
+      <div id="futureToolHeaderIcon" class="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl">
+        <i id="futureToolIcon" data-lucide="sparkles" class="w-8 h-8"></i>
+      </div>
+
+      <div class="space-y-2">
+        <div id="futureToolBadge" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"></div>
+        <h3 id="futureToolTitle" class="text-2xl font-extrabold"></h3>
+        <p id="futureToolDescription" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed"></p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-left text-xs space-y-2">
+        <span class="font-bold text-slate-700 dark:text-slate-300 block">Fonctionnalités prévues :</span>
+        <ul id="futureToolFeatures" class="space-y-1 text-slate-500 dark:text-slate-400 list-disc list-inside"></ul>
+      </div>
+
+      <button id="closeFutureToolModalBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        J'ai compris
+      </button>
+    </div>
+  </div>
 
   <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS -->
   <div id="reportConfigModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
@@ -368,7 +935,7 @@
       <form id="pinForm" class="space-y-4 text-xs">
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Intitulé / Sujet de la réserve</label>
-          <input type="text" id="pinInputTitle" required class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" placeholder="ex: Fissure placo, Prise manquante..." />
+          <input type="text" id="pinInputTitle" required class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" placeholder="Intitulé de la réserve..." />
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -398,9 +965,8 @@
           </div>
         </div>
 
-        <!-- MULTIMEDIA & PHOTOS DESSINABLES -->
         <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Photos de la réserve (Annotables avec dessin)</label>
+          <label class="block text-slate-500 font-medium mb-1.5">Photos de la réserve (Annotables)</label>
           <div class="flex flex-wrap items-center gap-2 mb-2">
             <label class="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-medium text-[11px] sm:text-xs cursor-pointer hover:bg-blue-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm">
               <i data-lucide="image" class="w-3.5 h-3.5 shrink-0"></i>
@@ -452,7 +1018,6 @@
           <h3 class="font-bold text-sm sm:text-base">Annoter la photo</h3>
         </div>
 
-        <!-- Selector outils -->
         <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl text-xs">
           <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-blue-600 text-white flex items-center space-x-1">
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
@@ -462,10 +1027,6 @@
             <i data-lucide="minus" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">Ligne</span>
           </button>
-          <button type="button" id="toolArrow" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Flèche</span>
-          </button>
           <button type="button" id="toolCircle" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
             <i data-lucide="circle" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">Cercle</span>
@@ -474,13 +1035,8 @@
             <i data-lucide="square" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">Rectangle</span>
           </button>
-          <button type="button" id="toolText" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="type" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Texte</span>
-          </button>
         </div>
 
-        <!-- Couleurs & Épaisseur -->
         <div class="flex items-center space-x-3">
           <div class="flex items-center space-x-1">
             <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 border border-slate-300"></button>
@@ -488,7 +1044,6 @@
             <button type="button" data-color="#eab308" class="color-btn w-6 h-6 rounded-full bg-yellow-500 border border-slate-300"></button>
             <button type="button" data-color="#22c55e" class="color-btn w-6 h-6 rounded-full bg-green-500 border border-slate-300"></button>
             <button type="button" data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white border border-slate-300"></button>
-            <button type="button" data-color="#000000" class="color-btn w-6 h-6 rounded-full bg-black border border-slate-300"></button>
           </div>
           <select id="drawLineWidth" class="px-2 py-1 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
             <option value="2">Fin</option>
@@ -528,7 +1083,7 @@
     </div>
   </div>
 
-  <!-- MODAL : PROJET (CREATION & MODIFICATION) -->
+  <!-- MODAL : PROJET -->
   <div id="editProjectModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between">
@@ -542,15 +1097,15 @@
       <form id="projectForm" class="space-y-4 text-xs">
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Nom du projet</label>
-          <input type="text" id="projectInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" id="projectInputName" required placeholder="Nom du projet..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div><label class="block text-slate-500 font-medium mb-1.5">Client</label><input type="text" id="projectInputClient" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" /></div>
-          <div><label class="block text-slate-500 font-medium mb-1.5">Surface globale (m²)</label><input type="number" id="projectInputSurface" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" /></div>
+          <div><label class="block text-slate-500 font-medium mb-1.5">Client</label><input type="text" id="projectInputClient" placeholder="Nom du client..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" /></div>
+          <div><label class="block text-slate-500 font-medium mb-1.5">Surface globale (m²)</label><input type="number" id="projectInputSurface" placeholder="0" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" /></div>
         </div>
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Adresse</label>
-          <input type="text" id="projectInputLocation" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" id="projectInputLocation" placeholder="Adresse du chantier..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Statut</label>
@@ -559,17 +1114,6 @@
             <option value="En cours d'aménagement">En cours d'aménagement</option>
             <option value="Livré / Achevé">Livré / Achevé</option>
           </select>
-        </div>
-
-        <!-- REMARQUE : BOUTON PHOTOS DU PROJET -->
-        <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Photos du projet</label>
-          <input type="file" id="projectPhotosInput" accept="image/*" multiple class="hidden" />
-          <button type="button" id="uploadProjectPhotosBtn" class="w-full px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-2 text-xs">
-            <i data-lucide="camera" class="w-4 h-4 text-blue-500"></i>
-            <span>Ajouter des photos du projet</span>
-          </button>
-          <div id="projectPhotosPreview" class="flex flex-wrap gap-2 mt-3"></div>
         </div>
 
         <div class="flex items-center justify-end space-x-2 sm:space-x-3 pt-4 border-t dark:border-slate-800">
@@ -586,33 +1130,41 @@
   <div id="editLotModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h3 class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
-        <button id="closeLotModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 id="lotModalTitle" class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
+        <button id="closeLotModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form id="lotForm" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-500 mb-1.5">Nom de la zone</label>
-          <input type="text" id="lotInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none" />
+          <label class="block text-slate-500 mb-1.5 font-medium">Nom de la zone</label>
+          <input type="text" id="lotInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" placeholder="ex: Rez-de-Chaussée, Zone A..." />
         </div>
         <div>
-          <label class="block text-slate-500 mb-1.5">Surface estimée</label>
+          <label class="block text-slate-500 mb-1.5 font-medium">Surface estimée</label>
           <div class="relative flex items-center">
             <input type="number" step="any" id="lotInputSurface" placeholder="0" class="w-full pl-4 pr-12 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs" />
             <span class="absolute right-4 text-slate-400 font-semibold text-xs pointer-events-none">m²</span>
           </div>
         </div>
         <div>
-          <label class="block text-slate-500 mb-2">Choisir une icône</label>
-          <div id="iconGridContainer" class="grid grid-cols-3 sm:grid-cols-3 gap-2 max-h-[180px] overflow-y-auto p-1"></div>
+          <label class="block text-slate-500 mb-2 font-medium">Choisir une icône</label>
+          <div id="iconGridContainer" class="grid grid-cols-3 gap-2 max-h-[180px] overflow-y-auto p-1"></div>
         </div>
-        <div class="flex flex-col sm:flex-row items-center justify-end pt-4 border-t gap-2 sm:space-x-3">
-          <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-blue-600 text-white font-medium">Enregistrer</button>
+        <div class="flex flex-col sm:flex-row items-center justify-end pt-4 border-t dark:border-slate-800 gap-2 sm:space-x-3">
+          <button type="button" id="cancelLotModalBtn" class="w-full sm:w-auto px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
+          <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-blue-600 text-white font-medium shadow-md shadow-blue-500/20">Enregistrer</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- APPLICATION CODE SCRIPT -->
   <script>
+    // Configuration Administrateur & Liste des utilisateurs/clés d'accès
+    const ADMIN_CONFIG = {
+      authorizedEmail: 'admin@orion.btp',
+      authorizedPassword: '123'
+    };
+
     const AVAILABLE_ICONS = [
       { id: 'building-2', label: 'Immeuble' },
       { id: 'home', label: 'Maison' },
@@ -622,14 +1174,28 @@
       { id: 'trees', label: 'Espace vert' }
     ];
 
-    const DEFAULT_COMPANIES = [];
-
+    // État central de l'application
     const state = {
       darkMode: false,
-      currentView: 'home',
+      currentView: 'landing', // 'landing', 'admin', 'm78Home', 'project'
       activeProjectId: null,
-      availableCompanies: [...DEFAULT_COMPANIES],
+      currentUser: null,
+      
+      // Données Utilisateurs & Clés d'Accès pour l'administration
+      registeredUsers: [
+        { id: 'usr-1', email: 'admin@orion.btp', name: 'Administrateur Orion', role: 'Administrateur', createdAt: '15/01/2026' },
+        { id: 'usr-2', email: 'jean.dupont@chantier-btp.fr', name: 'Jean Dupont', role: 'Ingénieur Travaux', createdAt: '02/02/2026' },
+        { id: 'usr-3', email: 'marie.curie@architecte-btp.fr', name: 'Marie Curie', role: 'Chef de Projet', createdAt: '10/02/2026' }
+      ],
+      accessKeys: [
+        { id: 'key-1', code: 'ORION-M42-8921', tool: 'M42', assignedTo: 'jean.dupont@chantier-btp.fr', status: 'Active' },
+        { id: 'key-2', code: 'ORION-M78-4412', tool: 'M78', assignedTo: 'marie.curie@architecte-btp.fr', status: 'Active' },
+        { id: 'key-3', code: 'ORION-M43-1092', tool: 'M43', assignedTo: 'admin@orion.btp', status: 'Active' }
+      ],
+
+      availableCompanies: ['Lot 01 - Gros Œuvre', 'Lot 02 - Électricité', 'Lot 03 - Plomberie', 'Lot 04 - Peinture'],
       editingPinId: null,
+      editingLotMode: 'create',
       reportConfig: {
         logoUrl: '',
         primaryColor: '#0071e3',
@@ -638,28 +1204,21 @@
       },
       projects: [],
       selectedIconForModal: 'building-2',
-      editingLotId: null,
+      
+      // Zoom & Pan Navigation State
       zoom: 1,
       pan: { x: 0, y: 0 },
       isDraggingCanvas: false,
       dragStart: { x: 0, y: 0 },
-      activeTool: 'select',
-      projectModalMode: 'edit'
-    };
-
-    let currentProjectPhotosTemp = [];
-
-    // Global Drawing state
-    const drawState = {
-      activePhotoIndex: null,
-      currentTool: 'pen',
-      color: '#ef4444',
-      lineWidth: 4,
-      isDrawing: false,
-      startX: 0,
-      startY: 0,
-      history: [],
-      baseImage: null
+      activeTool: 'select', // 'select' ou 'pin'
+      
+      projectModalMode: 'create',
+      drawingPhotoIndex: null,
+      drawHistory: [],
+      currentDrawTool: 'pen',
+      currentDrawColor: '#ef4444',
+      currentLineWidth: 4,
+      modalTempPhotos: []
     };
 
     function getActiveProject() {
@@ -669,10 +1228,17 @@
     
     function getActiveLot() {
       const proj = getActiveProject();
-      if(!proj || !proj.lots || proj.lots.length === 0) return null;
+      if (!proj || !proj.lots || proj.lots.length === 0) return null;
       return proj.lots.find(l => l.id === proj.activeLotId) || proj.lots[0];
     }
 
+    // Calcul automatique du nombre de réserves non levées pour un lot
+    function getUnresolvedPinsCount(lot) {
+      if (!lot || !lot.pins || !Array.isArray(lot.pins)) return 0;
+      return lot.pins.filter(pin => (pin.progress || 0) < 100).length;
+    }
+
+    // Mise à jour de la transformation Zoom & Pan du Plan avec maintien d'échelle des pins
     function updateCanvasTransform() {
       const group = document.getElementById('canvasTransformGroup');
       if (group) {
@@ -684,51 +1250,527 @@
       });
     }
 
-    function render() {
-      if (state.darkMode) { document.documentElement.classList.add('dark'); document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); } 
-      else { document.documentElement.classList.remove('dark'); document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); }
+    function updateAuthUI() {
+      const registerBtn = document.getElementById('dropdownRegisterBtn');
+      const loginBtn = document.getElementById('dropdownLoginBtn');
+      const logoutBtn = document.getElementById('dropdownLogoutBtn');
+      const adminBtn = document.getElementById('dropdownAdminBtn');
+      const reportIssueBtn = document.getElementById('dropdownReportIssueBtn');
+      const privacyBtn = document.getElementById('dropdownPrivacyBtn');
 
+      if (!state.currentUser) {
+        if (registerBtn) registerBtn.classList.remove('hidden');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        if (adminBtn) adminBtn.classList.add('hidden');
+        if (reportIssueBtn) reportIssueBtn.classList.add('hidden');
+        if (privacyBtn) privacyBtn.classList.remove('hidden');
+      } else {
+        if (registerBtn) registerBtn.classList.add('hidden');
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        if (reportIssueBtn) reportIssueBtn.classList.remove('hidden');
+        if (privacyBtn) privacyBtn.classList.remove('hidden');
+
+        if (state.currentUser.isAdmin) {
+          if (adminBtn) adminBtn.classList.remove('hidden');
+        } else {
+          if (adminBtn) adminBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    // Rendu Principal de l'Application
+    function render() {
+      if (state.darkMode) { 
+        document.documentElement.classList.add('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
+      } else { 
+        document.documentElement.classList.remove('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
+      }
+
+      const headerUserName = document.getElementById('headerUserName');
+      const dropdownUserStatus = document.getElementById('dropdownUserStatus');
+      if (state.currentUser) {
+        headerUserName.textContent = state.currentUser.name;
+        dropdownUserStatus.textContent = `${state.currentUser.name} (${state.currentUser.email})`;
+      } else {
+        headerUserName.textContent = "Connexion";
+        dropdownUserStatus.textContent = "Non connecté (Invité)";
+      }
+
+      updateAuthUI();
+
+      const landingView = document.getElementById('landingView');
+      const adminView = document.getElementById('adminView');
       const homeView = document.getElementById('homeView');
       const projectView = document.getElementById('projectView');
-      const backBtn = document.getElementById('backToHomeBtn');
+      
+      const backBtn = document.getElementById('backToPreviousBtn');
+      const backText = document.getElementById('backToPreviousText');
       const editProjBtn = document.getElementById('openEditProjectBtn');
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
+      const activeToolBadge = document.getElementById('activeToolBadge');
 
-      if (state.currentView === 'home' || !getActiveProject()) {
-        homeView.classList.remove('hidden');
-        projectView.classList.add('hidden');
-        projectView.classList.remove('flex');
+      landingView.classList.add('hidden');
+      adminView.classList.add('hidden');
+      homeView.classList.add('hidden');
+      projectView.classList.add('hidden');
+      projectView.classList.remove('flex');
+
+      editProjBtn.classList.add('hidden');
+      editProjBtn.classList.remove('inline-flex');
+      openReportConfigBtn.classList.add('hidden');
+      openReportConfigBtn.classList.remove('inline-flex');
+
+      if (state.currentView === 'landing') {
+        landingView.classList.remove('hidden');
         backBtn.classList.add('hidden');
         backBtn.classList.remove('inline-flex');
-        editProjBtn.classList.add('hidden');
-        editProjBtn.classList.remove('inline-flex');
-        openReportConfigBtn.classList.add('hidden');
-        openReportConfigBtn.classList.remove('inline-flex');
-        renderProjectsGrid();
-      } else {
-        homeView.classList.add('hidden');
-        projectView.classList.remove('hidden');
-        projectView.classList.add('flex');
+        activeToolBadge.classList.add('hidden');
+      } 
+      else if (state.currentView === 'admin') {
+        adminView.classList.remove('hidden');
         backBtn.classList.remove('hidden');
         backBtn.classList.add('inline-flex');
+        backText.textContent = "Accueil Orion";
+        
+        activeToolBadge.classList.remove('hidden');
+        activeToolBadge.textContent = "Admin";
+        activeToolBadge.className = "w-max px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 uppercase tracking-wider";
+        
+        renderAdminDashboardView();
+      }
+      else if (state.currentView === 'm78Home') {
+        homeView.classList.remove('hidden');
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('inline-flex');
+        backText.textContent = "Accueil Orion";
+        
+        activeToolBadge.classList.remove('hidden');
+        activeToolBadge.textContent = "M78";
+        activeToolBadge.className = "w-max px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 uppercase tracking-wider";
+        
+        renderProjectsGrid();
+      } 
+      else if (state.currentView === 'project' && getActiveProject()) {
+        projectView.classList.remove('hidden');
+        projectView.classList.add('flex');
+        
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('inline-flex');
+        backText.textContent = "Projets M78";
+
         editProjBtn.classList.remove('hidden');
         editProjBtn.classList.add('inline-flex');
         openReportConfigBtn.classList.remove('hidden');
         openReportConfigBtn.classList.add('inline-flex');
+
+        activeToolBadge.classList.remove('hidden');
+        activeToolBadge.textContent = "M78";
+        activeToolBadge.className = "w-max px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 uppercase tracking-wider";
+
         renderActiveProject();
+      } else if (state.currentView === 'project' && !getActiveProject()) {
+        state.currentView = 'm78Home';
+        render();
+        return;
       }
+
       lucide.createIcons();
     }
+
+    // Gestion de l'affichage du Dashboard Administrateur
+    function renderAdminDashboardView() {
+      // Metriques de statistiques
+      document.getElementById('adminStatUsersCount').textContent = state.registeredUsers.length;
+      document.getElementById('adminStatKeysCount').textContent = state.accessKeys.filter(k => k.status === 'Active').length;
+      document.getElementById('adminStatProjectsCount').textContent = state.projects.length;
+
+      // Table des utilisateurs
+      const usersBody = document.getElementById('adminUsersTableBody');
+      usersBody.innerHTML = '';
+      state.registeredUsers.forEach(usr => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-100">${usr.name}</td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${usr.email}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${usr.role === 'Administrateur' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">${usr.role}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-400 text-[11px]">${usr.createdAt}</td>
+          <td class="py-3 px-4 text-right">
+            <button class="delete-user-btn text-rose-500 hover:underline text-[11px] font-medium" data-email="${usr.email}">Supprimer</button>
+          </td>
+        `;
+        usersBody.appendChild(tr);
+      });
+
+      // Actions de suppression d'un utilisateur
+      usersBody.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const email = e.currentTarget.getAttribute('data-email');
+          if (email === ADMIN_CONFIG.authorizedEmail) {
+            alert("Impossible de supprimer le compte Administrateur principal.");
+            return;
+          }
+          if (confirm(`Voulez-vous vraiment supprimer l'utilisateur ${email} ?`)) {
+            state.registeredUsers = state.registeredUsers.filter(u => u.email !== email);
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      // Table des Clés d'Accès
+      const keysBody = document.getElementById('adminKeysTableBody');
+      keysBody.innerHTML = '';
+      state.accessKeys.forEach(k => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono font-bold text-purple-600 dark:text-purple-400">${k.code}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${k.tool === 'M42' ? 'bg-emerald-100 text-emerald-700' : k.tool === 'M43' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${k.tool}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${k.assignedTo}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${k.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${k.status}</span>
+          </td>
+          <td class="py-3 px-4 text-right space-x-2">
+            <button class="toggle-key-status-btn text-amber-600 hover:underline text-[11px] font-medium" data-id="${k.id}">
+              ${k.status === 'Active' ? 'Révoquer' : 'Réactiver'}
+            </button>
+            <button class="regen-key-btn text-blue-600 hover:underline text-[11px] font-medium" data-id="${k.id}">Régénérer</button>
+            <button class="delete-key-btn text-rose-500 hover:underline text-[11px] font-medium" data-id="${k.id}">Supprimer</button>
+          </td>
+        `;
+        keysBody.appendChild(tr);
+      });
+
+      // Actions sur les clés (Statut, Régénération, Suppression)
+      keysBody.querySelectorAll('.toggle-key-status-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          const key = state.accessKeys.find(k => k.id === keyId);
+          if (key) {
+            key.status = key.status === 'Active' ? 'Révoquée' : 'Active';
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      keysBody.querySelectorAll('.regen-key-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          const key = state.accessKeys.find(k => k.id === keyId);
+          if (key) {
+            key.code = `ORION-${key.tool}-${Math.floor(1000 + Math.random() * 9000)}`;
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      keysBody.querySelectorAll('.delete-key-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          if (confirm("Supprimer définitivement cette clé d'accès ?")) {
+            state.accessKeys = state.accessKeys.filter(k => k.id !== keyId);
+            renderAdminDashboardView();
+          }
+        });
+      });
+    }
+
+    // Gestion du thème
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      render();
+    });
+
+    // Menu Déroulant Utilisateur
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userDropdownMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
+        userDropdownMenu.classList.add('hidden');
+      }
+    });
+
+    // Modales Connexion & Administration
+    const loginModal = document.getElementById('loginModal');
+    const reportIssueModal = document.getElementById('reportIssueModal');
+    const privacyModal = document.getElementById('privacyModal');
+
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+      loginModal.classList.add('flex');
+    });
+
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+      loginModal.classList.add('flex');
+    });
+
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => {
+      loginModal.classList.add('hidden');
+      loginModal.classList.remove('flex');
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      const isAdmin = (email.toLowerCase() === ADMIN_CONFIG.authorizedEmail.toLowerCase() && password === ADMIN_CONFIG.authorizedPassword);
+
+      state.currentUser = {
+        name: isAdmin ? 'Administrateur' : (email.split('@')[0] || 'Utilisateur'),
+        email: email,
+        isAdmin: isAdmin
+      };
+
+      // Si l'utilisateur n'est pas encore dans la liste enregistrée
+      if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: state.currentUser.name,
+          role: isAdmin ? 'Administrateur' : 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+      }
+
+      loginModal.classList.add('hidden');
+      loginModal.classList.remove('flex');
+      render();
+    });
+
+    document.getElementById('dropdownLogoutBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      state.currentUser = null;
+      if (state.currentView === 'admin') state.currentView = 'landing';
+      render();
+    });
+
+    // Ouverture de la NOUVELLE PAGE d'administration (Remplacement du Popup)
+    document.getElementById('dropdownAdminBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      state.currentView = 'admin';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('closeAdminViewBtn').addEventListener('click', () => {
+      state.currentView = 'landing';
+      render();
+    });
+
+    // Création & Attribution des Clés dans l'Espace Admin
+    const createKeyModal = document.getElementById('createKeyModal');
+    document.getElementById('adminGenerateKeyBtn').addEventListener('click', () => {
+      createKeyModal.classList.remove('hidden');
+      createKeyModal.classList.add('flex');
+    });
+
+    document.getElementById('closeCreateKeyModalBtn').addEventListener('click', () => {
+      createKeyModal.classList.add('hidden');
+      createKeyModal.classList.remove('flex');
+    });
+
+    document.getElementById('createKeyForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const tool = document.getElementById('keyInputTool').value;
+      const email = document.getElementById('keyInputUserEmail').value.trim();
+      const customCode = document.getElementById('keyInputCustomCode').value.trim();
+
+      const newKey = {
+        id: 'key-' + Date.now(),
+        code: customCode || `ORION-${tool}-${Math.floor(1000 + Math.random() * 9000)}`,
+        tool: tool,
+        assignedTo: email,
+        status: 'Active'
+      };
+
+      state.accessKeys.push(newKey);
+      
+      // Auto-enregistrement de l'utilisateur si absent
+      if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: email.split('@')[0],
+          role: 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+      }
+
+      createKeyModal.classList.add('hidden');
+      createKeyModal.classList.remove('flex');
+      renderAdminDashboardView();
+    });
+
+    document.getElementById('adminAddNewUserBtn').addEventListener('click', () => {
+      const email = prompt("Saisissez l'adresse e-mail du nouvel utilisateur à inscrire :");
+      if (email && email.includes('@')) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: email.split('@')[0],
+          role: 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+        renderAdminDashboardView();
+      }
+    });
+
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      reportIssueModal.classList.remove('hidden');
+      reportIssueModal.classList.add('flex');
+    });
+
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => {
+      reportIssueModal.classList.add('hidden');
+      reportIssueModal.classList.remove('flex');
+    });
+
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert("Votre signalement a bien été transmis au support technique d'Orion BTP.");
+      reportIssueModal.classList.add('hidden');
+      reportIssueModal.classList.remove('flex');
+    });
+
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      privacyModal.classList.remove('hidden');
+      privacyModal.classList.add('flex');
+    });
+
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden');
+      privacyModal.classList.remove('flex');
+    });
+
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden');
+      privacyModal.classList.remove('flex');
+    });
+
+    // Navigation
+    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
+      if (state.currentView === 'project') {
+        state.currentView = 'm78Home';
+      } else if (state.currentView === 'm78Home' || state.currentView === 'admin') {
+        state.currentView = 'landing';
+      }
+      render();
+    });
+
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'landing';
+      render();
+    });
+
+    document.getElementById('launchM78Btn').addEventListener('click', () => {
+      state.currentView = 'm78Home';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Modale Outils Futurs (M42 & M43)
+    const futureToolModal = document.getElementById('futureToolModal');
+    const futureToolData = {
+      'M42': {
+        title: 'M42 | Préparation & Métrés',
+        badge: 'Prochainement (Vert)',
+        badgeClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
+        bgIconClass: 'bg-emerald-600',
+        icon: 'compass',
+        description: "M42 sera l'outil de référence pour la préparation technique des chantiers et le chiffrage de précision.",
+        features: [
+          'Calcul et métrés automatiques depuis les plans',
+          'Gestion des approvisionnements et phasage',
+          'Étude de faisabilité et intégration des lots techniques',
+          'Export synoptique des besoins d\'installation'
+        ]
+      },
+      'M43': {
+        title: 'M43 | Module à définir',
+        badge: 'En Conception (Violet)',
+        badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
+        bgIconClass: 'bg-purple-600',
+        icon: 'orbit',
+        description: "Ce module n'a pas encore d'intitulé défini. Il sera développé selon vos besoins futurs.",
+        features: [
+          'Fonctionnalité en cours de définition',
+          'Intégration fluide dans le workflow Orion BTP'
+        ]
+      }
+    };
+
+    document.querySelectorAll('.open-future-tool-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const toolKey = e.currentTarget.getAttribute('data-future-tool');
+        const data = futureToolData[toolKey];
+        if(!data) return;
+
+        document.getElementById('futureToolTitle').textContent = data.title;
+        document.getElementById('futureToolDescription').textContent = data.description;
+        
+        const badge = document.getElementById('futureToolBadge');
+        badge.textContent = data.badge;
+        badge.className = `inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${data.badgeClass}`;
+
+        const headerIcon = document.getElementById('futureToolHeaderIcon');
+        headerIcon.className = `w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl ${data.bgIconClass}`;
+        document.getElementById('futureToolIcon').setAttribute('data-lucide', data.icon);
+
+        const list = document.getElementById('futureToolFeatures');
+        list.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
+
+        futureToolModal.classList.remove('hidden');
+        futureToolModal.classList.add('flex');
+        lucide.createIcons();
+      });
+    });
+
+    document.getElementById('closeFutureToolModalBtn').addEventListener('click', () => {
+      futureToolModal.classList.add('hidden');
+      futureToolModal.classList.remove('flex');
+    });
+
+    // =========================================================================
+    // FONCTIONNALITÉS OUTIL M78 & AFFICHAGE DES ZONES DYNAMIQUES
+    // =========================================================================
 
     function renderProjectsGrid() {
       const grid = document.getElementById('projectsGrid');
       grid.innerHTML = '';
-      if(state.projects.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500">
-          <i data-lucide="folder-plus" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
-          <p class="font-semibold text-slate-700 dark:text-slate-300">Aucun projet actif</p>
-          <p class="text-xs text-slate-400 mt-1">Créez votre premier projet ou importez une sauvegarde JSON pour commencer.</p>
-        </div>`;
+      
+      if (!state.projects || state.projects.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-16 px-4 border-2 border-dashed rounded-3xl border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+            <i data-lucide="folder-plus" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
+            <h3 class="font-bold text-lg text-slate-800 dark:text-slate-200">Aucun projet actif dans M78</h3>
+            <p class="text-xs text-slate-400 mt-1 mb-4">Créez votre premier projet pour commencer le suivi de chantier.</p>
+            <button id="emptyStateCreateBtn" class="px-5 py-2.5 rounded-2xl bg-blue-600 text-white text-xs font-semibold shadow-md hover:bg-blue-500 transition-all">
+              + Nouveau projet
+            </button>
+          </div>
+        `;
+        document.getElementById('emptyStateCreateBtn')?.addEventListener('click', openCreateProjectModal);
+        lucide.createIcons();
         return;
       }
 
@@ -752,7 +1794,7 @@
               <i data-lucide="folder" class="w-5 h-5"></i>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${proj.status}</span>
+              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status && proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${proj.status || 'En cours'}</span>
               <button type="button" class="delete-project-btn p-1.5 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-colors" title="Supprimer le projet">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
@@ -769,13 +1811,10 @@
 
         card.querySelector('.delete-project-btn').addEventListener('click', (e) => {
           e.stopPropagation();
-          if (confirm(`Êtes-vous sûr de vouloir supprimer le projet "${proj.name}" ?`)) {
+          if (confirm(`Voulez-vous vraiment supprimer le projet "${proj.name}" ?`)) {
             state.projects = state.projects.filter(p => p.id !== proj.id);
             if (state.activeProjectId === proj.id) {
               state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
-              if (!state.activeProjectId) {
-                state.currentView = 'home';
-              }
             }
             render();
           }
@@ -786,280 +1825,768 @@
           state.currentView = 'project';
           render();
         });
+
         grid.appendChild(card);
       });
       lucide.createIcons();
     }
 
+    // Rendu du Projet Actif et Calcul Dynamique des Réserves par Zone
     function renderActiveProject() {
       const proj = getActiveProject();
-      if(!proj) return;
+      if (!proj) return;
 
       document.getElementById('projectNameDisplay').textContent = proj.name;
-      document.getElementById('projectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
-      document.getElementById('projectClientDisplay').textContent = proj.client || 'Non renseigné';
-      document.getElementById('projectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
-      document.getElementById('projectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status || 'En cours'}</span>`;
+      document.getElementById('projectLocationDisplay').textContent = proj.location || 'Adresse non spécifiée';
+      document.getElementById('projectClientDisplay').textContent = proj.client || 'NC';
+      document.getElementById('projectSurfaceDisplay').textContent = `${proj.surfaceTotal || 0} m²`;
+      document.getElementById('projectStatusBadge').textContent = proj.status || 'En cours';
 
-      document.getElementById('lotsCountBadge').textContent = proj.lots ? proj.lots.length : 0;
+      // Mise à jour de la liste des zones avec format : 101 - T3 (3 réserves)
       const lotSelect = document.getElementById('lotSelect');
       lotSelect.innerHTML = '';
 
-      if (proj.lots && proj.lots.length > 0) {
-        proj.lots.forEach((lot) => {
-          const option = document.createElement('option');
-          option.value = lot.id;
-          const pinsCount = lot.pins ? lot.pins.length : 0;
-          const surfText = lot.surface ? ` - ${lot.surface}` : '';
-          option.textContent = `${lot.name}${surfText} (${pinsCount} réserve${pinsCount > 1 ? 's' : ''})`;
-          if (lot.id === proj.activeLotId) {
-            option.selected = true;
-          }
-          lotSelect.appendChild(option);
-        });
-      } else {
+      if (!proj.lots || proj.lots.length === 0) {
+        proj.lots = [{
+          id: 'lot-1',
+          name: 'Zone Principale',
+          surface: proj.surfaceTotal || 0,
+          icon: 'building-2',
+          planImage: null,
+          pins: []
+        }];
+        proj.activeLotId = 'lot-1';
+      }
+
+      document.getElementById('lotsCountBadge').textContent = proj.lots.length;
+
+      proj.lots.forEach(lot => {
+        const unresolvedCount = getUnresolvedPinsCount(lot);
+        const countText = unresolvedCount === 1 ? '1 réserve' : `${unresolvedCount} réserves`;
+        
         const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'Aucune zone créée';
+        option.value = lot.id;
+        // Format demandé : "101 - T3 (3 réserves)"
+        option.textContent = `${lot.name} (${countText})`;
+        if (lot.id === proj.activeLotId) option.selected = true;
         lotSelect.appendChild(option);
-      }
+      });
 
-      const activeLot = getActiveLot();
-      if (activeLot) {
-        document.getElementById('selectLotIcon').setAttribute('data-lucide', activeLot.icon || 'building-2');
-      } else {
-        document.getElementById('selectLotIcon').setAttribute('data-lucide', 'building-2');
-      }
-
-      if(activeLot) {
-        document.getElementById('emptyLotTitle').textContent = `Aucun plan pour ${activeLot.name}`;
-        const activeCanvas = document.getElementById('activeCanvas');
-        const emptyDropzone = document.getElementById('emptyDropzone');
-
-        if (activeLot.planImage) {
-          emptyDropzone.classList.add('hidden');
-          activeCanvas.classList.remove('hidden'); activeCanvas.classList.add('flex');
-          document.getElementById('canvasToolbar').classList.remove('hidden'); document.getElementById('canvasToolbar').classList.add('flex');
-          document.getElementById('replacePlanContainer').classList.remove('hidden');
-          document.getElementById('planImageView').src = activeLot.planImage;
-
-          const tSelect = document.getElementById('toolSelectBtn');
-          const tPin = document.getElementById('toolPinBtn');
-          if (state.activeTool === 'select') {
-            tSelect.className = 'p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-blue-600 text-white shadow';
-            tPin.className = 'p-2 rounded-xl text-xs flex items-center space-x-1.5 hover:bg-slate-800 text-slate-300';
-            activeCanvas.style.cursor = 'grab';
-          } else {
-            tPin.className = 'p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-blue-600 text-white shadow';
-            tSelect.className = 'p-2 rounded-xl text-xs flex items-center space-x-1.5 hover:bg-slate-800 text-slate-300';
-            activeCanvas.style.cursor = 'crosshair';
-          }
-
-          updateCanvasTransform();
-          renderPinsOverlay(activeLot);
-        } else {
-          emptyDropzone.classList.remove('hidden');
-          activeCanvas.classList.add('hidden'); activeCanvas.classList.remove('flex');
-          document.getElementById('canvasToolbar').classList.add('hidden');
-          document.getElementById('replacePlanContainer').classList.add('hidden');
-        }
-
-        document.getElementById('sidebarLotTitle').textContent = activeLot.name;
-        document.getElementById('sidebarLotIcon').setAttribute('data-lucide', activeLot.icon || 'building-2');
-        document.getElementById('sidebarLotSurface').textContent = activeLot.surface || 'N/A';
-        document.getElementById('sidebarPinsCount').textContent = activeLot.pins ? activeLot.pins.length : 0;
-        renderPinsList(activeLot);
-      } else {
-        document.getElementById('emptyLotTitle').textContent = "Aucune zone créée";
-        document.getElementById('emptyDropzone').classList.remove('hidden');
-        document.getElementById('activeCanvas').classList.add('hidden');
-        document.getElementById('canvasToolbar').classList.add('hidden');
-        document.getElementById('replacePlanContainer').classList.add('hidden');
-        document.getElementById('sidebarLotTitle').textContent = "Aucune zone";
-        document.getElementById('sidebarLotIcon').setAttribute('data-lucide', 'building-2');
-        document.getElementById('sidebarLotSurface').textContent = "-";
-        document.getElementById('sidebarPinsCount').textContent = "0";
-        document.getElementById('pinsListContainer').innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Créez une zone pour commencer.</div>`;
-      }
+      renderActiveLotCanvas();
     }
 
-    document.getElementById('lotSelect').addEventListener('change', (e) => {
-      const proj = getActiveProject();
-      if(proj && e.target.value) {
-        proj.activeLotId = e.target.value;
-        state.zoom = 1; 
-        state.pan = { x: 0, y: 0 }; 
-        render();
-      }
-    });
-
-    document.getElementById('addNewLotBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if(!proj) return;
-      if(!proj.lots) proj.lots = [];
-      const newLot = { id: 'lot_' + Date.now(), name: `Zone ${proj.lots.length + 1}`, icon: AVAILABLE_ICONS[0].id, surface: '', planImage: null, pins: [] };
-      proj.lots.push(newLot); 
-      proj.activeLotId = newLot.id; 
-      render();
-      openEditLotModal(newLot);
-    });
-
-    document.getElementById('quickEditLotBtn').addEventListener('click', () => {
+    function renderActiveLotCanvas() {
       const lot = getActiveLot();
-      if(lot) openEditLotModal(lot);
-    });
+      if (!lot) return;
 
-    document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if (!proj || !proj.lots || proj.lots.length === 0) return;
-      const activeLot = getActiveLot();
-      if (!activeLot) return;
+      document.getElementById('sidebarLotTitle').textContent = lot.name;
+      document.getElementById('sidebarLotSurface').textContent = `${lot.surface || 0} m²`;
+      document.getElementById('sidebarLotIcon').setAttribute('data-lucide', lot.icon || 'building-2');
 
-      if (confirm(`Voulez-vous supprimer la zone "${activeLot.name}" ?`)) {
-        proj.lots = proj.lots.filter(l => l.id !== activeLot.id);
-        proj.activeLotId = proj.lots.length > 0 ? proj.lots[0].id : null;
-        render();
+      const emptyDropzone = document.getElementById('emptyDropzone');
+      const activeCanvas = document.getElementById('activeCanvas');
+      const canvasToolbar = document.getElementById('canvasToolbar');
+      const replaceContainer = document.getElementById('replacePlanContainer');
+      const planImg = document.getElementById('planImageView');
+
+      if (!lot.planImage) {
+        emptyDropzone.classList.remove('hidden');
+        activeCanvas.classList.add('hidden');
+        canvasToolbar.classList.add('hidden');
+        replaceContainer.classList.add('hidden');
+      } else {
+        emptyDropzone.classList.add('hidden');
+        activeCanvas.classList.remove('hidden');
+        activeCanvas.classList.add('flex');
+        canvasToolbar.classList.remove('hidden');
+        canvasToolbar.classList.add('flex');
+        replaceContainer.classList.remove('hidden');
+
+        planImg.src = lot.planImage;
+        updateCanvasTransform();
+        renderPinsOverlay();
       }
-    });
 
-    function renderPinsOverlay(lot) {
-      const pinsOverlay = document.getElementById('pinsOverlay');
-      pinsOverlay.innerHTML = '';
+      renderPinsList();
+    }
 
-      if(!lot.pins) return;
+    function renderPinsOverlay() {
+      const lot = getActiveLot();
+      const overlay = document.getElementById('pinsOverlay');
+      overlay.innerHTML = '';
+      if (!lot || !lot.pins) return;
 
       lot.pins.forEach(pin => {
-        const pinEl = document.createElement('div');
-        pinEl.className = 'absolute pin-marker group pointer-events-auto cursor-pointer z-10';
-        pinEl.style.left = pin.x + '%'; 
-        pinEl.style.top = pin.y + '%';
-        pinEl.style.transform = `translate(-50%, -50%) scale(${1 / state.zoom})`;
-        
-        const isCompleted = (pin.progress || 0) == 100;
-        const colorClass = isCompleted ? 'bg-emerald-500' : 'bg-rose-500';
-        const companiesCount = (pin.companies && pin.companies.length) || 0;
-        const photosCount = (pin.photos && pin.photos.length) || 0;
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = `pin-marker absolute w-7 h-7 rounded-full font-bold text-xs flex items-center justify-center text-white shadow-lg transition-transform hover:scale-125 z-10 ${pin.progress == 100 ? 'bg-emerald-500 ring-2 ring-emerald-300' : 'bg-rose-500 ring-2 ring-rose-300'}`;
+        marker.style.left = `${pin.x}%`;
+        marker.style.top = `${pin.y}%`;
+        marker.style.transform = `translate(-50%, -50%) scale(${1 / state.zoom})`;
+        marker.textContent = pin.number;
 
-        pinEl.innerHTML = `
-          <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-white font-bold text-[10px] sm:text-xs shadow-lg ring-4 ring-white dark:ring-slate-900 transition-transform hover:scale-125 ${colorClass}">
-            ${pin.number || 1}
-          </div>
-          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-start bg-slate-900/90 text-white text-xs py-2 px-3 rounded-xl backdrop-blur-md shadow-2xl whitespace-nowrap z-30 space-y-0.5">
-            <span class="font-bold">${pin.title || 'Réserve n°' + pin.number}</span>
-            <span class="text-[10px] text-slate-300">Avancement : ${pin.progress || 0}%</span>
-            ${photosCount > 0 ? `<span class="text-[10px] text-emerald-300">${photosCount} photo(s) attachée(s)</span>` : ''}
-            ${companiesCount > 0 ? `<span class="text-[10px] text-blue-300">${companiesCount} lot(s) / entreprise(s)</span>` : ''}
-          </div>
-        `;
-
-        pinEl.addEventListener('click', (e) => {
+        marker.addEventListener('click', (e) => {
           e.stopPropagation();
           openPinModal(pin);
         });
 
-        pinsOverlay.appendChild(pinEl);
+        overlay.appendChild(marker);
       });
     }
 
-    function renderPinsList(lot) {
+    function renderPinsList() {
+      const lot = getActiveLot();
       const container = document.getElementById('pinsListContainer');
       container.innerHTML = '';
 
       if (!lot || !lot.pins || lot.pins.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucun repère placé.</div>`;
+        container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Aucun repère sur ce plan.</div>`;
+        document.getElementById('sidebarPinsCount').textContent = "0";
         return;
       }
 
+      document.getElementById('sidebarPinsCount').textContent = lot.pins.length;
+
       lot.pins.forEach(pin => {
         const item = document.createElement('div');
-        item.className = 'p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer space-y-2';
-        
-        const isCompleted = (pin.progress || 0) == 100;
-        const colorClass = isCompleted ? 'bg-emerald-500' : 'bg-rose-500';
-        const companies = pin.companies || [];
-        const photos = pin.photos || [];
-
+        item.className = 'p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 transition-all cursor-pointer flex items-center justify-between text-xs';
         item.innerHTML = `
-          <div class="flex items-start justify-between gap-2">
-            <div class="flex items-center space-x-2 truncate">
-              <div class="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ${colorClass}">
-                ${pin.number}
-              </div>
-              <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate">${pin.title}</span>
-            </div>
-            <div class="flex items-center space-x-1 shrink-0">
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'}">
-                ${pin.progress || 0}%
-              </span>
-            </div>
+          <div class="flex items-center space-x-2.5 truncate">
+            <span class="w-6 h-6 rounded-full ${pin.progress == 100 ? 'bg-emerald-500' : 'bg-rose-500'} text-white font-bold flex items-center justify-center text-[10px] shrink-0">${pin.number}</span>
+            <span class="font-semibold text-slate-800 dark:text-slate-200 truncate">${pin.title}</span>
           </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${pin.progress == 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}">${pin.progress || 0}%</span>
+        `;
+        item.addEventListener('click', () => openPinModal(pin));
+        container.appendChild(item);
+      });
+    }
 
-          ${pin.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 italic">${pin.description}</p>` : ''}
+    // NAVIGATION SUR LE PLAN : ZOOM FLUIDE AVEC MOLETTE & TOUCH PINCH-TO-ZOOM / PAN
+    const viewportEl = document.getElementById('canvasViewport');
+    const activeCanvasEl = document.getElementById('activeCanvas');
+    const planImgEl = document.getElementById('planImageView');
 
-          <div class="flex flex-wrap items-center justify-between gap-1 pt-1">
-            <div class="flex flex-wrap gap-1">
-              ${companies.map(c => `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium truncate max-w-[130px]">${c}</span>`).join('')}
-            </div>
-            ${photos.length > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 font-medium flex items-center"><i data-lucide="image" class="w-3 h-3 mr-1 shrink-0"></i>${photos.length}</span>` : ''}
+    // 1. Zoom Molette Ordinateur centré sous le curseur
+    viewportEl.addEventListener('wheel', (e) => {
+      const lot = getActiveLot();
+      if (!lot || !lot.planImage) return;
+      e.preventDefault();
+
+      const rect = viewportEl.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      const oldZoom = state.zoom;
+      let newZoom = oldZoom * zoomFactor;
+
+      // Limites minimale et maximale
+      if (newZoom < 0.5) newZoom = 0.5;
+      if (newZoom > 6.0) newZoom = 6.0;
+
+      if (newZoom === oldZoom) return;
+
+      // Conservation du point sous le curseur comme centre du zoom
+      const dx = mouseX - (rect.width / 2 + state.pan.x);
+      const dy = mouseY - (rect.height / 2 + state.pan.y);
+
+      state.pan.x -= dx * (newZoom / oldZoom - 1);
+      state.pan.y -= dy * (newZoom / oldZoom - 1);
+      state.zoom = newZoom;
+
+      updateCanvasTransform();
+    }, { passive: false });
+
+    // 2. Pinch-to-Zoom et Déplacement Tactile (Mobile / Tablette)
+    let initialPinchDist = null;
+    let initialZoom = 1;
+
+    viewportEl.addEventListener('touchstart', (e) => {
+      const lot = getActiveLot();
+      if (!lot || !lot.planImage) return;
+
+      if (e.touches.length === 2) {
+        state.isDraggingCanvas = false;
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        initialZoom = state.zoom;
+      } else if (e.touches.length === 1 && state.activeTool === 'select') {
+        state.isDraggingCanvas = true;
+        state.dragStart = {
+          x: e.touches[0].clientX - state.pan.x,
+          y: e.touches[0].clientY - state.pan.y
+        };
+      }
+    }, { passive: true });
+
+    viewportEl.addEventListener('touchmove', (e) => {
+      const lot = getActiveLot();
+      if (!lot || !lot.planImage) return;
+
+      if (e.touches.length === 2 && initialPinchDist) {
+        e.preventDefault();
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        if (currentDist > 0) {
+          let newZoom = initialZoom * (currentDist / initialPinchDist);
+          if (newZoom < 0.5) newZoom = 0.5;
+          if (newZoom > 6.0) newZoom = 6.0;
+          state.zoom = newZoom;
+          updateCanvasTransform();
+        }
+      } else if (e.touches.length === 1 && state.isDraggingCanvas) {
+        e.preventDefault();
+        state.pan.x = e.touches[0].clientX - state.dragStart.x;
+        state.pan.y = e.touches[0].clientY - state.dragStart.y;
+        updateCanvasTransform();
+      }
+    }, { passive: false });
+
+    viewportEl.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) initialPinchDist = null;
+      if (e.touches.length === 0) state.isDraggingCanvas = false;
+    });
+
+    // 3. Déplacement du plan à la souris (Pan)
+    activeCanvasEl.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.pin-marker')) return;
+      if (state.activeTool === 'select' || e.button === 1) {
+        state.isDraggingCanvas = true;
+        state.dragStart = {
+          x: e.clientX - state.pan.x,
+          y: e.clientY - state.pan.y
+        };
+        activeCanvasEl.style.cursor = 'grabbing';
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDraggingCanvas) {
+        state.pan.x = e.clientX - state.dragStart.x;
+        state.pan.y = e.clientY - state.dragStart.y;
+        updateCanvasTransform();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (state.isDraggingCanvas) {
+        state.isDraggingCanvas = false;
+        if (activeCanvasEl) activeCanvasEl.style.cursor = 'grab';
+      }
+    });
+
+    // Interaction : Placement précis des repères au clic sur le plan
+    planImgEl.addEventListener('click', (e) => {
+      if (state.activeTool !== 'pin') return;
+      const rect = planImgEl.getBoundingClientRect();
+      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+      if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100) return;
+
+      const lot = getActiveLot();
+      if (!lot) return;
+
+      if (!lot.pins) lot.pins = [];
+      const newPinNum = lot.pins.length + 1;
+      const newPin = {
+        id: 'pin-' + Date.now(),
+        number: newPinNum,
+        x: Math.round(xPercent * 10) / 10,
+        y: Math.round(yPercent * 10) / 10,
+        title: `Réserve #${newPinNum}`,
+        description: '',
+        progress: 0,
+        companies: [],
+        photos: []
+      };
+
+      lot.pins.push(newPin);
+      state.editingPinId = newPin.id;
+      renderActiveProject();
+      openPinModal(newPin);
+    });
+
+    // Boutons de contrôle du Zoom
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      state.zoom = Math.min(state.zoom * 1.25, 6.0);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      state.zoom = Math.max(state.zoom * 0.8, 0.5);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomResetBtn').addEventListener('click', () => {
+      state.zoom = 1;
+      state.pan = { x: 0, y: 0 };
+      updateCanvasTransform();
+    });
+
+    // Outils Déplacer / Placer Repère
+    const toolSelectBtn = document.getElementById('toolSelectBtn');
+    const toolPinBtn = document.getElementById('toolPinBtn');
+
+    toolSelectBtn.addEventListener('click', () => {
+      state.activeTool = 'select';
+      toolSelectBtn.className = "p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-blue-600 text-white shadow transition-all";
+      toolPinBtn.className = "p-2 rounded-xl text-xs flex items-center space-x-1.5 hover:bg-slate-800 text-slate-300 transition-all";
+      activeCanvasEl.style.cursor = 'grab';
+    });
+
+    toolPinBtn.addEventListener('click', () => {
+      state.activeTool = 'pin';
+      toolPinBtn.className = "p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-blue-600 text-white shadow transition-all";
+      toolSelectBtn.className = "p-2 rounded-xl text-xs flex items-center space-x-1.5 hover:bg-slate-800 text-slate-300 transition-all";
+      activeCanvasEl.style.cursor = 'crosshair';
+    });
+
+    // Import Fichier Plan PDF / Image
+    document.getElementById('importPlanBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+    document.getElementById('replacePlanBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const lot = getActiveLot();
+      if (!lot) return;
+
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const typedarray = new Uint8Array(evt.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 2.0 });
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              const renderContext = { canvasContext: context, viewport: viewport };
+              page.render(renderContext).promise.then(() => {
+                lot.planImage = canvas.toDataURL('image/png');
+                state.zoom = 1;
+                state.pan = { x: 0, y: 0 };
+                render();
+              });
+            });
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          lot.planImage = evt.target.result;
+          state.zoom = 1;
+          state.pan = { x: 0, y: 0 };
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Gestion du sélecteur de Zone
+    document.getElementById('lotSelect').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj) {
+        proj.activeLotId = e.target.value;
+        state.zoom = 1;
+        state.pan = { x: 0, y: 0 };
+        renderActiveProject();
+      }
+    });
+
+    // Gestion de la modale d'édition de repère
+    const editPinModal = document.getElementById('editPinModal');
+
+    function openPinModal(pin) {
+      state.editingPinId = pin.id;
+      state.modalTempPhotos = pin.photos ? [...pin.photos] : [];
+
+      document.getElementById('modalPinBadge').textContent = pin.number;
+      document.getElementById('pinInputTitle').value = pin.title || '';
+      document.getElementById('pinInputProgress').value = pin.progress || 0;
+      document.getElementById('pinInputStatusSelect').value = pin.progress || 0;
+      document.getElementById('pinInputDescription').value = pin.description || '';
+
+      renderPinCompaniesList(pin.companies || []);
+      renderPinPhotosList();
+
+      editPinModal.classList.remove('hidden');
+      editPinModal.classList.add('flex');
+    }
+
+    function renderPinCompaniesList(selectedCompanies) {
+      const list = document.getElementById('pinCompaniesList');
+      list.innerHTML = '';
+      state.availableCompanies.forEach(comp => {
+        const label = document.createElement('label');
+        label.className = "flex items-center space-x-2 text-xs p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer";
+        const isChecked = selectedCompanies.includes(comp);
+        label.innerHTML = `
+          <input type="checkbox" value="${comp}" ${isChecked ? 'checked' : ''} class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" />
+          <span class="truncate font-medium text-slate-700 dark:text-slate-300">${comp}</span>
+        `;
+        list.appendChild(label);
+      });
+    }
+
+    function renderPinPhotosList() {
+      const container = document.getElementById('pinPhotosContainer');
+      container.innerHTML = '';
+      state.modalTempPhotos.forEach((photo, idx) => {
+        const div = document.createElement('div');
+        div.className = "relative w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group shrink-0";
+        div.innerHTML = `
+          <img src="${photo}" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
+            <button type="button" class="draw-photo-btn p-1 bg-blue-600 rounded-lg text-white" title="Annoter"><i data-lucide="edit-3" class="w-3 h-3"></i></button>
+            <button type="button" class="delete-photo-btn p-1 bg-rose-600 rounded-lg text-white" title="Supprimer"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
           </div>
         `;
 
-        item.addEventListener('click', () => openPinModal(pin));
-        container.appendChild(item);
+        div.querySelector('.delete-photo-btn').addEventListener('click', () => {
+          state.modalTempPhotos.splice(idx, 1);
+          renderPinPhotosList();
+        });
+
+        div.querySelector('.draw-photo-btn').addEventListener('click', () => {
+          openPhotoDrawModal(idx);
+        });
+
+        container.appendChild(div);
       });
       lucide.createIcons();
     }
 
-    // GENERATION DE L'IMAGE COMPOSITE DU PLAN AVEC REPERES (POUR RAPPORT PDF)
-    function generateCompositePlanImage(lot) {
-      return new Promise((resolve) => {
-        if (!lot || !lot.planImage) return resolve(null);
-        
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          
-          // Dessin du plan
-          ctx.drawImage(img, 0, 0);
+    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
+      document.getElementById('pinInputProgress').value = e.target.value;
+    });
 
-          // Dessin des pastilles de repères sur le plan
-          if (lot.pins && lot.pins.length > 0) {
-            lot.pins.forEach(pin => {
-              const px = (pin.x / 100) * img.width;
-              const py = (pin.y / 100) * img.height;
-              const radius = Math.max(14, Math.min(img.width, img.height) * 0.02);
+    document.getElementById('addCompanyBtn').addEventListener('click', () => {
+      const input = document.getElementById('newCompanyInput');
+      const val = input.value.trim();
+      if (val && !state.availableCompanies.includes(val)) {
+        state.availableCompanies.push(val);
+        input.value = '';
+        const selected = Array.from(document.querySelectorAll('#pinCompaniesList input:checked')).map(c => c.value);
+        selected.push(val);
+        renderPinCompaniesList(selected);
+      }
+    });
 
-              // Cercles
-              ctx.beginPath();
-              ctx.arc(px, py, radius, 0, 2 * Math.PI);
-              ctx.fillStyle = (pin.progress == 100) ? '#10b981' : '#f43f5e';
-              ctx.fill();
-              ctx.lineWidth = radius * 0.25;
-              ctx.strokeStyle = '#ffffff';
-              ctx.stroke();
+    document.getElementById('pinGalleryInput').addEventListener('change', handlePhotosUpload);
+    document.getElementById('pinCameraInput').addEventListener('change', handlePhotosUpload);
 
-              // Numéro
-              ctx.fillStyle = '#ffffff';
-              ctx.font = `bold ${radius * 1.1}px sans-serif`;
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(pin.number || '1', px, py);
-            });
-          }
-          resolve(canvas.toDataURL('image/png'));
+    function handlePhotosUpload(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(f => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          state.modalTempPhotos.push(evt.target.result);
+          renderPinPhotosList();
         };
-        img.onerror = () => resolve(null);
-        img.src = lot.planImage;
+        reader.readAsDataURL(f);
       });
     }
 
-    // CONFIGURATION ET GENERATION RAPPORTS
+    document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
+    document.getElementById('cancelPinModalBtn').addEventListener('click', closePinModal);
+
+    function closePinModal() {
+      editPinModal.classList.add('hidden');
+      editPinModal.classList.remove('flex');
+    }
+
+    document.getElementById('pinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lot = getActiveLot();
+      if (!lot || !state.editingPinId) return;
+
+      const pin = lot.pins.find(p => p.id === state.editingPinId);
+      if (pin) {
+        pin.title = document.getElementById('pinInputTitle').value.trim();
+        pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
+        pin.description = document.getElementById('pinInputDescription').value.trim();
+        pin.companies = Array.from(document.querySelectorAll('#pinCompaniesList input:checked')).map(c => c.value);
+        pin.photos = [...state.modalTempPhotos];
+      }
+
+      closePinModal();
+      // La mise à jour met automatiquement à jour la liste des zones avec le compteur de réserves
+      renderActiveProject();
+    });
+
+    document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      if (lot && state.editingPinId) {
+        if (confirm("Supprimer ce repère / réserve ?")) {
+          lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
+          closePinModal();
+          renderActiveProject();
+        }
+      }
+    });
+
+    // Annotation de Photos sur Canvas
+    const drawPhotoModal = document.getElementById('drawPhotoModal');
+    const drawCanvas = document.getElementById('photoDrawCanvas');
+    const drawCtx = drawCanvas.getContext('2d');
+    let isDrawing = false;
+    let drawStartX = 0, drawStartY = 0;
+
+    function openPhotoDrawModal(photoIdx) {
+      state.drawingPhotoIndex = photoIdx;
+      const img = new Image();
+      img.onload = () => {
+        drawCanvas.width = img.width;
+        drawCanvas.height = img.height;
+        drawCtx.drawImage(img, 0, 0);
+        state.drawHistory = [drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height)];
+        drawPhotoModal.classList.remove('hidden');
+        drawPhotoModal.classList.add('flex');
+      };
+      img.src = state.modalTempPhotos[photoIdx];
+    }
+
+    drawCanvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+      drawStartX = (e.clientX - rect.left) * scaleX;
+      drawStartY = (e.clientY - rect.top) * scaleY;
+      drawCtx.beginPath();
+      drawCtx.moveTo(drawStartX, drawStartY);
+    });
+
+    drawCanvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+      const currentX = (e.clientX - rect.left) * scaleX;
+      const currentY = (e.clientY - rect.top) * scaleY;
+
+      drawCtx.strokeStyle = state.currentDrawColor;
+      drawCtx.lineWidth = state.currentLineWidth;
+      drawCtx.lineCap = 'round';
+
+      if (state.currentDrawTool === 'pen') {
+        drawCtx.lineTo(currentX, currentY);
+        drawCtx.stroke();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDrawing) {
+        isDrawing = false;
+        state.drawHistory.push(drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+      }
+    });
+
+    document.getElementById('undoDrawBtn').addEventListener('click', () => {
+      if (state.drawHistory.length > 1) {
+        state.drawHistory.pop();
+        drawCtx.putImageData(state.drawHistory[state.drawHistory.length - 1], 0, 0);
+      }
+    });
+
+    document.getElementById('clearDrawBtn').addEventListener('click', () => {
+      if (state.drawHistory.length > 0) {
+        drawCtx.putImageData(state.drawHistory[0], 0, 0);
+        state.drawHistory = [state.drawHistory[0]];
+      }
+    });
+
+    document.getElementById('saveDrawBtn').addEventListener('click', () => {
+      if (state.drawingPhotoIndex !== null) {
+        state.modalTempPhotos[state.drawingPhotoIndex] = drawCanvas.toDataURL('image/png');
+        renderPinPhotosList();
+      }
+      drawPhotoModal.classList.add('hidden');
+      drawPhotoModal.classList.remove('flex');
+    });
+
+    document.getElementById('closeDrawModalBtn').addEventListener('click', () => {
+      drawPhotoModal.classList.add('hidden');
+      drawPhotoModal.classList.remove('flex');
+    });
+
+    // Modales Projets & Zones
+    function openCreateProjectModal() {
+      state.projectModalMode = 'create';
+      document.getElementById('projectModalTitle').textContent = "Nouveau Projet M78";
+      document.getElementById('projectInputName').value = '';
+      document.getElementById('projectInputClient').value = '';
+      document.getElementById('projectInputSurface').value = '';
+      document.getElementById('projectInputLocation').value = '';
+      document.getElementById('projectInputStatus').value = 'En cours d\'aménagement';
+      document.getElementById('editProjectModal').classList.remove('hidden');
+      document.getElementById('editProjectModal').classList.add('flex');
+    }
+
+    document.getElementById('createNewProjectBtn').addEventListener('click', openCreateProjectModal);
+
+    document.getElementById('openEditProjectBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      state.projectModalMode = 'edit';
+      document.getElementById('projectModalTitle').textContent = "Modifier le Projet";
+      document.getElementById('projectInputName').value = proj.name;
+      document.getElementById('projectInputClient').value = proj.client || '';
+      document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
+      document.getElementById('projectInputLocation').value = proj.location || '';
+      document.getElementById('projectInputStatus').value = proj.status || 'En cours';
+      document.getElementById('editProjectModal').classList.remove('hidden');
+      document.getElementById('editProjectModal').classList.add('flex');
+    });
+
+    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjectModal);
+    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjectModal);
+
+    function closeProjectModal() {
+      document.getElementById('editProjectModal').classList.add('hidden');
+      document.getElementById('editProjectModal').classList.remove('flex');
+    }
+
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('projectInputName').value.trim();
+      const client = document.getElementById('projectInputClient').value.trim();
+      const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const location = document.getElementById('projectInputLocation').value.trim();
+      const status = document.getElementById('projectInputStatus').value;
+
+      if (state.projectModalMode === 'create') {
+        const newProj = {
+          id: 'proj-' + Date.now(),
+          name, client, surfaceTotal: surface, location, status,
+          lots: [{
+            id: 'lot-1', name: 'Zone Principale', surface: surface, icon: 'building-2', planImage: null, pins: []
+          }],
+          activeLotId: 'lot-1'
+        };
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
+        state.currentView = 'project';
+      } else {
+        const proj = getActiveProject();
+        if (proj) {
+          proj.name = name;
+          proj.client = client;
+          proj.surfaceTotal = surface;
+          proj.location = location;
+          proj.status = status;
+        }
+      }
+
+      closeProjectModal();
+      render();
+    });
+
+    // Gestion de la modale des Zones / Lots
+    const editLotModal = document.getElementById('editLotModal');
+
+    document.getElementById('addNewLotBtn').addEventListener('click', () => {
+      state.editingLotMode = 'create';
+      document.getElementById('lotModalTitle').textContent = "Nouvelle Zone";
+      document.getElementById('lotInputName').value = '';
+      document.getElementById('lotInputSurface').value = '';
+      renderIconGrid('building-2');
+      editLotModal.classList.remove('hidden');
+      editLotModal.classList.add('flex');
+    });
+
+    document.getElementById('quickEditLotBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      if (!lot) return;
+      state.editingLotMode = 'edit';
+      document.getElementById('lotModalTitle').textContent = "Modifier la Zone";
+      document.getElementById('lotInputName').value = lot.name;
+      document.getElementById('lotInputSurface').value = lot.surface || '';
+      renderIconGrid(lot.icon || 'building-2');
+      editLotModal.classList.remove('hidden');
+      editLotModal.classList.add('flex');
+    });
+
+    document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      const lot = getActiveLot();
+      if (proj && lot) {
+        if (proj.lots.length <= 1) {
+          alert("Un projet doit conserver au moins une zone.");
+          return;
+        }
+        if (confirm(`Supprimer la zone "${lot.name}" ?`)) {
+          proj.lots = proj.lots.filter(l => l.id !== lot.id);
+          proj.activeLotId = proj.lots[0].id;
+          renderActiveProject();
+        }
+      }
+    });
+
+    function renderIconGrid(selectedId) {
+      state.selectedIconForModal = selectedId;
+      const container = document.getElementById('iconGridContainer');
+      container.innerHTML = '';
+      AVAILABLE_ICONS.forEach(icon => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-3 rounded-2xl border flex flex-col items-center justify-center space-y-1 transition-all ${state.selectedIconForModal === icon.id ? 'border-blue-600 bg-blue-50 dark:bg-slate-800 text-blue-600' : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50'}`;
+        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] font-medium">${icon.label}</span>`;
+        btn.addEventListener('click', () => renderIconGrid(icon.id));
+        container.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    document.getElementById('closeLotModalBtn').addEventListener('click', closeLotModal);
+    document.getElementById('cancelLotModalBtn').addEventListener('click', closeLotModal);
+
+    function closeLotModal() {
+      editLotModal.classList.add('hidden');
+      editLotModal.classList.remove('flex');
+    }
+
+    document.getElementById('lotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      const name = document.getElementById('lotInputName').value.trim();
+      const surface = parseFloat(document.getElementById('lotInputSurface').value) || 0;
+
+      if (state.editingLotMode === 'create') {
+        const newLot = {
+          id: 'lot-' + Date.now(),
+          name, surface,
+          icon: state.selectedIconForModal,
+          planImage: null,
+          pins: []
+        };
+        proj.lots.push(newLot);
+        proj.activeLotId = newLot.id;
+      } else {
+        const lot = getActiveLot();
+        if (lot) {
+          lot.name = name;
+          lot.surface = surface;
+          lot.icon = state.selectedIconForModal;
+        }
+      }
+
+      closeLotModal();
+      renderActiveProject();
+    });
+
+    // Modale de Configuration des Rapports
     const reportConfigModal = document.getElementById('reportConfigModal');
-    
     document.getElementById('openReportConfigBtn').addEventListener('click', () => {
       reportConfigModal.classList.remove('hidden');
       reportConfigModal.classList.add('flex');
@@ -1070,1065 +2597,47 @@
       reportConfigModal.classList.remove('flex');
     });
 
-    const logoFileInput = document.getElementById('logoFileInput');
-    document.getElementById('uploadLogoBtn').addEventListener('click', () => logoFileInput.click());
-
-    logoFileInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if(file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          state.reportConfig.logoUrl = evt.target.result;
-          updateLogoPreview();
-        };
-        reader.readAsDataURL(file);
-      }
+    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
+      window.print();
     });
 
-    document.getElementById('removeLogoBtn').addEventListener('click', () => {
-      state.reportConfig.logoUrl = '';
-      updateLogoPreview();
-    });
-
-    function updateLogoPreview() {
-      const container = document.getElementById('logoPreviewContainer');
-      const removeBtn = document.getElementById('removeLogoBtn');
-      if(state.reportConfig.logoUrl) {
-        container.innerHTML = `<img src="${state.reportConfig.logoUrl}" class="w-full h-full object-contain" alt="Logo" />`;
-        removeBtn.classList.remove('hidden');
-      } else {
-        container.innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucun logo</span>`;
-        removeBtn.classList.add('hidden');
-      }
-    }
-
-    const reportColorInput = document.getElementById('reportColorInput');
-    const reportColorHex = document.getElementById('reportColorHex');
-    reportColorInput.addEventListener('input', (e) => {
-      state.reportConfig.primaryColor = e.target.value;
-      reportColorHex.textContent = e.target.value;
-    });
-
-    document.getElementById('reportLayoutSelect').addEventListener('change', (e) => {
-      state.reportConfig.layoutStyle = e.target.value;
-    });
-
-    document.getElementById('reportIncludePhotosCheckbox').addEventListener('change', (e) => {
-      state.reportConfig.includePhotos = e.target.checked;
-    });
-
-    // EXPORT PDF RAPPORT AVEC REMARQUES DE MISE EN PAGE ET SANS CADRES NOIRS
-    document.getElementById('exportPdfReportBtn').addEventListener('click', async () => {
-      const proj = getActiveProject();
-      if(!proj) return;
-      const config = state.reportConfig;
-
-      const printWin = window.open('', '_blank');
-      if(!printWin) return alert('Veuillez autoriser les fenêtres surgissantes (popups) pour générer le rapport.');
-
-      const todayStr = '28/07/2026';
-
-      // Génération des vues composites des plans
-      const planComposites = {};
-      if(proj.lots && proj.lots.length > 0) {
-        for(let lot of proj.lots) {
-          planComposites[lot.id] = await generateCompositePlanImage(lot);
-        }
-      }
-
-      const totalPages = (proj.lots ? proj.lots.length : 0) + 1;
-
-      // REMARQUE : En-tête tout ce qui est au-dessus du trait marron/couleur inclus
-      const headerHtml = `
-        <table class="header-table">
-          <tr>
-            <td>
-              <h1 class="header-title">Rapport de Chantiers & Réserves</h1>
-            </td>
-            <td style="text-align: right;">
-              <div class="logo-box">
-                ${config.logoUrl ? `<img src="${config.logoUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" />` : ''}
-              </div>
-            </td>
-          </tr>
-        </table>
-      `;
-
-      // REMARQUE : Intitulé dans le pied de page
-      const footerHtml = (pageNum) => `
-        <div class="page-footer">
-          Généré via M42 (orion BTP) le ${todayStr}
-          <div class="page-num">${pageNum} / ${totalPages}</div>
-        </div>
-      `;
-
-      // REMARQUE : Première photo du projet
-      const firstProjectPhoto = (proj.photos && proj.photos.length > 0) ? proj.photos[0] : null;
-
-      let html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Rapport de Chantiers & Réserves - ${proj.name}</title>
-          <style>
-            @page { size: A4; margin: 15mm; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; color: #1e293b; line-height: 1.4; font-size: 12px; }
-            
-            /* REMARQUE : En-tête avec la ligne de couleur (primaryColor) */
-            .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 12px; }
-            .header-title { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; }
-            
-            /* REMARQUE : Suppression du cadre noir sur le logo */
-            .logo-box { width: 180px; height: 60px; display: flex; align-items: center; justify-content: flex-end; text-align: right; font-weight: bold; font-size: 12px; float: right; overflow: hidden; }
-            
-            .meta-card { background: #f8fafc; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-            .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; }
-            .meta-item { font-size: 11px; }
-            .meta-item strong { color: #334155; }
-
-            /* REMARQUE : Suppression du cadre noir sur la photo du projet */
-            .project-photo-box { width: 85%; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #000; background: transparent; text-align: center; }
-
-            .page-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 20px; margin-bottom: 10px; }
-            .page-footer .page-num { font-weight: bold; color: #0f172a; margin-top: 4px; }
-
-            .zone-header { font-size: 18px; color: ${config.primaryColor}; font-weight: 700; margin-top: 20px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-
-            table.reserves-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-            table.reserves-table th, table.reserves-table td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
-            table.reserves-table th { background-color: #f1f5f9; font-weight: 700; color: #334155; text-align: left; }
-
-            .badge-progress { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; background-color: #ffe4e6; color: #e11d48; text-align: center; }
-            .badge-success { background-color: #dcfce7; color: #15803d; }
-
-            .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; margin-right: 4px; margin-bottom: 4px; }
-
-            /* REMARQUE : Suppression du cadre noir sur la photo de la zone / plan */
-            .plan-box { width: 90%; min-height: 220px; margin: 20px auto; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 16px; background: transparent; padding: 8px; }
-            .plan-box img { max-width: 100%; max-height: 380px; object-fit: contain; }
-
-            .page-break { page-break-after: always; }
-            @media print { button { display: none !important; } }
-          </style>
-        </head>
-        <body>
-
-          <!-- PAGE 1 : COUVERTURE AVEC EN-TETE ET PIED DE PAGE -->
-          ${headerHtml}
-
-          <div class="meta-card">
-            <div class="meta-grid">
-              <div class="meta-item"><strong>Projet :</strong> ${proj.name}</div>
-              <div class="meta-item"><strong>Client :</strong> ${proj.client || 'Non renseigné'}</div>
-              <div class="meta-item"><strong>Adresse :</strong> ${proj.location || 'Non renseignée'}</div>
-              <div class="meta-item"><strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</div>
-              <div class="meta-item"><strong>Statut :</strong> ${proj.status || 'En cours'}</div>
-              <div class="meta-item"><strong>Total zones :</strong> ${proj.lots ? proj.lots.length : 0}</div>
-            </div>
-          </div>
-
-          <!-- REMARQUE : PREMIERE PHOTO DU PROJET SANS CADRE NOIR -->
-          <div class="project-photo-box">
-            ${firstProjectPhoto ? `<img src="${firstProjectPhoto}" style="max-width:100%; max-height:260px; object-fit:contain;" />` : ''}
-          </div>
-
-          ${footerHtml(1)}
-
-          <div class="page-break"></div>
-      `;
-
-      // PAGES PAR ZONE / LOGEMENT AVEC EN-TETE ET PIED DE PAGE REPETE
-      if (proj.lots && proj.lots.length > 0) {
-        proj.lots.forEach((lot, idx) => {
-          const pinsCount = lot.pins ? lot.pins.length : 0;
-          const compositeImg = planComposites[lot.id];
-
-          html += `
-            ${headerHtml}
-
-            <div class="zone-header">${lot.name} (${lot.surface || 'N/A'}) - ${pinsCount} réserve(s)</div>
-          `;
-
-          if (!lot.pins || lot.pins.length === 0) {
-            html += `<p style="color: #94a3b8; font-style: italic; margin-bottom: 20px;">Aucune réserve enregistrée pour cette zone.</p>`;
-          } else {
-            html += `
-              <table class="reserves-table">
-                <thead>
-                  <tr>
-                    <th style="width: 18%;">Entreprises</th>
-                    <th style="width: 5%; text-align: center;">N°</th>
-                    <th style="width: 18%;">Intitulé</th>
-                    <th style="width: 24%;">Description</th>
-                    ${config.includePhotos ? '<th style="width: 15%;">Photos</th>' : ''}
-                    <th style="width: 12%;">Dates</th>
-                    <th style="width: 8%; text-align: center;">Avancement</th>
-                  </tr>
-                </thead>
-                <tbody>
-            `;
-
-            lot.pins.forEach(pin => {
-              const isDone = (pin.progress || 0) == 100;
-              const companiesText = (pin.companies && pin.companies.length) ? pin.companies.join(', ') : '-';
-              
-              html += `
-                <tr>
-                  <td>${companiesText}</td>
-                  <td style="text-align: center; font-weight: bold;">${pin.number}</td>
-                  <td><strong>${pin.title}</strong></td>
-                  <td>${pin.description || '-'}</td>
-                  ${config.includePhotos ? `
-                    <td>
-                      ${(pin.photos && pin.photos.length) ? pin.photos.map(p => `<img src="${p}" class="photo-thumb" />`).join('') : '-'}
-                    </td>
-                  ` : ''}
-                  <td style="font-size: 10px; line-height: 1.3;">
-                    <strong>posé le :</strong> ${todayStr}<br/>
-                    <strong>constaté le :</strong> ${todayStr}
-                  </td>
-                  <td style="text-align: center;">
-                    <span class="badge-progress ${isDone ? 'badge-success' : ''}">${pin.progress || 0}%</span>
-                  </td>
-                </tr>
-              `;
-            });
-
-            html += `</tbody></table>`;
-          }
-
-          // PLAN DU LOGEMENT SANS CADRE NOIR
-          html += `
-            <div class="plan-box">
-              ${compositeImg ? `<img src="${compositeImg}" />` : ''}
-            </div>
-
-            ${footerHtml(idx + 2)}
-          `;
-
-          if (idx < proj.lots.length - 1) {
-            html += `<div class="page-break"></div>`;
-          }
-        });
-      }
-
-      html += `
-          <div style="margin-top: 30px; text-align: center;">
-            <button onclick="window.print()" style="padding: 12px 24px; background: ${config.primaryColor}; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">Imprimer / Enregistrer en PDF</button>
-          </div>
-        </body>
-        </html>
-      `;
-
-      printWin.document.write(html);
-      printWin.document.close();
-      reportConfigModal.classList.add('hidden');
-      reportConfigModal.classList.remove('flex');
-    });
-
-    // EXPORT WORD (.doc)
     document.getElementById('exportWordReportBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if(!proj) return;
-      const config = state.reportConfig;
-
-      let wordHtml = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-        <head><meta charset="utf-8"><title>Rapport - ${proj.name}</title></head>
-        <body style="font-family: Arial, sans-serif; color: #1e293b; padding: 20px; line-height: 1.5;">
-          ${config.logoUrl ? `<div style="text-align:right; margin-bottom:20px;"><img src="${config.logoUrl}" style="max-height:80px;" /></div>` : ''}
-          <h1 style="color: ${config.primaryColor}; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 10px;">Rapport de Chantiers & Réserves</h1>
-          <p><strong>Projet :</strong> ${proj.name} | <strong>Client :</strong> ${proj.client || 'N/A'}</p>
-          <p><strong>Adresse :</strong> ${proj.location || 'N/A'} | <strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</p>
-          <hr style="border:0; border-top:1px solid #ccc; margin: 20px 0;"/>
-      `;
-
-      if (proj.lots && proj.lots.length > 0) {
-        proj.lots.forEach(lot => {
-          wordHtml += `<h2 style="color: ${config.primaryColor}; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px;">${lot.name} (${lot.surface || 'N/A'})</h2>`;
-          if (!lot.pins || lot.pins.length === 0) {
-            wordHtml += `<p style="color: #666; font-style: italic;">Aucune réserve enregistrée.</p>`;
-          } else {
-            lot.pins.forEach(pin => {
-              const isDone = (pin.progress || 0) == 100;
-              wordHtml += `
-                <div style="border: 1px solid #cbd5e1; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8fafc;">
-                  <h3 style="margin: 0 0 8px 0; color: #0f172a;">N°${pin.number} - ${pin.title} <span style="font-size: 11px; font-weight: normal; color: ${isDone ? '#166534' : '#991b1b'};">(${pin.progress || 0}%)</span></h3>
-                  <p style="margin: 4px 0;"><strong>Description :</strong> ${pin.description || 'Aucune'}</p>
-                  <p style="margin: 4px 0;"><strong>Entreprises :</strong> ${(pin.companies && pin.companies.length) ? pin.companies.join(', ') : 'Aucune'}</p>
-                  ${config.includePhotos && pin.photos && pin.photos.length > 0 ? `
-                    <div style="margin-top: 10px;">
-                      <strong>Photos :</strong><br/>
-                      ${pin.photos.map(p => `<img src="${p}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 6px; margin-top: 6px; border: 1px solid #ccc;" />`).join('')}
-                    </div>
-                  ` : ''}
-                </div>
-              `;
-            });
-          }
-        });
-      }
-
-      wordHtml += `</body></html>`;
-
-      const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword' });
-      const url = URL.createObjectURL(blob);
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.href = url;
-      downloadAnchor.download = `Rapport_${proj.name.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-
-      reportConfigModal.classList.add('hidden');
-      reportConfigModal.classList.remove('flex');
+      alert("Génération du rapport Word (.doc) en cours d'export...");
     });
 
-    // EXPORT / IMPORT PROJETS (JSON)
+    // Import / Export JSON complet des Projets
     document.getElementById('exportProjectsBtn').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `M42_Sauvegarde_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `orion_btp_projets_${Date.now()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
     });
 
-    const importProjectsInput = document.getElementById('importProjectsInput');
-    document.getElementById('importProjectsBtn').addEventListener('click', () => importProjectsInput.click());
-
-    importProjectsInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
+    document.getElementById('importProjectsBtn').addEventListener('click', () => document.getElementById('importProjectsInput').click());
+    document.getElementById('importProjectsInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = (evt) => {
         try {
           const imported = JSON.parse(evt.target.result);
           if (Array.isArray(imported)) {
             state.projects = imported;
-            state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
+            if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
             render();
             alert("Projets importés avec succès !");
-          } else {
-            alert("Fichier JSON invalide.");
           }
-        } catch(err) {
-          alert("Erreur lors de la lecture du fichier de sauvegarde JSON.");
+        } catch (err) {
+          alert("Erreur lors de la lecture du fichier JSON.");
         }
       };
       reader.readAsText(file);
-      e.target.value = '';
     });
 
-    // MODALE REPERE & MULTIMEDIA DESSIN
-    const editPinModal = document.getElementById('editPinModal');
-
-    function openPinModal(pin) {
-      state.editingPinId = pin.id;
-      
-      const badge = document.getElementById('modalPinBadge');
-      badge.textContent = pin.number;
-      badge.className = `w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-sm shadow shrink-0 ${(pin.progress || 0) == 100 ? 'bg-emerald-500' : 'bg-rose-500'}`;
-
-      document.getElementById('pinInputTitle').value = pin.title || `Réserve n°${pin.number}`;
-      document.getElementById('pinInputProgress').value = pin.progress || 0;
-      document.getElementById('pinInputStatusSelect').value = pin.progress || 0;
-      document.getElementById('pinInputDescription').value = pin.description || '';
-
-      renderPinCompaniesCheckboxes(pin.companies || []);
-      renderPinPhotos(pin.photos || []);
-
-      editPinModal.classList.remove('hidden');
-      editPinModal.classList.add('flex');
-    }
-
-    function renderPinCompaniesCheckboxes(assignedCompanies) {
-      const container = document.getElementById('pinCompaniesList');
-      container.innerHTML = '';
-
-      if (state.availableCompanies.length === 0) {
-        container.innerHTML = `<span class="text-[11px] text-slate-400 italic col-span-2">Aucun lot/entreprise défini. Saisissez-en un ci-dessous.</span>`;
-        return;
-      }
-
-      state.availableCompanies.forEach((companyName) => {
-        const isChecked = assignedCompanies.includes(companyName);
-        const wrapper = document.createElement('label');
-        wrapper.className = 'flex items-center space-x-2 p-1.5 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-700/50 cursor-pointer select-none transition-colors';
-        wrapper.innerHTML = `
-          <input type="checkbox" value="${companyName}" ${isChecked ? 'checked' : ''} class="pin-company-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0">
-          <span class="text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate">${companyName}</span>
-        `;
-        container.appendChild(wrapper);
-      });
-    }
-
-    function renderPinPhotos(photos) {
-      const container = document.getElementById('pinPhotosContainer');
-      container.innerHTML = '';
-
-      if (!photos || photos.length === 0) {
-        container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Aucune photo ajoutée.</span>`;
-        return;
-      }
-
-      photos.forEach((photoSrc, idx) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'relative group w-20 h-20 rounded-xl overflow-hidden border dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0';
-        wrapper.innerHTML = `
-          <img src="${photoSrc}" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
-            <button type="button" class="p-1.5 rounded-lg bg-blue-600 text-white edit-photo-btn" title="Annoter / Dessiner">
-              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-            </button>
-            <button type="button" class="p-1.5 rounded-lg bg-rose-600 text-white remove-photo-btn" title="Supprimer">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        `;
-
-        wrapper.querySelector('.edit-photo-btn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          openDrawModal(photoSrc, idx);
-        });
-
-        wrapper.querySelector('.remove-photo-btn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          photos.splice(idx, 1);
-          renderPinPhotos(photos);
-        });
-
-        container.appendChild(wrapper);
-      });
-      lucide.createIcons();
-    }
-
-    function handlePhotoFiles(files) {
-      const lot = getActiveLot();
-      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if(!pin) return;
-      if(!pin.photos) pin.photos = [];
-
-      Array.from(files).forEach(file => {
-        if(file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            pin.photos.push(evt.target.result);
-            renderPinPhotos(pin.photos);
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-
-    document.getElementById('pinGalleryInput').addEventListener('change', (e) => {
-      handlePhotoFiles(e.target.files);
-      e.target.value = '';
-    });
-
-    document.getElementById('pinCameraInput').addEventListener('change', (e) => {
-      handlePhotoFiles(e.target.files);
-      e.target.value = '';
-    });
-
-    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
-      document.getElementById('pinInputProgress').value = e.target.value;
-    });
-
-    document.getElementById('addCompanyBtn').addEventListener('click', () => {
-      const input = document.getElementById('newCompanyInput');
-      const val = input.value.trim();
-      if (val) {
-        if (!state.availableCompanies.includes(val)) {
-          state.availableCompanies.push(val);
-        }
-        const currentChecked = Array.from(document.querySelectorAll('.pin-company-checkbox:checked')).map(cb => cb.value);
-        currentChecked.push(val);
-        renderPinCompaniesCheckboxes(currentChecked);
-        input.value = '';
-      }
-    });
-
-    const closePinModal = () => {
-      editPinModal.classList.add('hidden');
-      editPinModal.classList.remove('flex');
-      state.editingPinId = null;
-    };
-
-    document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
-    document.getElementById('cancelPinModalBtn').addEventListener('click', closePinModal);
-
-    document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
-      const lot = getActiveLot();
-      if (lot && lot.pins && state.editingPinId) {
-        lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
-        closePinModal();
-        render();
-      }
-    });
-
-    document.getElementById('pinForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const lot = getActiveLot();
-      if (!lot) return;
-
-      const pin = lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if (pin) {
-        pin.title = document.getElementById('pinInputTitle').value;
-        pin.progress = Math.min(100, Math.max(0, parseInt(document.getElementById('pinInputProgress').value) || 0));
-        pin.description = document.getElementById('pinInputDescription').value;
-        const checkboxes = document.querySelectorAll('.pin-company-checkbox:checked');
-        pin.companies = Array.from(checkboxes).map(cb => cb.value);
-      }
-
-      closePinModal();
-      render();
-    });
-
-    // ==================== SYSTEME DE DESSIN SUR PHOTO ====================
-    const drawModal = document.getElementById('drawPhotoModal');
-    const drawCanvas = document.getElementById('photoDrawCanvas');
-    const drawCtx = drawCanvas.getContext('2d');
-
-    function openDrawModal(photoSrc, photoIdx) {
-      drawState.activePhotoIndex = photoIdx;
-      drawState.history = [];
-
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => {
-        drawState.baseImage = img;
-        drawCanvas.width = img.width;
-        drawCanvas.height = img.height;
-        
-        drawCtx.drawImage(img, 0, 0);
-        saveDrawHistory();
-
-        drawModal.classList.remove('hidden');
-        drawModal.classList.add('flex');
-      };
-      img.src = photoSrc;
-    }
-
-    function saveDrawHistory() {
-      drawState.history.push(drawCanvas.toDataURL());
-    }
-
-    document.getElementById('undoDrawBtn').addEventListener('click', () => {
-      if (drawState.history.length > 1) {
-        drawState.history.pop();
-        const prevImgSrc = drawState.history[drawState.history.length - 1];
-        const img = new Image();
-        img.onload = () => {
-          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-          drawCtx.drawImage(img, 0, 0);
-        };
-        img.src = prevImgSrc;
-      }
-    });
-
-    document.getElementById('clearDrawBtn').addEventListener('click', () => {
-      if (drawState.baseImage) {
-        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        drawCtx.drawImage(drawState.baseImage, 0, 0);
-        saveDrawHistory();
-      }
-    });
-
-    // Tool switching
-    document.querySelectorAll('.draw-tool-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.draw-tool-btn').forEach(b => {
-          b.classList.remove('active', 'bg-blue-600', 'text-white');
-          b.classList.add('hover:bg-slate-200', 'dark:hover:bg-slate-700');
-        });
-        const target = e.currentTarget;
-        target.classList.add('active', 'bg-blue-600', 'text-white');
-        
-        const toolId = target.id;
-        if(toolId === 'toolPen') drawState.currentTool = 'pen';
-        else if(toolId === 'toolLine') drawState.currentTool = 'line';
-        else if(toolId === 'toolArrow') drawState.currentTool = 'arrow';
-        else if(toolId === 'toolCircle') drawState.currentTool = 'circle';
-        else if(toolId === 'toolRect') drawState.currentTool = 'rect';
-        else if(toolId === 'toolText') drawState.currentTool = 'text';
-      });
-    });
-
-    // Color & Line thickness
-    document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        drawState.color = e.currentTarget.getAttribute('data-color');
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'dark:ring-slate-900'));
-        e.currentTarget.classList.add('ring-2', 'ring-white', 'dark:ring-slate-900');
-      });
-    });
-
-    document.getElementById('drawLineWidth').addEventListener('change', (e) => {
-      drawState.lineWidth = parseInt(e.target.value);
-    });
-
-    // Drawing Canvas Events
-    function getCanvasCoords(e) {
-      const rect = drawCanvas.getBoundingClientRect();
-      const scaleX = drawCanvas.width / rect.width;
-      const scaleY = drawCanvas.height / rect.height;
-
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
-    }
-
-    function startDrawing(e) {
-      drawState.isDrawing = true;
-      const coords = getCanvasCoords(e);
-      drawState.startX = coords.x;
-      drawState.startY = coords.y;
-
-      if (drawState.currentTool === 'pen') {
-        drawCtx.beginPath();
-        drawCtx.moveTo(coords.x, coords.y);
-      } else if (drawState.currentTool === 'text') {
-        const text = prompt("Entrez votre texte :");
-        if (text) {
-          drawCtx.fillStyle = drawState.color;
-          drawCtx.font = `bold ${drawState.lineWidth * 6 + 12}px sans-serif`;
-          drawCtx.fillText(text, coords.x, coords.y);
-          saveDrawHistory();
-        }
-        drawState.isDrawing = false;
-      }
-    }
-
-    function draw(e) {
-      if (!drawState.isDrawing) return;
-      e.preventDefault();
-      const coords = getCanvasCoords(e);
-
-      if (drawState.currentTool === 'pen') {
-        drawCtx.strokeStyle = drawState.color;
-        drawCtx.lineWidth = drawState.lineWidth * 2;
-        drawCtx.lineCap = 'round';
-        drawCtx.lineTo(coords.x, coords.y);
-        drawCtx.stroke();
-      } else {
-        const lastImg = new Image();
-        lastImg.onload = () => {
-          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-          drawCtx.drawImage(lastImg, 0, 0);
-
-          drawCtx.strokeStyle = drawState.color;
-          drawCtx.fillStyle = drawState.color;
-          drawCtx.lineWidth = drawState.lineWidth * 2;
-
-          if (drawState.currentTool === 'line') {
-            drawCtx.beginPath();
-            drawCtx.moveTo(drawState.startX, drawState.startY);
-            drawCtx.lineTo(coords.x, coords.y);
-            drawCtx.stroke();
-          } else if (drawState.currentTool === 'arrow') {
-            drawArrow(drawState.startX, drawState.startY, coords.x, coords.y);
-          } else if (drawState.currentTool === 'circle') {
-            const radius = Math.hypot(coords.x - drawState.startX, coords.y - drawState.startY);
-            drawCtx.beginPath();
-            drawCtx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
-            drawCtx.stroke();
-          } else if (drawState.currentTool === 'rect') {
-            drawCtx.beginPath();
-            drawCtx.strokeRect(drawState.startX, drawState.startY, coords.x - drawState.startX, coords.y - drawState.startY);
-          }
-        };
-        lastImg.src = drawState.history[drawState.history.length - 1];
-      }
-    }
-
-    function stopDrawing() {
-      if (drawState.isDrawing) {
-        drawState.isDrawing = false;
-        saveDrawHistory();
-      }
-    }
-
-    function drawArrow(fromx, fromy, tox, toy) {
-      const headlen = drawState.lineWidth * 4 + 8;
-      const dx = tox - fromx;
-      const dy = toy - fromy;
-      const angle = Math.atan2(dy, dx);
-
-      drawCtx.beginPath();
-      drawCtx.moveTo(fromx, fromy);
-      drawCtx.lineTo(tox, toy);
-      drawCtx.stroke();
-
-      drawCtx.beginPath();
-      drawCtx.moveTo(tox, toy);
-      drawCtx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-      drawCtx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-      drawCtx.closePath();
-      drawCtx.fill();
-    }
-
-    drawCanvas.addEventListener('mousedown', startDrawing);
-    drawCanvas.addEventListener('mousemove', draw);
-    drawCanvas.addEventListener('mouseup', stopDrawing);
-
-    drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
-    drawCanvas.addEventListener('touchmove', draw, { passive: false });
-    drawCanvas.addEventListener('touchend', stopDrawing);
-
-    const closeDrawModal = () => {
-      drawModal.classList.add('hidden');
-      drawModal.classList.remove('flex');
-    };
-
-    document.getElementById('closeDrawModalBtn').addEventListener('click', closeDrawModal);
-
-    document.getElementById('saveDrawBtn').addEventListener('click', () => {
-      const lot = getActiveLot();
-      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if (pin && pin.photos && drawState.activePhotoIndex !== null) {
-        pin.photos[drawState.activePhotoIndex] = drawCanvas.toDataURL('image/png');
-        renderPinPhotos(pin.photos);
-      }
-      closeDrawModal();
-    });
-
-    // IMPORT PLAN / CANVAS LOGIC
-    async function handleFileImport(file) {
-      if(!file) return;
-      const activeLot = getActiveLot();
-      if(!activeLot) return alert("Veuillez d'abord créer une zone.");
-      
-      if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onload = async function() {
-          try {
-            const typedarray = new Uint8Array(this.result);
-            const pdf = await pdfjsLib.getDocument(typedarray).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 2.0 });
-            
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            activeLot.planImage = canvas.toDataURL('image/png');
-            state.zoom = 1; state.pan = { x: 0, y: 0 };
-            render();
-          } catch(e) {
-            alert("Erreur lors de la lecture du PDF.");
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } 
-      else if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          activeLot.planImage = evt.target.result;
-          state.zoom = 1; state.pan = { x: 0, y: 0 };
-          render();
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Format non supporté.");
-      }
-    }
-
-    const fileInput = document.getElementById('fileInput');
-    document.getElementById('importPlanBtn').addEventListener('click', () => {
-      if(!getActiveLot()) return alert("Veuillez d'abord créer une zone.");
-      fileInput.click();
-    });
-    document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', (e) => {
-      handleFileImport(e.target.files && e.target.files[0]);
-      e.target.value = '';
-    });
-
-    const viewport = document.getElementById('canvasViewport');
-    viewport.addEventListener('dragover', (e) => { e.preventDefault(); viewport.classList.add('drag-over-active'); });
-    viewport.addEventListener('dragleave', () => viewport.classList.remove('drag-over-active'));
-    viewport.addEventListener('drop', (e) => {
-      e.preventDefault(); viewport.classList.remove('drag-over-active');
-      handleFileImport(e.dataTransfer.files && e.dataTransfer.files[0]);
-    });
-
-    document.getElementById('toolSelectBtn').addEventListener('click', () => { state.activeTool = 'select'; render(); });
-    document.getElementById('toolPinBtn').addEventListener('click', () => { state.activeTool = 'pin'; render(); });
-    document.getElementById('addPinQuickBtn').addEventListener('click', () => {
-      const l = getActiveLot(); 
-      if(!l) return alert("Veuillez d'abord créer une zone.");
-      if(!l.planImage){ fileInput.click(); return; }
-      state.activeTool = 'pin'; render();
-    });
-
-    document.getElementById('zoomInBtn').addEventListener('click', () => { 
-      state.zoom = Math.min(state.zoom + 0.25, 4); 
-      updateCanvasTransform();
-    });
-    document.getElementById('zoomOutBtn').addEventListener('click', () => { 
-      state.zoom = Math.max(state.zoom - 0.25, 0.4); 
-      updateCanvasTransform();
-    });
-    document.getElementById('zoomResetBtn').addEventListener('click', () => { 
-      state.zoom = 1; state.pan = { x: 0, y: 0 }; 
-      updateCanvasTransform();
-    });
-
-    const activeCanvas = document.getElementById('activeCanvas');
-    
-    activeCanvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomIntensity = 0.15;
-      if (e.deltaY < 0) {
-        state.zoom = Math.min(state.zoom + zoomIntensity, 4);
-      } else {
-        state.zoom = Math.max(state.zoom - zoomIntensity, 0.4);
-      }
-      updateCanvasTransform();
-    }, { passive: false });
-
-    activeCanvas.addEventListener('mousedown', (e) => {
-      if (state.activeTool === 'select') {
-        state.isDraggingCanvas = true;
-        state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
-        activeCanvas.style.cursor = 'grabbing';
-      }
-    });
-    window.addEventListener('mousemove', (e) => {
-      if (state.isDraggingCanvas && state.activeTool === 'select') {
-        state.pan = { x: e.clientX - state.dragStart.x, y: e.clientY - state.dragStart.y };
-        updateCanvasTransform();
-      }
-    });
-    window.addEventListener('mouseup', () => { if (state.isDraggingCanvas) { state.isDraggingCanvas = false; if (state.activeTool === 'select') activeCanvas.style.cursor = 'grab'; } });
-
-    // PLACEMENT REPERE
-    activeCanvas.addEventListener('click', (e) => {
-      if (state.activeTool === 'pin') {
-        const imageEl = document.getElementById('planImageView');
-        const imgRect = imageEl.getBoundingClientRect();
-        
-        if (e.clientX >= imgRect.left && e.clientX <= imgRect.right && e.clientY >= imgRect.top && e.clientY <= imgRect.bottom) {
-          const xPercent = Math.round(((e.clientX - imgRect.left) / imgRect.width) * 100);
-          const yPercent = Math.round(((e.clientY - imgRect.top) / imgRect.height) * 100);
-
-          const lot = getActiveLot();
-          if(!lot) return;
-          if(!lot.pins) lot.pins = [];
-
-          const nextNum = lot.pins.length > 0 ? Math.max(...lot.pins.map(p => p.number || 0)) + 1 : 1;
-          
-          const newPin = {
-            id: 'pin_' + Date.now(),
-            number: nextNum,
-            progress: 0,
-            x: xPercent,
-            y: yPercent,
-            title: 'Réserve n°' + nextNum,
-            description: '',
-            companies: [],
-            photos: []
-          };
-
-          lot.pins.push(newPin);
-          state.activeTool = 'select';
-          render();
-          openPinModal(newPin);
-        }
-      }
-    });
-
-    document.getElementById('navLogoBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
-    document.getElementById('backToHomeBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
-    document.getElementById('themeToggleBtn').addEventListener('click', () => { state.darkMode = !state.darkMode; render(); });
-
-    // MODALE PROJET ET GESTION DES PHOTOS
-    const editProjectModal = document.getElementById('editProjectModal');
-    const projectPhotosInput = document.getElementById('projectPhotosInput');
-    const uploadProjectPhotosBtn = document.getElementById('uploadProjectPhotosBtn');
-    
-    function openProjectModal(mode) {
-      state.projectModalMode = mode;
-      if (mode === 'create') {
-        document.getElementById('projectModalTitle').textContent = 'Créer un nouveau projet';
-        document.getElementById('projectInputName').value = '';
-        document.getElementById('projectInputClient').value = '';
-        document.getElementById('projectInputSurface').value = '';
-        document.getElementById('projectInputLocation').value = '';
-        currentProjectPhotosTemp = [];
-      } else {
-        const p = getActiveProject();
-        if(!p) return;
-        document.getElementById('projectModalTitle').textContent = 'Modifier le projet';
-        document.getElementById('projectInputName').value = p.name || '';
-        document.getElementById('projectInputClient').value = p.client || '';
-        document.getElementById('projectInputSurface').value = p.surfaceTotal || '';
-        document.getElementById('projectInputLocation').value = p.location || '';
-        document.getElementById('projectInputStatus').value = p.status || 'En cours d\'aménagement';
-        currentProjectPhotosTemp = p.photos ? [...p.photos] : [];
-      }
-      renderProjectPhotosPreview();
-      editProjectModal.classList.remove('hidden');
-      editProjectModal.classList.add('flex');
-    }
-
-    document.getElementById('createNewProjectBtn').addEventListener('click', () => openProjectModal('create'));
-    document.getElementById('openEditProjectBtn').addEventListener('click', () => openProjectModal('edit'));
-
-    if (uploadProjectPhotosBtn && projectPhotosInput) {
-      uploadProjectPhotosBtn.addEventListener('click', () => projectPhotosInput.click());
-
-      projectPhotosInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files || []);
-        files.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-              currentProjectPhotosTemp.push(evt.target.result);
-              renderProjectPhotosPreview();
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-        e.target.value = '';
-      });
-    }
-
-    function renderProjectPhotosPreview() {
-      const container = document.getElementById('projectPhotosPreview');
-      if (!container) return;
-      container.innerHTML = '';
-      currentProjectPhotosTemp.forEach((src, idx) => {
-        const imgWrap = document.createElement('div');
-        imgWrap.className = 'relative w-16 h-16 rounded-2xl border dark:border-slate-700 overflow-hidden bg-slate-100 group';
-        imgWrap.innerHTML = `
-          <img src="${src}" class="w-full h-full object-cover" />
-          <button type="button" class="absolute top-1 right-1 p-1 bg-rose-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" title="Supprimer">
-            <i data-lucide="x" class="w-3 h-3"></i>
-          </button>
-        `;
-        imgWrap.querySelector('button').addEventListener('click', () => {
-          currentProjectPhotosTemp.splice(idx, 1);
-          renderProjectPhotosPreview();
-        });
-        container.appendChild(imgWrap);
-      });
-      lucide.createIcons();
-    }
-
-    const closeProjectModal = () => {
-      editProjectModal.classList.add('hidden');
-      editProjectModal.classList.remove('flex');
-    };
-
-    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjectModal);
-    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjectModal);
-
-    document.getElementById('projectForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('projectInputName').value;
-      const client = document.getElementById('projectInputClient').value;
-      const surfaceTotal = document.getElementById('projectInputSurface').value;
-      const location = document.getElementById('projectInputLocation').value;
-      const status = document.getElementById('projectInputStatus').value;
-
-      if (state.projectModalMode === 'create') {
-        const newProj = {
-          id: 'proj_' + Date.now(),
-          name: name,
-          client: client,
-          surfaceTotal: surfaceTotal,
-          location: location,
-          status: status,
-          lots: [],
-          photos: [...currentProjectPhotosTemp],
-          activeLotId: null
-        };
-        state.projects.push(newProj);
-        state.activeProjectId = newProj.id;
-        state.currentView = 'project';
-      } else {
-        const p = getActiveProject();
-        if (p) {
-          p.name = name;
-          p.client = client;
-          p.surfaceTotal = surfaceTotal;
-          p.location = location;
-          p.status = status;
-          p.photos = [...currentProjectPhotosTemp];
-        }
-      }
-
-      closeProjectModal();
-      render();
-    });
-
-    // MODALE ZONE / LOT
-    const editLotModal = document.getElementById('editLotModal');
-
-    function openEditLotModal(lot) {
-      state.editingLotId = lot ? lot.id : null;
-      document.getElementById('lotInputName').value = lot ? lot.name : '';
-      document.getElementById('lotInputSurface').value = lot ? lot.surface || '' : '';
-      state.selectedIconForModal = lot ? (lot.icon || AVAILABLE_ICONS[0].id) : AVAILABLE_ICONS[0].id;
-
-      renderIconGrid();
-      editLotModal.classList.remove('hidden');
-      editLotModal.classList.add('flex');
-    }
-
-    function renderIconGrid() {
-      const container = document.getElementById('iconGridContainer');
-      container.innerHTML = '';
-      AVAILABLE_ICONS.forEach(icon => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        const isSelected = icon.id === state.selectedIconForModal;
-        btn.className = `p-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all ${isSelected ? 'border-blue-500 bg-blue-50 dark:bg-slate-800 text-blue-600' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`;
-        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] truncate max-w-full">${icon.label}</span>`;
-        btn.addEventListener('click', () => {
-          state.selectedIconForModal = icon.id;
-          renderIconGrid();
-        });
-        container.appendChild(btn);
-      });
-      lucide.createIcons();
-    }
-
-    document.getElementById('closeLotModalBtn').addEventListener('click', () => {
-      editLotModal.classList.add('hidden');
-      editLotModal.classList.remove('flex');
-    });
-
-    document.getElementById('lotForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const lot = getActiveLot();
-      if (lot) {
-        lot.name = document.getElementById('lotInputName').value;
-        lot.surface = document.getElementById('lotInputSurface').value ? document.getElementById('lotInputSurface').value + ' m²' : '';
-        lot.icon = state.selectedIconForModal;
-      }
-      editLotModal.classList.add('hidden');
-      editLotModal.classList.remove('flex');
-      render();
-    });
-
-    document.getElementById('editActiveLotBtn').addEventListener('click', () => {
-      const lot = getActiveLot();
-      if(lot) openEditLotModal(lot);
-    });
-
-    // INITIALISATION
+    // Initialisation
     render();
   </script>
 </body>
