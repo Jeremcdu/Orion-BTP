@@ -56,28 +56,34 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo & Navigation -->
-      <div class="flex items-center space-x-4 sm:space-x-6">
+      <div class="flex items-center space-x-3 sm:space-x-4">
         <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
             <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
           <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-            <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
+            <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-blue-900 dark:from-white dark:via-blue-200 dark:to-blue-300">Orion BTP</span>
             <span id="activeToolBadge" class="hidden w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"></span>
           </div>
         </button>
 
-        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
-          <span id="backToPreviousText">Retour</span>
+        <!-- Texte cliquable ACCUEIL / MES PROJETS (style screenshot) -->
+        <a id="homeNavBtn" href="#" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <span>Mes projets</span>
+        </a>
+
+        <!-- Texte cliquable RETOUR (Mes projets / Choix du module) (style screenshot) -->
+        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <span id="backToPreviousText">Mes projets</span>
         </button>
       </div>
 
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Bouton d'export commun au module réserve et réunion -->
         <button id="openReportConfigBtn" title="Rapports & Exports" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
           <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
-          <span class="hidden sm:inline">Rapports</span>
+          <span class="hidden sm:inline" id="reportBtnLabel">Rapports</span>
         </button>
 
         <button id="openEditProjectBtn" title="Modifier le projet" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
@@ -246,7 +252,7 @@
           </button>
           
           <button id="importProjectsBtn" title="Importer des projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
-            <i data-lucide="upload" class="w-4 h-4 text-indigo-500"></i>
+            <i data-lucide="upload" class="w-4 h-4 text-blue-500"></i>
             <span>Importer</span>
           </button>
           <input type="file" id="importProjectsInput" accept=".json" class="hidden" />
@@ -288,7 +294,26 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- MODULE 1 : LEVE DE RESERVES -->
+        <!-- MODULE 1 : REUNION DE CHANTIER (PLACÉ À GAUCHE - BLEU) -->
+        <div id="selectModuleReunion" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i data-lucide="users" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Réunion de Chantier</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Rédigez vos comptes-rendus de réunion (CR), gérez la liste de présence des intervenants, attribuez les consignes par entreprise et planifiez les réunions suivantes.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <span>Ouvrir le module</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- MODULE 2 : LEVE DE RESERVES (PLACÉ À DROITE - BLEU) -->
         <div id="selectModuleReserves" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -306,43 +331,36 @@
             <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
           </div>
         </div>
-
-        <!-- MODULE 2 : REUNION DE CHANTIER -->
-        <div id="selectModuleReunion" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-indigo-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
-          <div class="space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="users" class="w-7 h-7"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Réunion de Chantier</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Rédigez vos comptes-rendus de réunion (CR), gérez la liste de présence des intervenants, attribuez les consignes par entreprise et planifiez les réunions suivantes.
-              </p>
-            </div>
-          </div>
-          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-            <span>Ouvrir le module</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- MODULE REUNION DE CHANTIER -->
+    <!-- MODULE REUNION DE CHANTIER (HARMONISÉ AVEC LE CADRE DU MODULE RESERVES) -->
     <div id="reunionView" class="hidden space-y-6">
-      <section class="rounded-3xl p-5 sm:p-6 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">Module Réunion</span>
-            <span id="reunionProjectNameDisplay" class="text-xs font-bold text-slate-400"></span>
+      <!-- Encadré Projet Identique au Module Réserves -->
+      <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg shadow-slate-200/40 dark:shadow-black/20 transition-all duration-300">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center space-x-2">
+              <span id="reunionProjectStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">Module Réunion</span>
+            </div>
+            <h1 id="reunionProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <span id="reunionProjectLocationDisplay"></span>
+            </p>
           </div>
-          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1">Compte-Rendu de Chantier</h1>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button id="exportReunionPdfBtn" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs shadow-md shadow-indigo-500/20 transition-all flex items-center space-x-2">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            <span>Exporter le CR (PDF)</span>
-          </button>
+
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div class="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 text-xs">
+              <div class="text-slate-400 font-medium truncate">Client</div>
+              <div id="reunionProjectClientDisplay" class="font-semibold text-slate-800 dark:text-slate-100 mt-0.5 truncate"></div>
+            </div>
+            <div class="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 text-xs">
+              <div class="text-slate-400 font-medium truncate">Surface Totale</div>
+              <div id="reunionProjectSurfaceDisplay" class="font-semibold text-slate-800 dark:text-slate-100 mt-0.5 truncate"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -351,7 +369,7 @@
           <div class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-                <i data-lucide="calendar" class="w-5 h-5 text-indigo-500"></i>
+                <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i>
                 <span>Détails de la Réunion</span>
               </h3>
             </div>
@@ -379,7 +397,7 @@
             <div class="space-y-3 pt-2">
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-xs uppercase text-slate-500">Remarques & Actions par entreprise</h4>
-                <button type="button" id="addReunionNoteBtn" class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-semibold text-xs hover:underline flex items-center space-x-1">
+                <button type="button" id="addReunionNoteBtn" class="px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold text-xs hover:underline flex items-center space-x-1">
                   <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                   <span>Ajouter une remarque</span>
                 </button>
@@ -394,7 +412,7 @@
           <div class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-                <i data-lucide="user-check" class="w-5 h-5 text-indigo-500"></i>
+                <i data-lucide="user-check" class="w-5 h-5 text-blue-500"></i>
                 <span>Feuille de Présence</span>
               </h3>
             </div>
@@ -403,7 +421,7 @@
 
             <div class="pt-2 flex items-center space-x-2">
               <input type="text" id="newAttendeeName" placeholder="Nom / Entreprise..." class="flex-1 px-3 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none" />
-              <button type="button" id="addAttendeeBtn" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-medium text-xs hover:bg-indigo-500 transition-all">+ Ajouter</button>
+              <button type="button" id="addAttendeeBtn" class="px-3 py-2 rounded-xl bg-blue-600 text-white font-medium text-xs hover:bg-blue-500 transition-all">+ Ajouter</button>
             </div>
           </div>
         </div>
@@ -417,6 +435,7 @@
           <div class="space-y-2">
             <div class="flex items-center space-x-2">
               <span id="projectStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">Levé de Réserves</span>
             </div>
             <h1 id="projectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
@@ -501,7 +520,7 @@
 
             <div id="emptyDropzone" class="p-6 sm:p-12 text-center max-w-md mx-auto space-y-6">
               <div class="relative inline-flex items-center justify-center">
-                <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 rounded-full blur-2xl opacity-20 animate-pulse"></div>
                 <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-blue-600 flex items-center justify-center shadow-2xl transition-transform hover:scale-105">
                   <i data-lucide="upload" class="w-8 h-8 sm:w-10 sm:h-10 stroke-[1.8]"></i>
                 </div>
@@ -549,7 +568,6 @@
             <div class="space-y-3 pt-2">
               <div class="flex items-center justify-between text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">
                 <span>Repères / Réserves</span>
-                <button id="addPinQuickBtn" class="text-blue-500 flex items-center space-x-1 hover:underline"><i data-lucide="plus" class="w-3 h-3"></i> Ajouter</button>
               </div>
               <div id="pinsListContainer" class="space-y-2 max-h-[320px] overflow-y-auto pr-1"></div>
             </div>
@@ -560,7 +578,7 @@
 
   </main>
 
-  <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS -->
+  <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS (COMMUN AUX MODULES RESERVES & REUNION) -->
   <div id="reportConfigModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -609,7 +627,7 @@
           </div>
         </div>
 
-        <div>
+        <div id="photoOptionRow">
           <label class="flex items-center space-x-2 cursor-pointer select-none pt-2">
             <input type="checkbox" id="reportIncludePhotosCheckbox" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 shrink-0" />
             <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">Inclure les photos des réserves</span>
@@ -737,42 +755,14 @@
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">Crayon</span>
           </button>
-          <button type="button" id="toolLine" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="minus" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Ligne</span>
-          </button>
-          <button type="button" id="toolArrow" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Flèche</span>
-          </button>
-          <button type="button" id="toolCircle" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="circle" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Cercle</span>
-          </button>
-          <button type="button" id="toolRect" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="square" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Rectangle</span>
-          </button>
-          <button type="button" id="toolText" class="draw-tool-btn px-2.5 py-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1">
-            <i data-lucide="type" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Texte</span>
-          </button>
         </div>
 
         <div class="flex items-center space-x-3">
           <div class="flex items-center space-x-1">
             <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 border border-slate-300"></button>
             <button type="button" data-color="#3b82f6" class="color-btn w-6 h-6 rounded-full bg-blue-500 border border-slate-300"></button>
-            <button type="button" data-color="#eab308" class="color-btn w-6 h-6 rounded-full bg-yellow-500 border border-slate-300"></button>
             <button type="button" data-color="#22c55e" class="color-btn w-6 h-6 rounded-full bg-green-500 border border-slate-300"></button>
-            <button type="button" data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white border border-slate-300"></button>
-            <button type="button" data-color="#000000" class="color-btn w-6 h-6 rounded-full bg-black border border-slate-300"></button>
           </div>
-          <select id="drawLineWidth" class="px-2 py-1 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs">
-            <option value="2">Fin</option>
-            <option value="4" selected>Moyen</option>
-            <option value="8">Épais</option>
-          </select>
         </div>
       </div>
 
@@ -781,24 +771,7 @@
       </div>
 
       <div class="flex items-center justify-between pt-2 border-t dark:border-slate-800">
-        <div class="flex items-center space-x-2">
-          <button type="button" id="undoDrawBtn" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium flex items-center space-x-1">
-            <i data-lucide="undo" class="w-3.5 h-3.5"></i>
-            <span>Annuler</span>
-          </button>
-          <button type="button" id="clearDrawBtn" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-xs font-medium flex items-center space-x-1">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>Tout effacer</span>
-          </button>
-        </div>
-
-        <div class="flex items-center space-x-2">
-          <button type="button" id="closeDrawModalBtn" class="px-4 py-2 rounded-xl border text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Annuler</button>
-          <button type="button" id="saveDrawBtn" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs flex items-center space-x-1.5 shadow">
-            <i data-lucide="check" class="w-4 h-4"></i>
-            <span>Valider la photo</span>
-          </button>
-        </div>
+        <button type="button" id="closeDrawModalBtn" class="px-4 py-2 rounded-xl border text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Fermer & Enregistrer</button>
       </div>
 
     </div>
@@ -835,16 +808,6 @@
             <option value="En cours d'aménagement">En cours d'aménagement</option>
             <option value="Livré / Achevé">Livré / Achevé</option>
           </select>
-        </div>
-
-        <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Photos du projet</label>
-          <input type="file" id="projectPhotosInput" accept="image/*" multiple class="hidden" />
-          <button type="button" id="uploadProjectPhotosBtn" class="w-full px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-2 text-xs">
-            <i data-lucide="camera" class="w-4 h-4 text-blue-500"></i>
-            <span>Ajouter des photos du projet</span>
-          </button>
-          <div id="projectPhotosPreview" class="flex flex-wrap gap-2 mt-3"></div>
         </div>
 
         <div class="flex items-center justify-end space-x-2 sm:space-x-3 pt-4 border-t dark:border-slate-800">
@@ -911,7 +874,38 @@
         layoutStyle: 'standard',
         includePhotos: true
       },
-      projects: [],
+      projects: [
+        {
+          id: 'proj_demo',
+          name: 'Résidence les Pins',
+          client: 'Promoteur ABC',
+          surfaceTotal: 1200,
+          location: '12 Rue de Paris, Lyon',
+          status: 'En cours d\'aménagement',
+          activeLotId: 'lot_demo_1',
+          lots: [
+            {
+              id: 'lot_demo_1',
+              name: 'Zone A - RDC',
+              icon: 'building-2',
+              surface: '450 m²',
+              planImage: null,
+              pins: []
+            }
+          ],
+          reunion: {
+            number: 1,
+            date: new Date().toISOString().slice(0, 10),
+            nextDate: '',
+            subject: 'Lancement du chantier',
+            attendees: [
+              { name: 'Maître d\'Ouvrage', status: 'present' },
+              { name: 'Architecte', status: 'present' }
+            ],
+            notes: []
+          }
+        }
+      ],
       selectedIconForModal: 'building-2',
       editingLotId: null,
       zoom: 1,
@@ -920,20 +914,6 @@
       dragStart: { x: 0, y: 0 },
       activeTool: 'select',
       projectModalMode: 'edit'
-    };
-
-    let currentProjectPhotosTemp = [];
-
-    const drawState = {
-      activePhotoIndex: null,
-      currentTool: 'pen',
-      color: '#ef4444',
-      lineWidth: 4,
-      isDrawing: false,
-      startX: 0,
-      startY: 0,
-      history: [],
-      baseImage: null
     };
 
     function getActiveProject() {
@@ -972,9 +952,11 @@
       const projectView = document.getElementById('projectView');
       const reunionView = document.getElementById('reunionView');
       
+      const homeNavBtn = document.getElementById('homeNavBtn');
       const backBtn = document.getElementById('backToPreviousBtn');
       const editProjBtn = document.getElementById('openEditProjectBtn');
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
+      const reportBtnLabel = document.getElementById('reportBtnLabel');
 
       // Masquer toutes les vues
       homeView.classList.add('hidden');
@@ -987,6 +969,7 @@
 
       if (state.currentView === 'home' || !activeProject) {
         homeView.classList.remove('hidden');
+        if (homeNavBtn) { homeNavBtn.classList.remove('hidden'); homeNavBtn.classList.add('inline-flex'); }
         backBtn.classList.add('hidden');
         backBtn.classList.remove('inline-flex');
         editProjBtn.classList.add('hidden');
@@ -996,6 +979,7 @@
         renderProjectsGrid();
       } else if (state.currentView === 'projectHub') {
         projectHubView.classList.remove('hidden');
+        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
         backBtn.classList.remove('hidden');
         backBtn.classList.add('inline-flex');
         document.getElementById('backToPreviousText').textContent = "Mes projets";
@@ -1005,6 +989,7 @@
       } else if (state.currentView === 'project') {
         projectView.classList.remove('hidden');
         projectView.classList.add('flex');
+        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
         backBtn.classList.remove('hidden');
         backBtn.classList.add('inline-flex');
         document.getElementById('backToPreviousText').textContent = "Choix du module";
@@ -1012,15 +997,19 @@
         editProjBtn.classList.add('inline-flex');
         openReportConfigBtn.classList.remove('hidden');
         openReportConfigBtn.classList.add('inline-flex');
+        if (reportBtnLabel) reportBtnLabel.textContent = "Rapports";
         renderActiveProject();
       } else if (state.currentView === 'reunion') {
         reunionView.classList.remove('hidden');
+        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
         backBtn.classList.remove('hidden');
         backBtn.classList.add('inline-flex');
         document.getElementById('backToPreviousText').textContent = "Choix du module";
         editProjBtn.classList.remove('hidden');
         editProjBtn.classList.add('inline-flex');
-        openReportConfigBtn.classList.add('hidden');
+        openReportConfigBtn.classList.remove('hidden');
+        openReportConfigBtn.classList.add('inline-flex');
+        if (reportBtnLabel) reportBtnLabel.textContent = "Rapports";
         renderReunionModule();
       }
 
@@ -1217,7 +1206,12 @@
     function renderReunionModule() {
       const proj = getActiveProject();
       if (!proj) return;
+
       document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
+      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
+      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
+      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
+      document.getElementById('reunionProjectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status || 'En cours'}</span>`;
 
       if (!proj.reunion) {
         proj.reunion = {
@@ -1333,67 +1327,275 @@
       }
     };
 
-    // EXPORT PDF COMPTE-RENDU REUNION
-    document.getElementById('exportReunionPdfBtn').onclick = () => {
+    // EXPORT COMPTE-RENDU REUNION
+    function exportReunionReport(format) {
       const proj = getActiveProject();
-      if (!proj || !proj.reunion) return;
+      if (!proj || !proj.reunion) return alert('Aucun projet ou compte-rendu disponible.');
+
       const r = proj.reunion;
+      const primaryColor = document.getElementById('reportColorInput').value || '#0071e3';
 
-      const printWin = window.open('', '_blank');
-      if (!printWin) return alert('Veuillez autoriser les popups.');
-
-      const html = `
+      let html = `
         <!DOCTYPE html>
         <html>
         <head>
+          <meta charset="utf-8">
           <title>Compte-Rendu N°${r.number} - ${proj.name}</title>
           <style>
-            body { font-family: sans-serif; padding: 20px; font-size: 12px; color: #1e293b; line-height: 1.5; }
-            h1 { font-size: 20px; border-bottom: 2px solid #4f46e5; padding-bottom: 8px; color: #312e81; }
-            .meta { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-            th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
-            th { background: #f1f5f9; }
+            body { font-family: Arial, sans-serif; margin: 30px; color: #1e293b; line-height: 1.5; font-size: 12px; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid ${primaryColor}; padding-bottom: 15px; margin-bottom: 20px; }
+            .header h1 { margin: 0; color: ${primaryColor}; font-size: 22px; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
+            .section-title { font-size: 16px; font-weight: bold; color: ${primaryColor}; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; }
+            th { background: #f1f5f9; font-weight: bold; color: ${primaryColor}; }
+            .no-print { margin-bottom: 20px; text-align: right; }
+            @media print { .no-print { display: none; } }
           </style>
         </head>
         <body>
-          <h1>Compte-Rendu de Réunion N°${r.number}</h1>
-          <div class="meta">
-            <div class="grid">
-              <div><strong>Projet :</strong> ${proj.name}</div>
-              <div><strong>Date :</strong> ${r.date || 'Non précisée'}</div>
-              <div><strong>Lieu :</strong> ${proj.location || 'Chantier'}</div>
-              <div><strong>Prochaine Réunion :</strong> ${r.nextDate || 'À déterminer'}</div>
+          <div class="no-print">
+            <button onclick="window.print()" style="padding: 10px 20px; background: ${primaryColor}; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Imprimer / Sauvegarder PDF</button>
+          </div>
+          <div class="header">
+            <div>
+              <h1>Compte-Rendu de Réunion N°${r.number || 1}</h1>
+              <p style="margin: 5px 0 0 0; color: #64748b;">Date du CR : ${r.date || 'Non précisée'}</p>
             </div>
-            <div style="margin-top:10px;"><strong>Ordre du jour :</strong> ${r.subject || 'Suivi général'}</div>
+            ${state.reportConfig.logoUrl ? `<img src="${state.reportConfig.logoUrl}" style="max-height: 60px;" />` : ''}
           </div>
 
-          <h3>1. Présences & Intervenants</h3>
+          <div class="meta-grid">
+            <div><strong>Projet :</strong> ${proj.name}</div>
+            <div><strong>Client :</strong> ${proj.client || 'N/A'}</div>
+            <div><strong>Lieu :</strong> ${proj.location || 'N/A'}</div>
+            <div><strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</div>
+            <div><strong>Statut Chantier :</strong> ${proj.status || 'En cours'}</div>
+            <div><strong>Prochaine Réunion :</strong> ${r.nextDate || 'À déterminer'}</div>
+          </div>
+
+          ${r.subject ? `<div style="margin-bottom:20px; padding:12px; background:#eff6ff; border-left:4px solid ${primaryColor}; border-radius:4px;"><strong>Ordre du jour & Sujets principaux :</strong><br/>${r.subject}</div>` : ''}
+
+          <div class="section-title">1. Présences & Feuille d'émargement</div>
           <table>
-            <thead><tr><th>Nom / Entreprise</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Intervenant / Entreprise</th><th style="width: 150px;">Statut</th></tr></thead>
             <tbody>
-              ${r.attendees.map(a => `<tr><td>${a.name}</td><td>${a.status.toUpperCase()}</td></tr>`).join('')}
+              ${r.attendees.map(a => `<tr><td>${a.name}</td><td><strong>${(a.status || 'present').toUpperCase()}</strong></td></tr>`).join('')}
             </tbody>
           </table>
 
-          <h3>2. Remarques & Actions à mener</h3>
+          <div class="section-title">2. Remarques, Décisions & Actions par Entreprise</div>
           <table>
-            <thead><tr><th style="width:25%;">Entreprise / Lot</th><th>Remarques & Consignes</th></tr></thead>
+            <thead><tr><th style="width: 30%;">Entreprise / Lot</th><th>Remarques & Consignes</th></tr></thead>
             <tbody>
-              ${r.notes.map(n => `<tr><td><strong>${n.company || 'Général'}</strong></td><td>${n.text || '-'}</td></tr>`).join('')}
+              ${r.notes.length > 0 ? r.notes.map(n => `<tr><td><strong>${n.company || 'Général'}</strong></td><td>${n.text || '-'}</td></tr>`).join('') : '<tr><td colspan="2" style="font-style:italic; color:#94a3b8;">Aucune remarque enregistrée</td></tr>'}
             </tbody>
           </table>
-
-          <div style="margin-top:30px; text-align:center;">
-            <button onclick="window.print()" style="padding:10px 20px; background:#4f46e5; color:white; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">Imprimer / Sauvegarder en PDF</button>
-          </div>
         </body>
         </html>
       `;
 
-      printWin.document.write(html);
-      printWin.document.close();
+      if (format === 'doc') {
+        const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CR_Reunion_${r.number}_${proj.name.replace(/\s+/g, '_')}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(html);
+          win.document.close();
+        } else {
+          alert('Veuillez autoriser les fenêtres surgissantes (popups) pour générer le rapport.');
+        }
+      }
+    }
+
+    // EXPORT DES RAPPORTS DE RESERVES (PDF & WORD)
+    function exportReservesReport(format) {
+      const proj = getActiveProject();
+      if (!proj) return alert('Aucun projet sélectionné.');
+
+      const includePhotos = document.getElementById('reportIncludePhotosCheckbox').checked;
+      const primaryColor = document.getElementById('reportColorInput').value || '#0071e3';
+
+      let lotsToExport = proj.lots || [];
+
+      let html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Rapport de Réserves - ${proj.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 30px; color: #1e293b; line-height: 1.5; font-size: 12px; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid ${primaryColor}; padding-bottom: 15px; margin-bottom: 20px; }
+            .header h1 { margin: 0; color: ${primaryColor}; font-size: 22px; }
+            .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
+            .section-title { font-size: 16px; font-weight: bold; color: ${primaryColor}; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; }
+            th { background: #f1f5f9; font-weight: bold; }
+            .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: white; }
+            .badge-done { background: #10b981; }
+            .badge-todo { background: #ef4444; }
+            .img-thumb { max-width: 120px; max-height: 120px; border-radius: 4px; margin-right: 5px; margin-bottom: 5px; border: 1px solid #e2e8f0; }
+            .plan-img { max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #cbd5e1; display: block; margin: 10px 0; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+            <button onclick="window.print()" style="padding: 10px 20px; background: ${primaryColor}; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Imprimer / Sauvegarder PDF</button>
+          </div>
+          <div class="header">
+            <div>
+              <h1>Rapport de Levé de Réserves</h1>
+              <p style="margin: 5px 0 0 0; color: #64748b;">Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
+            </div>
+            ${state.reportConfig.logoUrl ? `<img src="${state.reportConfig.logoUrl}" style="max-height: 60px;" />` : ''}
+          </div>
+
+          <div class="meta-grid">
+            <div><strong>Projet :</strong> ${proj.name}</div>
+            <div><strong>Client :</strong> ${proj.client || 'N/A'}</div>
+            <div><strong>Lieu :</strong> ${proj.location || 'N/A'}</div>
+            <div><strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</div>
+            <div><strong>Statut du chantier :</strong> ${proj.status || 'En cours'}</div>
+          </div>
+      `;
+
+      lotsToExport.forEach(lot => {
+        html += `<div class="section-title">Zone : ${lot.name} ${lot.surface ? '(' + lot.surface + ')' : ''}</div>`;
+        if (lot.planImage) {
+          html += `<div><strong>Plan de la zone :</strong><br/><img src="${lot.planImage}" class="plan-img" /></div>`;
+        }
+
+        if (!lot.pins || lot.pins.length === 0) {
+          html += `<p style="font-style: italic; color: #94a3b8;">Aucune réserve enregistrée dans cette zone.</p>`;
+        } else {
+          html += `
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 50px;">N°</th>
+                  <th>Intitulé / Description</th>
+                  <th style="width: 120px;">Entreprises</th>
+                  <th style="width: 90px;">Avancement</th>
+                  ${includePhotos ? '<th>Photos</th>' : ''}
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          lot.pins.forEach(pin => {
+            const isDone = (pin.progress || 0) == 100;
+            const badgeClass = isDone ? 'badge-done' : 'badge-todo';
+            const comps = pin.companies && pin.companies.length > 0 ? pin.companies.join(', ') : 'Non assigné';
+
+            let photosHtml = '';
+            if (includePhotos && pin.photos && pin.photos.length > 0) {
+              photosHtml = '<td>' + pin.photos.map(p => `<img src="${p}" class="img-thumb"/>`).join('') + '</td>';
+            } else if (includePhotos) {
+              photosHtml = '<td style="color:#94a3b8; font-style:italic;">Aucune photo</td>';
+            }
+
+            html += `
+              <tr>
+                <td><strong>#${pin.number}</strong></td>
+                <td>
+                  <strong>${pin.title || 'Sans titre'}</strong>
+                  ${pin.description ? `<br/><span style="color:#475569;">${pin.description}</span>` : ''}
+                </td>
+                <td>${comps}</td>
+                <td><span class="badge ${badgeClass}">${pin.progress || 0}%</span></td>
+                ${photosHtml}
+              </tr>
+            `;
+          });
+          html += `</tbody></table>`;
+        }
+      });
+
+      html += `</body></html>`;
+
+      if (format === 'doc') {
+        const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Rapport_Reserves_${proj.name.replace(/\s+/g, '_')}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(html);
+          win.document.close();
+        } else {
+          alert('Veuillez autoriser les fenêtres surgissantes (popups) pour afficher le rapport.');
+        }
+      }
+    }
+
+    // LISTENER HEADER : OUVERTURE DE LA MODALE DE RAPPORT UNIFIÉE
+    document.getElementById('openReportConfigBtn').addEventListener('click', () => {
+      const photoRow = document.getElementById('photoOptionRow');
+      if (state.currentView === 'reunion') {
+        if (photoRow) photoRow.classList.add('hidden');
+      } else {
+        if (photoRow) photoRow.classList.remove('hidden');
+      }
+
+      document.getElementById('reportConfigModal').classList.remove('hidden');
+      document.getElementById('reportConfigModal').classList.add('flex');
+    });
+
+    // LISTENERS D'EXPORT DANS LA MODALE
+    document.getElementById('closeReportConfigBtn').onclick = () => {
+      document.getElementById('reportConfigModal').classList.add('hidden');
+      document.getElementById('reportConfigModal').classList.remove('flex');
+    };
+
+    document.getElementById('exportPdfReportBtn').onclick = () => {
+      if (state.currentView === 'reunion') {
+        exportReunionReport('pdf');
+      } else {
+        exportReservesReport('pdf');
+      }
+    };
+
+    document.getElementById('exportWordReportBtn').onclick = () => {
+      if (state.currentView === 'reunion') {
+        exportReunionReport('doc');
+      } else {
+        exportReservesReport('doc');
+      }
+    };
+
+    // GESTION DU LOGO DANS LA MODALE DE RAPPORT
+    document.getElementById('uploadLogoBtn').onclick = () => document.getElementById('logoFileInput').click();
+    document.getElementById('logoFileInput').onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          state.reportConfig.logoUrl = evt.target.result;
+          document.getElementById('logoPreviewContainer').innerHTML = `<img src="${evt.target.result}" class="max-h-full max-w-full object-contain" />`;
+          document.getElementById('removeLogoBtn').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    document.getElementById('removeLogoBtn').onclick = () => {
+      state.reportConfig.logoUrl = '';
+      document.getElementById('logoPreviewContainer').innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucun logo</span>`;
+      document.getElementById('removeLogoBtn').classList.add('hidden');
     };
 
     // EVENTS NAVIGATION
@@ -1407,6 +1609,12 @@
     });
 
     document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'home';
+      render();
+    });
+
+    document.getElementById('homeNavBtn').addEventListener('click', (e) => {
+      e.preventDefault();
       state.currentView = 'home';
       render();
     });
@@ -1486,308 +1694,125 @@
       container.innerHTML = '';
 
       if (!lot || !lot.pins || lot.pins.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucun repère placé.</div>`;
+        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucune réserve enregistrée.</div>`;
         return;
       }
 
       lot.pins.forEach(pin => {
-        const item = document.createElement('div');
-        item.className = 'p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer space-y-1';
-        
-        const isCompleted = (pin.progress || 0) == 100;
-        const colorClass = isCompleted ? 'bg-emerald-500' : 'bg-rose-500';
-
-        item.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center space-x-2 truncate">
-              <div class="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ${colorClass}">
-                ${pin.number}
-              </div>
-              <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate">${pin.title}</span>
-            </div>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'}">
-              ${pin.progress || 0}%
+        const isDone = (pin.progress || 0) == 100;
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 hover:border-blue-500/50 transition-all cursor-pointer space-y-1.5';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded-full ${isDone ? 'bg-emerald-500' : 'bg-rose-500'} text-white text-[9px] flex items-center justify-center font-bold">${pin.number}</span>
+              ${pin.title || 'Sans titre'}
             </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${pin.progress || 0}%</span>
           </div>
+          ${pin.companies && pin.companies.length > 0 ? `<div class="text-[10px] text-slate-500 truncate">${pin.companies.join(', ')}</div>` : ''}
         `;
-
-        item.addEventListener('click', () => openPinModal(pin));
-        container.appendChild(item);
+        div.addEventListener('click', () => openPinModal(pin));
+        container.appendChild(div);
       });
-      lucide.createIcons();
     }
-
-    // GESTION DU CANVAS ET PLACEMENT D'ÉPINGLES
-    const activeCanvas = document.getElementById('activeCanvas');
-    activeCanvas.addEventListener('click', (e) => {
-      if (state.activeTool !== 'pin') return;
-      const img = document.getElementById('planImageView');
-      const rect = img.getBoundingClientRect();
-
-      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-
-      if (xPercent >= 0 && xPercent <= 100 && yPercent >= 0 && yPercent <= 100) {
-        const lot = getActiveLot();
-        if (!lot) return;
-        if (!lot.pins) lot.pins = [];
-
-        const newPin = {
-          id: 'pin_' + Date.now(),
-          number: lot.pins.length + 1,
-          x: Math.round(xPercent * 100) / 100,
-          y: Math.round(yPercent * 100) / 100,
-          title: `Réserve n°${lot.pins.length + 1}`,
-          progress: 0,
-          description: '',
-          companies: [],
-          photos: []
-        };
-
-        lot.pins.push(newPin);
-        render();
-        openPinModal(newPin);
-      }
-    });
-
-    document.getElementById('toolSelectBtn').onclick = () => { state.activeTool = 'select'; render(); };
-    document.getElementById('toolPinBtn').onclick = () => { state.activeTool = 'pin'; render(); };
-
-    // IMPORT DE PLAN (PDF/IMAGE)
-    const fileInput = document.getElementById('fileInput');
-    document.getElementById('importPlanBtn').onclick = () => fileInput.click();
-    document.getElementById('replacePlanBtn').onclick = () => fileInput.click();
-
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      const lot = getActiveLot();
-      if (!lot) return;
-
-      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-        const fileReader = new FileReader();
-        fileReader.onload = function() {
-          const typedarray = new Uint8Array(this.result);
-          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-            pdf.getPage(1).then(page => {
-              const viewport = page.getViewport({ scale: 2 });
-              const canvas = document.createElement('canvas');
-              const ctx = canvas.getContext('2d');
-              canvas.height = viewport.height;
-              canvas.width = viewport.width;
-
-              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
-                lot.planImage = canvas.toDataURL('image/png');
-                render();
-              });
-            });
-          });
-        };
-        fileReader.readAsArrayBuffer(file);
-      } else {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          lot.planImage = evt.target.result;
-          render();
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // MODALE PROJET
-    function openEditProjectModal(proj) {
-      state.projectModalMode = proj ? 'edit' : 'create';
-      document.getElementById('projectModalTitle').textContent = proj ? 'Modifier le projet' : 'Créer un nouveau projet';
-      document.getElementById('projectInputName').value = proj ? proj.name : '';
-      document.getElementById('projectInputClient').value = proj ? (proj.client || '') : '';
-      document.getElementById('projectInputSurface').value = proj ? (proj.surfaceTotal || '') : '';
-      document.getElementById('projectInputLocation').value = proj ? (proj.location || '') : '';
-      document.getElementById('projectInputStatus').value = proj ? proj.status : 'En conception';
-
-      document.getElementById('editProjectModal').classList.remove('hidden');
-      document.getElementById('editProjectModal').classList.add('flex');
-    }
-
-    document.getElementById('createNewProjectBtn').onclick = () => openEditProjectModal(null);
-    document.getElementById('closeProjectModalBtn').onclick = () => {
-      document.getElementById('editProjectModal').classList.add('hidden');
-      document.getElementById('editProjectModal').classList.remove('flex');
-    };
-    document.getElementById('cancelProjectModalBtn').onclick = () => {
-      document.getElementById('editProjectModal').classList.add('hidden');
-      document.getElementById('editProjectModal').classList.remove('flex');
-    };
-
-    document.getElementById('projectForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('projectInputName').value;
-      const client = document.getElementById('projectInputClient').value;
-      const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
-      const location = document.getElementById('projectInputLocation').value;
-      const status = document.getElementById('projectInputStatus').value;
-
-      if (state.projectModalMode === 'create') {
-        const newProj = {
-          id: 'proj_' + Date.now(),
-          name, client, surfaceTotal: surface, location, status,
-          lots: [{ id: 'lot_1', name: 'Zone 1', icon: 'building-2', surface: '', planImage: null, pins: [] }],
-          activeLotId: 'lot_1'
-        };
-        state.projects.push(newProj);
-        state.activeProjectId = newProj.id;
-        state.currentView = 'projectHub';
-      } else {
-        const proj = getActiveProject();
-        if (proj) {
-          proj.name = name; proj.client = client; proj.surfaceTotal = surface;
-          proj.location = location; proj.status = status;
-        }
-      }
-
-      document.getElementById('editProjectModal').classList.add('hidden');
-      document.getElementById('editProjectModal').classList.remove('flex');
-      render();
-    });
-
-    // MODALE ZONE / LOT
-    function openEditLotModal(lot) {
-      state.editingLotId = lot.id;
-      document.getElementById('lotInputName').value = lot.name || '';
-      document.getElementById('lotInputSurface').value = lot.surface ? lot.surface.replace('m²', '').trim() : '';
-
-      const grid = document.getElementById('iconGridContainer');
-      grid.innerHTML = '';
-      AVAILABLE_ICONS.forEach(ic => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `p-2 rounded-xl border flex flex-col items-center space-y-1 text-xs ${lot.icon === ic.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600' : 'border-slate-200 dark:border-slate-700'}`;
-        btn.innerHTML = `<i data-lucide="${ic.id}" class="w-5 h-5"></i><span>${ic.label}</span>`;
-        btn.onclick = () => {
-          lot.icon = ic.id;
-          openEditLotModal(lot);
-        };
-        grid.appendChild(btn);
-      });
-
-      document.getElementById('editLotModal').classList.remove('hidden');
-      document.getElementById('editLotModal').classList.add('flex');
-      lucide.createIcons();
-    }
-
-    document.getElementById('closeLotModalBtn').onclick = () => {
-      document.getElementById('editLotModal').classList.add('hidden');
-      document.getElementById('editLotModal').classList.remove('flex');
-    };
-
-    document.getElementById('lotForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const lot = getActiveLot();
-      if (lot) {
-        lot.name = document.getElementById('lotInputName').value;
-        const surf = document.getElementById('lotInputSurface').value;
-        lot.surface = surf ? `${surf} m²` : '';
-      }
-      document.getElementById('editLotModal').classList.add('hidden');
-      document.getElementById('editLotModal').classList.remove('flex');
-      render();
-    });
-
-    // MODALE REPERE / PIN
-    const editPinModal = document.getElementById('editPinModal');
 
     function openPinModal(pin) {
       state.editingPinId = pin.id;
-      
-      const badge = document.getElementById('modalPinBadge');
-      badge.textContent = pin.number;
-      badge.className = `w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-sm shadow shrink-0 ${(pin.progress || 0) == 100 ? 'bg-emerald-500' : 'bg-rose-500'}`;
-
-      document.getElementById('pinInputTitle').value = pin.title || `Réserve n°${pin.number}`;
+      document.getElementById('modalPinBadge').textContent = pin.number;
+      document.getElementById('pinInputTitle').value = pin.title || '';
       document.getElementById('pinInputProgress').value = pin.progress || 0;
       document.getElementById('pinInputStatusSelect').value = pin.progress || 0;
       document.getElementById('pinInputDescription').value = pin.description || '';
-
-      renderPinCompaniesCheckboxes(pin.companies || []);
-      renderPinPhotos(pin.photos || []);
-
-      editPinModal.classList.remove('hidden');
-      editPinModal.classList.add('flex');
+      renderPinCompanies(pin);
+      renderPinPhotos(pin);
+      document.getElementById('editPinModal').classList.remove('hidden');
+      document.getElementById('editPinModal').classList.add('flex');
     }
 
-    function renderPinCompaniesCheckboxes(assignedCompanies) {
+    function renderPinCompanies(pin) {
       const container = document.getElementById('pinCompaniesList');
       container.innerHTML = '';
-
-      state.availableCompanies.forEach((companyName) => {
-        const isChecked = assignedCompanies.includes(companyName);
-        const wrapper = document.createElement('label');
-        wrapper.className = 'flex items-center space-x-2 p-1.5 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-700/50 cursor-pointer select-none transition-colors';
-        wrapper.innerHTML = `
-          <input type="checkbox" value="${companyName}" ${isChecked ? 'checked' : ''} class="pin-company-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0">
-          <span class="text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate">${companyName}</span>
+      state.availableCompanies.forEach(comp => {
+        const checked = pin.companies && pin.companies.includes(comp);
+        const label = document.createElement('label');
+        label.className = 'flex items-center space-x-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none';
+        label.innerHTML = `
+          <input type="checkbox" value="${comp}" ${checked ? 'checked' : ''} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" />
+          <span>${comp}</span>
         `;
-        container.appendChild(wrapper);
+        label.querySelector('input').addEventListener('change', (e) => {
+          if (!pin.companies) pin.companies = [];
+          if (e.target.checked) {
+            if (!pin.companies.includes(comp)) pin.companies.push(comp);
+          } else {
+            pin.companies = pin.companies.filter(c => c !== comp);
+          }
+        });
+        container.appendChild(label);
       });
     }
 
-    function renderPinPhotos(photos) {
+    function renderPinPhotos(pin) {
       const container = document.getElementById('pinPhotosContainer');
       container.innerHTML = '';
-
-      if (!photos || photos.length === 0) {
-        container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Aucune photo ajoutée.</span>`;
+      if (!pin.photos || pin.photos.length === 0) {
+        container.innerHTML = `<span class="text-[10px] text-slate-400 italic">Aucune photo pour le moment</span>`;
         return;
       }
-
-      photos.forEach((photoSrc, idx) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'relative group w-20 h-20 rounded-xl overflow-hidden border dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0';
-        wrapper.innerHTML = `
-          <img src="${photoSrc}" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
-            <button type="button" class="p-1.5 rounded-lg bg-blue-600 text-white edit-photo-btn" title="Annoter"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-            <button type="button" class="p-1.5 rounded-lg bg-rose-600 text-white remove-photo-btn" title="Supprimer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
+      pin.photos.forEach((photo, idx) => {
+        const div = document.createElement('div');
+        div.className = 'relative group w-14 h-14 rounded-xl overflow-hidden border dark:border-slate-700 shrink-0';
+        div.innerHTML = `
+          <img src="${photo}" class="w-full h-full object-cover" />
+          <button type="button" class="delete-photo-btn absolute top-0.5 right-0.5 bg-rose-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x" class="w-3 h-3"></i></button>
         `;
-
-        wrapper.querySelector('.edit-photo-btn').onclick = (e) => { e.stopPropagation(); openDrawModal(photoSrc, idx); };
-        wrapper.querySelector('.remove-photo-btn').onclick = (e) => { e.stopPropagation(); photos.splice(idx, 1); renderPinPhotos(photos); };
-
-        container.appendChild(wrapper);
+        div.querySelector('.delete-photo-btn').onclick = (e) => {
+          e.stopPropagation();
+          pin.photos.splice(idx, 1);
+          renderPinPhotos(pin);
+        };
+        container.appendChild(div);
       });
       lucide.createIcons();
     }
 
-    function handlePhotoFiles(files) {
-      const lot = getActiveLot();
-      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if(!pin) return;
-      if(!pin.photos) pin.photos = [];
-
-      Array.from(files).forEach(file => {
-        if(file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            pin.photos.push(evt.target.result);
-            renderPinPhotos(pin.photos);
-          };
-          reader.readAsDataURL(file);
+    document.getElementById('addCompanyBtn').onclick = () => {
+      const input = document.getElementById('newCompanyInput');
+      const val = input.value.trim();
+      if (val && !state.availableCompanies.includes(val)) {
+        state.availableCompanies.push(val);
+        const activeLot = getActiveLot();
+        const pin = activeLot ? activeLot.pins.find(p => p.id === state.editingPinId) : null;
+        if (pin) {
+          if (!pin.companies) pin.companies = [];
+          pin.companies.push(val);
+          renderPinCompanies(pin);
         }
-      });
-    }
+        input.value = '';
+      }
+    };
 
-    document.getElementById('pinGalleryInput').onchange = (e) => { handlePhotoFiles(e.target.files); e.target.value = ''; };
-    document.getElementById('pinCameraInput').onchange = (e) => { handlePhotoFiles(e.target.files); e.target.value = ''; };
+    document.getElementById('pinInputStatusSelect').onchange = (e) => {
+      document.getElementById('pinInputProgress').value = e.target.value;
+    };
 
-    document.getElementById('closePinModalBtn').onclick = () => { editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex'); };
-    document.getElementById('cancelPinModalBtn').onclick = () => { editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex'); };
+    document.getElementById('closePinModalBtn').onclick = () => {
+      document.getElementById('editPinModal').classList.add('hidden');
+      document.getElementById('editPinModal').classList.remove('flex');
+    };
+
+    document.getElementById('cancelPinModalBtn').onclick = () => {
+      document.getElementById('editPinModal').classList.add('hidden');
+      document.getElementById('editPinModal').classList.remove('flex');
+    };
 
     document.getElementById('deletePinFromModalBtn').onclick = () => {
       const lot = getActiveLot();
-      if (lot && lot.pins && state.editingPinId) {
+      if (lot && state.editingPinId) {
         lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
-        editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex');
+        document.getElementById('editPinModal').classList.add('hidden');
+        document.getElementById('editPinModal').classList.remove('flex');
         render();
       }
     };
@@ -1795,164 +1820,322 @@
     document.getElementById('pinForm').onsubmit = (e) => {
       e.preventDefault();
       const lot = getActiveLot();
-      if (!lot) return;
-
-      const pin = lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if (pin) {
-        pin.title = document.getElementById('pinInputTitle').value;
-        pin.progress = Math.min(100, Math.max(0, parseInt(document.getElementById('pinInputProgress').value) || 0));
-        pin.description = document.getElementById('pinInputDescription').value;
-        const checkboxes = document.querySelectorAll('.pin-company-checkbox:checked');
-        pin.companies = Array.from(checkboxes).map(cb => cb.value);
-      }
-
-      editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex');
-      render();
-    };
-
-    // SYSTEME DE DESSIN SUR PHOTO
-    const drawModal = document.getElementById('drawPhotoModal');
-    const drawCanvas = document.getElementById('photoDrawCanvas');
-    const drawCtx = drawCanvas.getContext('2d');
-    let drawIsMouseDown = false;
-
-    function openDrawModal(photoSrc, photoIdx) {
-      drawState.activePhotoIndex = photoIdx;
-      drawState.history = [];
-
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => {
-        drawState.baseImage = img;
-        drawCanvas.width = img.width;
-        drawCanvas.height = img.height;
-        drawCtx.drawImage(img, 0, 0);
-        saveDrawHistory();
-
-        drawModal.classList.remove('hidden');
-        drawModal.classList.add('flex');
-      };
-      img.src = photoSrc;
-    }
-
-    function saveDrawHistory() {
-      drawState.history.push(drawCanvas.toDataURL());
-    }
-
-    drawCanvas.addEventListener('mousedown', (e) => {
-      drawIsMouseDown = true;
-      const rect = drawCanvas.getBoundingClientRect();
-      const scaleX = drawCanvas.width / rect.width;
-      const scaleY = drawCanvas.height / rect.height;
-      drawState.startX = (e.clientX - rect.left) * scaleX;
-      drawState.startY = (e.clientY - rect.top) * scaleY;
-
-      if (drawState.currentTool === 'pen') {
-        drawCtx.beginPath();
-        drawCtx.moveTo(drawState.startX, drawState.startY);
-        drawCtx.strokeStyle = drawState.color;
-        drawCtx.lineWidth = drawState.lineWidth;
-        drawCtx.lineCap = 'round';
-      }
-    });
-
-    drawCanvas.addEventListener('mousemove', (e) => {
-      if (!drawIsMouseDown) return;
-      const rect = drawCanvas.getBoundingClientRect();
-      const scaleX = drawCanvas.width / rect.width;
-      const scaleY = drawCanvas.height / rect.height;
-      const currentX = (e.clientX - rect.left) * scaleX;
-      const currentY = (e.clientY - rect.top) * scaleY;
-
-      if (drawState.currentTool === 'pen') {
-        drawCtx.lineTo(currentX, currentY);
-        drawCtx.stroke();
-      }
-    });
-
-    drawCanvas.addEventListener('mouseup', (e) => {
-      if (!drawIsMouseDown) return;
-      drawIsMouseDown = false;
-
-      const rect = drawCanvas.getBoundingClientRect();
-      const scaleX = drawCanvas.width / rect.width;
-      const scaleY = drawCanvas.height / rect.height;
-      const endX = (e.clientX - rect.left) * scaleX;
-      const endY = (e.clientY - rect.top) * scaleY;
-
-      drawCtx.strokeStyle = drawState.color;
-      drawCtx.fillStyle = drawState.color;
-      drawCtx.lineWidth = drawState.lineWidth;
-
-      if (drawState.currentTool === 'line') {
-        drawCtx.beginPath();
-        drawCtx.moveTo(drawState.startX, drawState.startY);
-        drawCtx.lineTo(endX, endY);
-        drawCtx.stroke();
-      } else if (drawState.currentTool === 'rect') {
-        drawCtx.strokeRect(drawState.startX, drawState.startY, endX - drawState.startX, endY - drawState.startY);
-      } else if (drawState.currentTool === 'circle') {
-        const radius = Math.sqrt(Math.pow(endX - drawState.startX, 2) + Math.pow(endY - drawState.startY, 2));
-        drawCtx.beginPath();
-        drawCtx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
-        drawCtx.stroke();
-      } else if (drawState.currentTool === 'text') {
-        const text = prompt("Entrez votre texte :");
-        if (text) {
-          drawCtx.font = `bold ${drawState.lineWidth * 6}px sans-serif`;
-          drawCtx.fillText(text, drawState.startX, drawState.startY);
+      if (lot && state.editingPinId) {
+        const pin = lot.pins.find(p => p.id === state.editingPinId);
+        if (pin) {
+          pin.title = document.getElementById('pinInputTitle').value;
+          pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
+          pin.description = document.getElementById('pinInputDescription').value;
         }
       }
+      document.getElementById('editPinModal').classList.add('hidden');
+      document.getElementById('editPinModal').classList.remove('flex');
+      render();
+    };
 
-      saveDrawHistory();
+    document.getElementById('pinGalleryInput').onchange = (e) => {
+      const files = Array.from(e.target.files);
+      const lot = getActiveLot();
+      const pin = lot ? lot.pins.find(p => p.id === state.editingPinId) : null;
+      if (!pin) return;
+      if (!pin.photos) pin.photos = [];
+      files.forEach(f => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          pin.photos.push(evt.target.result);
+          renderPinPhotos(pin);
+        };
+        reader.readAsDataURL(f);
+      });
+    };
+
+    document.getElementById('themeToggleBtn').onclick = () => {
+      state.darkMode = !state.darkMode;
+      render();
+    };
+
+    // DRAG & DROP CANVAS + CREATION DE RESERVE
+    const activeCanvas = document.getElementById('activeCanvas');
+
+    activeCanvas.addEventListener('mousedown', (e) => {
+      if (state.activeTool === 'select') {
+        state.isDraggingCanvas = true;
+        state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
+        activeCanvas.style.cursor = 'grabbing';
+      } else if (state.activeTool === 'pin') {
+        const lot = getActiveLot();
+        if (!lot) return;
+        const rect = document.getElementById('planImageView').getBoundingClientRect();
+        const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+
+        if (xPct >= 0 && xPct <= 100 && yPct >= 0 && yPct <= 100) {
+          if (!lot.pins) lot.pins = [];
+          const newPin = {
+            id: 'pin_' + Date.now(),
+            number: lot.pins.length + 1,
+            x: Math.round(xPct * 10) / 10,
+            y: Math.round(yPct * 10) / 10,
+            title: 'Nouvelle réserve',
+            progress: 0,
+            companies: [],
+            photos: [],
+            description: ''
+          };
+          lot.pins.push(newPin);
+          renderActiveProject();
+          openPinModal(newPin);
+        }
+      }
     });
 
-    document.getElementById('saveDrawBtn').onclick = () => {
-      const lot = getActiveLot();
-      if (!lot) return;
-      const pin = lot.pins && lot.pins.find(p => p.id === state.editingPinId);
-      if (pin && pin.photos && drawState.activePhotoIndex !== null) {
-        pin.photos[drawState.activePhotoIndex] = drawCanvas.toDataURL('image/png');
-        renderPinPhotos(pin.photos);
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDraggingCanvas && state.activeTool === 'select') {
+        state.pan.x = e.clientX - state.dragStart.x;
+        state.pan.y = e.clientY - state.dragStart.y;
+        updateCanvasTransform();
       }
-      drawModal.classList.add('hidden'); drawModal.classList.remove('flex');
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (state.isDraggingCanvas) {
+        state.isDraggingCanvas = false;
+        if (state.activeTool === 'select') {
+          activeCanvas.style.cursor = 'grab';
+        }
+      }
+    });
+
+    document.getElementById('toolSelectBtn').onclick = () => { state.activeTool = 'select'; renderActiveProject(); };
+    document.getElementById('toolPinBtn').onclick = () => { state.activeTool = 'pin'; renderActiveProject(); };
+    document.getElementById('zoomInBtn').onclick = () => { state.zoom = Math.min(state.zoom + 0.2, 4); updateCanvasTransform(); };
+    document.getElementById('zoomOutBtn').onclick = () => { state.zoom = Math.max(state.zoom - 0.2, 0.5); updateCanvasTransform(); };
+    document.getElementById('zoomResetBtn').onclick = () => { state.zoom = 1; state.pan = { x: 0, y: 0 }; updateCanvasTransform(); };
+
+    // IMPORT DE PLAN
+    document.getElementById('importPlanBtn').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('replacePlanBtn').onclick = () => document.getElementById('fileInput').click();
+
+    document.getElementById('fileInput').onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const lot = getActiveLot();
+        if (!lot) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          lot.planImage = evt.target.result;
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
     };
 
-    document.getElementById('closeDrawModalBtn').onclick = () => {
-      drawModal.classList.add('hidden'); drawModal.classList.remove('flex');
-    };
+    // MODALE LOT
+    function openEditLotModal(lot) {
+      state.editingLotId = lot ? lot.id : null;
+      document.getElementById('lotInputName').value = lot ? lot.name : '';
+      document.getElementById('lotInputSurface').value = lot ? parseInt(lot.surface) || '' : '';
+      renderIconGrid(lot ? lot.icon : 'building-2');
+      document.getElementById('editLotModal').classList.remove('hidden');
+      document.getElementById('editLotModal').classList.add('flex');
+    }
 
-    // MENU UTILISATEUR ET THEME
-    document.getElementById('themeToggleBtn').onclick = () => { state.darkMode = !state.darkMode; render(); };
-    document.getElementById('userMenuBtn').onclick = () => { document.getElementById('userDropdownMenu').classList.toggle('hidden'); };
-    document.getElementById('dropdownLoginBtn').onclick = () => { document.getElementById('loginModal').classList.remove('hidden'); document.getElementById('loginModal').classList.add('flex'); };
-    document.getElementById('closeLoginModalBtn').onclick = () => { document.getElementById('loginModal').classList.add('hidden'); document.getElementById('loginModal').classList.remove('flex'); };
-    document.getElementById('dropdownPrivacyBtn').onclick = () => { document.getElementById('privacyModal').classList.remove('hidden'); document.getElementById('privacyModal').classList.add('flex'); };
-    document.getElementById('confirmPrivacyBtn').onclick = () => { document.getElementById('privacyModal').classList.add('hidden'); document.getElementById('privacyModal').classList.remove('flex'); };
-    document.getElementById('closePrivacyModalBtn').onclick = () => { document.getElementById('privacyModal').classList.add('hidden'); document.getElementById('privacyModal').classList.remove('flex'); };
-
-    // INITIALISATION DE L'APPLICATION
-    window.addEventListener('DOMContentLoaded', () => {
-      // Données de démo par défaut si aucun projet
-      if (state.projects.length === 0) {
-        state.projects = [
-          {
-            id: 'proj_demo_1',
-            name: 'Résidence Les Clématites',
-            client: 'Promogim BTP',
-            location: '12 Rue des Fleurs, 75015 Paris',
-            surfaceTotal: 850,
-            status: "En cours d'aménagement",
-            lots: [
-              { id: 'lot_1', name: 'Appartement A101', surface: '65 m²', icon: 'layers', planImage: null, pins: [] }
-            ],
-            activeLotId: 'lot_1'
-          }
-        ];
-      }
-
-      render();
+    function renderIconGrid(selectedIcon) {
+      const container = document.getElementById('iconGridContainer');
+      container.innerHTML = '';
+      AVAILABLE_ICONS.forEach(iconObj => {
+        const div = document.createElement('div');
+        const isSel = iconObj.id === selectedIcon;
+        div.className = `p-2.5 rounded-2xl border text-center cursor-pointer transition-all flex flex-col items-center justify-center space-y-1 ${isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/40 text-blue-600' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'}`;
+        div.innerHTML = `<i data-lucide="${iconObj.id}" class="w-5 h-5"></i><span class="text-[10px] font-medium">${iconObj.label}</span>`;
+        div.onclick = () => {
+          state.selectedIconForModal = iconObj.id;
+          renderIconGrid(iconObj.id);
+        };
+        container.appendChild(div);
+      });
       lucide.createIcons();
+    }
+
+    document.getElementById('closeLotModalBtn').onclick = () => { document.getElementById('editLotModal').classList.add('hidden'); document.getElementById('editLotModal').classList.remove('flex'); };
+    document.getElementById('lotForm').onsubmit = (e) => {
+      e.preventDefault();
+      const lot = getActiveLot();
+      if (lot) {
+        lot.name = document.getElementById('lotInputName').value;
+        const surfVal = document.getElementById('lotInputSurface').value;
+        lot.surface = surfVal ? surfVal + ' m²' : '';
+        lot.icon = state.selectedIconForModal;
+      }
+      document.getElementById('editLotModal').classList.add('hidden');
+      document.getElementById('editLotModal').classList.remove('flex');
+      render();
+    };
+
+    // MODALE PROJET
+    document.getElementById('createNewProjectBtn').onclick = () => {
+      const newProj = {
+        id: 'proj_' + Date.now(),
+        name: 'Nouveau Projet',
+        client: '',
+        surfaceTotal: 0,
+        location: '',
+        status: 'En cours d\'aménagement',
+        activeLotId: null,
+        lots: []
+      };
+      state.projects.push(newProj);
+      state.activeProjectId = newProj.id;
+      openEditProjectModal(newProj);
+    };
+
+    function openEditProjectModal(proj) {
+      document.getElementById('projectInputName').value = proj.name || '';
+      document.getElementById('projectInputClient').value = proj.client || '';
+      document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
+      document.getElementById('projectInputLocation').value = proj.location || '';
+      document.getElementById('projectInputStatus').value = proj.status || 'En cours d\'aménagement';
+      document.getElementById('editProjectModal').classList.remove('hidden');
+      document.getElementById('editProjectModal').classList.add('flex');
+    }
+
+    document.getElementById('openEditProjectBtn').onclick = () => {
+      const proj = getActiveProject();
+      if(proj) openEditProjectModal(proj);
+    };
+
+    document.getElementById('closeProjectModalBtn').onclick = () => { document.getElementById('editProjectModal').classList.add('hidden'); document.getElementById('editProjectModal').classList.remove('flex'); };
+    document.getElementById('cancelProjectModalBtn').onclick = () => { document.getElementById('editProjectModal').classList.add('hidden'); document.getElementById('editProjectModal').classList.remove('flex'); };
+
+    document.getElementById('projectForm').onsubmit = (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (proj) {
+        proj.name = document.getElementById('projectInputName').value;
+        proj.client = document.getElementById('projectInputClient').value;
+        proj.surfaceTotal = parseInt(document.getElementById('projectInputSurface').value) || 0;
+        proj.location = document.getElementById('projectInputLocation').value;
+        proj.status = document.getElementById('projectInputStatus').value;
+      }
+      document.getElementById('editProjectModal').classList.add('hidden');
+      document.getElementById('editProjectModal').classList.remove('flex');
+      render();
+    };
+
+    // EXPORT & IMPORT JSON DE PROJETS
+    document.getElementById('exportProjectsBtn').onclick = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Sauvegarde_Projets_OrionBTP_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    };
+
+    document.getElementById('importProjectsBtn').onclick = () => document.getElementById('importProjectsInput').click();
+    document.getElementById('importProjectsInput').onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const imported = JSON.parse(evt.target.result);
+            if (Array.isArray(imported)) {
+              state.projects = imported;
+              if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
+              render();
+              alert('Projets importés avec succès !');
+            }
+          } catch(err) {
+            alert('Fichier JSON invalide.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+
+    // MENU UTILISATEUR & MODALES SECONDAIRES
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+    userMenuBtn.onclick = (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    };
+
+    window.onclick = () => {
+      if (!userDropdownMenu.classList.contains('hidden')) {
+        userDropdownMenu.classList.add('hidden');
+      }
+    };
+
+    document.getElementById('dropdownLoginBtn').onclick = () => {
+      userDropdownMenu.classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('hidden');
+      document.getElementById('loginModal').classList.add('flex');
+    };
+
+    document.getElementById('dropdownRegisterBtn').onclick = () => {
+      userDropdownMenu.classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('hidden');
+      document.getElementById('loginModal').classList.add('flex');
+    };
+
+    document.getElementById('closeLoginModalBtn').onclick = () => {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('flex');
+    };
+
+    document.getElementById('loginForm').onsubmit = (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      document.getElementById('headerUserName').textContent = email.split('@')[0];
+      document.getElementById('dropdownUserStatus').textContent = email;
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('flex');
+    };
+
+    document.getElementById('dropdownReportIssueBtn').onclick = () => {
+      userDropdownMenu.classList.add('hidden');
+      document.getElementById('reportIssueModal').classList.remove('hidden');
+      document.getElementById('reportIssueModal').classList.add('flex');
+    };
+
+    document.getElementById('closeReportIssueModalBtn').onclick = () => {
+      document.getElementById('reportIssueModal').classList.add('hidden');
+      document.getElementById('reportIssueModal').classList.remove('flex');
+    };
+
+    document.getElementById('reportIssueForm').onsubmit = (e) => {
+      e.preventDefault();
+      alert('Signalement transmis au support technique.');
+      document.getElementById('reportIssueModal').classList.add('hidden');
+      document.getElementById('reportIssueModal').classList.remove('flex');
+    };
+
+    document.getElementById('dropdownPrivacyBtn').onclick = () => {
+      userDropdownMenu.classList.add('hidden');
+      document.getElementById('privacyModal').classList.remove('hidden');
+      document.getElementById('privacyModal').classList.add('flex');
+    };
+
+    document.getElementById('closePrivacyModalBtn').onclick = () => {
+      document.getElementById('privacyModal').classList.add('hidden');
+      document.getElementById('privacyModal').classList.remove('flex');
+    };
+
+    document.getElementById('confirmPrivacyBtn').onclick = () => {
+      document.getElementById('privacyModal').classList.add('hidden');
+      document.getElementById('privacyModal').classList.remove('flex');
+    };
+
+    // INITIALISATION
+    window.addEventListener('DOMContentLoaded', () => {
+      if (state.projects.length > 0) {
+        state.activeProjectId = state.projects[0].id;
+      }
+      render();
     });
   </script>
 </body>
