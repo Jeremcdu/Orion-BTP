@@ -75,6 +75,16 @@
 
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="openReportConfigBtn" title="Rapports & Exports" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+          <span class="hidden sm:inline">Rapports</span>
+        </button>
+
+        <button id="openEditProjectBtn" title="Modifier le projet" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
+          <i data-lucide="settings" class="w-4 h-4 text-blue-500"></i>
+          <span class="hidden sm:inline">Paramètres</span>
+        </button>
+
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
@@ -107,11 +117,6 @@
                 <span>Se connecter</span>
               </button>
 
-              <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
-                <span>Espace Administration</span>
-              </button>
-
               <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
                 <span>Signaler un problème</span>
@@ -122,20 +127,14 @@
                 <span>Politique de confidentialité</span>
               </button>
             </div>
-
-            <div class="border-t border-slate-100 dark:border-slate-800 py-1">
-              <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-                <span>Se déconnecter</span>
-              </button>
-            </div>
           </div>
         </div>
 
       </div>
     </div>
   </header>
- <!-- MODAL : CONNEXION -->
+
+  <!-- MODAL : CONNEXION -->
   <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -191,7 +190,7 @@
         </div>
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Description de l'incident</label>
-          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement ou votre question..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
           <span>Envoyer le signalement</span>
@@ -218,9 +217,9 @@
       </div>
 
       <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-        <p><strong>1. Stockage Local :</strong> Les données de vos projets et plans importés sur Orion BTP sont conservées localement au niveau de votre navigateur afin d'assurer la confidentialité intégrale de vos chantiers.</p>
-        <p><strong>2. Données Personnelles :</strong> Aucune donnée confidentielle ou image d'inspection de réserve n'est partagée sans votre consentement préalable.</p>
-        <p><strong>3. Exports de Rapports :</strong> Tous les documents générés (.PDF, .DOC) restent sous votre pleine propriété.</p>
+        <p><strong>1. Stockage Local :</strong> Les données de vos projets et plans sont conservées en local sur votre navigateur afin d'assurer la confidentialité intégrale de vos chantiers.</p>
+        <p><strong>2. Données Personnelles :</strong> Aucune donnée confidentielle n'est partagée sans votre consentement préalable.</p>
+        <p><strong>3. Exports de Rapports :</strong> Tous les documents générés restent sous votre pleine propriété.</p>
       </div>
 
       <button id="confirmPrivacyBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
@@ -228,6 +227,7 @@
       </button>
     </div>
   </div>
+
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
@@ -236,7 +236,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets</h1>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gérez vos plans et le suivi de vos chantiers.</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gérez vos plans, réunions et le suivi de vos chantiers.</p>
         </div>
         
         <div class="flex flex-wrap items-center gap-2">
@@ -261,7 +261,156 @@
       <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
-    <!-- PROJECT VIEW -->
+    <!-- PROJECT HUB VIEW (CHOIX DU MODULE DU PROJET SELECTIONNE) -->
+    <div id="projectHubView" class="hidden space-y-6">
+      <section class="rounded-3xl p-6 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span id="hubStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
+            <h1 id="hubProjectName" class="text-2xl sm:text-3xl font-extrabold tracking-tight"></h1>
+            <p id="hubProjectLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1 mt-1">
+              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <span id="hubLocationText"></span>
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button id="hubEditProjectBtn" class="px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all flex items-center space-x-2 shadow-sm">
+              <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
+              <span>Modifier le projet</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="text-center sm:text-left py-2">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Choisissez un module de travail</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sélectionnez le module à utiliser pour ce chantier</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- MODULE 1 : LEVE DE RESERVES -->
+        <div id="selectModuleReserves" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i data-lucide="map-pin" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Levé de Réserves</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Importez vos plans PDF/images, positionnez des repères géolocalisés, annotez vos photos et générez des rapports d'inspection complets (PDF/Word).
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-blue-400">
+            <span>Ouvrir le module</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- MODULE 2 : REUNION DE CHANTIER -->
+        <div id="selectModuleReunion" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-indigo-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i data-lucide="users" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Réunion de Chantier</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Rédigez vos comptes-rendus de réunion (CR), gérez la liste de présence des intervenants, attribuez les consignes par entreprise et planifiez les réunions suivantes.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+            <span>Ouvrir le module</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE REUNION DE CHANTIER -->
+    <div id="reunionView" class="hidden space-y-6">
+      <section class="rounded-3xl p-5 sm:p-6 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">Module Réunion</span>
+            <span id="reunionProjectNameDisplay" class="text-xs font-bold text-slate-400"></span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1">Compte-Rendu de Chantier</h1>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="exportReunionPdfBtn" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs shadow-md shadow-indigo-500/20 transition-all flex items-center space-x-2">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Exporter le CR (PDF)</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+                <i data-lucide="calendar" class="w-5 h-5 text-indigo-500"></i>
+                <span>Détails de la Réunion</span>
+              </h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div>
+                <label class="block text-slate-500 font-medium mb-1">N° Réunion</label>
+                <input type="number" id="reunionInputNumber" value="1" min="1" class="w-full px-3 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+              </div>
+              <div>
+                <label class="block text-slate-500 font-medium mb-1">Date</label>
+                <input type="date" id="reunionInputDate" class="w-full px-3 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+              </div>
+              <div>
+                <label class="block text-slate-500 font-medium mb-1">Prochaine réunion</label>
+                <input type="date" id="reunionInputNextDate" class="w-full px-3 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-slate-500 font-medium mb-1 text-xs">Ordre du jour & Sujets principaux</label>
+              <input type="text" id="reunionInputSubject" placeholder="ex: Avancement du R+1, validation des choix faïence..." class="w-full px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none" />
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-xs uppercase text-slate-500">Remarques & Actions par entreprise</h4>
+                <button type="button" id="addReunionNoteBtn" class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-semibold text-xs hover:underline flex items-center space-x-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>Ajouter une remarque</span>
+                </button>
+              </div>
+
+              <div id="reunionNotesContainer" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+                <i data-lucide="user-check" class="w-5 h-5 text-indigo-500"></i>
+                <span>Feuille de Présence</span>
+              </h3>
+            </div>
+
+            <div id="reunionAttendeesContainer" class="space-y-2 text-xs"></div>
+
+            <div class="pt-2 flex items-center space-x-2">
+              <input type="text" id="newAttendeeName" placeholder="Nom / Entreprise..." class="flex-1 px-3 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none" />
+              <button type="button" id="addAttendeeBtn" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-medium text-xs hover:bg-indigo-500 transition-all">+ Ajouter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT VIEW (LEVE DE RESERVES) -->
     <div id="projectView" class="hidden flex-col space-y-6">
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg shadow-slate-200/40 dark:shadow-black/20 transition-all duration-300">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -445,16 +594,16 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="block text-slate-500 font-medium mb-1.5">Couleur principale du rapport</label>
+            <label class="block text-slate-500 font-medium mb-1.5">Couleur principale</label>
             <div class="flex items-center space-x-2">
               <input type="color" id="reportColorInput" value="#0071e3" class="w-10 h-10 rounded-xl border dark:border-slate-700 cursor-pointer p-1 bg-slate-50 dark:bg-slate-800" />
               <span id="reportColorHex" class="font-mono text-slate-600 dark:text-slate-300">#0071e3</span>
             </div>
           </div>
           <div>
-            <label class="block text-slate-500 font-medium mb-1.5">Mise en page des documents</label>
+            <label class="block text-slate-500 font-medium mb-1.5">Mise en page</label>
             <select id="reportLayoutSelect" class="w-full px-3 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-              <option value="standard">Standard Conforme Schéma</option>
+              <option value="standard">Standard Conforme</option>
               <option value="compact">Synthétique & Compact</option>
             </select>
           </div>
@@ -463,7 +612,7 @@
         <div>
           <label class="flex items-center space-x-2 cursor-pointer select-none pt-2">
             <input type="checkbox" id="reportIncludePhotosCheckbox" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 shrink-0" />
-            <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">Inclure les photos des réserves dans les rapports</span>
+            <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">Inclure les photos des réserves</span>
           </label>
         </div>
 
@@ -472,7 +621,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button type="button" id="exportPdfReportBtn" class="px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-2 shadow-md shadow-rose-500/20 transition-all text-xs sm:text-sm">
               <i data-lucide="file-text" class="w-4 h-4"></i>
-              <span>Rapport PDF / Impression</span>
+              <span>Rapport PDF</span>
             </button>
             <button type="button" id="exportWordReportBtn" class="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center justify-center space-x-2 shadow-md shadow-blue-500/20 transition-all text-xs sm:text-sm">
               <i data-lucide="file-code" class="w-4 h-4"></i>
@@ -492,7 +641,7 @@
           <div id="modalPinBadge" class="w-8 h-8 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-sm shadow shrink-0">1</div>
           <div>
             <h3 class="text-base sm:text-lg font-bold leading-tight">Gestion du repère / réserve</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Saisissez les détails et ajoutez/éditez vos photos</p>
+            <p class="text-[10px] sm:text-xs text-slate-400">Saisissez les détails et ajoutez vos photos</p>
           </div>
         </div>
         <button id="closePinModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -531,7 +680,6 @@
           </div>
         </div>
 
-        <!-- MULTIMEDIA & PHOTOS DESSINABLES -->
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Photos de la réserve (Annotables avec dessin)</label>
           <div class="flex flex-wrap items-center gap-2 mb-2">
@@ -550,8 +698,8 @@
         </div>
 
         <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Descriptif détaillé de la réserve</label>
-          <textarea id="pinInputDescription" rows="3" placeholder="Description technique, consignes, dimensions, matériel à remplacer..." class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <label class="block text-slate-500 font-medium mb-1.5">Descriptif détaillé</label>
+          <textarea id="pinInputDescription" rows="3" placeholder="Description technique, consignes, matériel à remplacer..." class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         </div>
 
         <div class="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t dark:border-slate-800">
@@ -576,7 +724,6 @@
   <div id="drawPhotoModal" class="hidden fixed inset-0 z-50 items-center justify-center p-3 sm:p-6 bg-slate-950/80 apple-glass">
     <div class="w-full max-w-4xl rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-4 sm:p-6 flex flex-col max-h-[95vh] space-y-4">
       
-      <!-- Toolbar dessin -->
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b dark:border-slate-800">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
@@ -585,7 +732,6 @@
           <h3 class="font-bold text-sm sm:text-base">Annoter la photo</h3>
         </div>
 
-        <!-- Selector outils -->
         <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl text-xs">
           <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-blue-600 text-white flex items-center space-x-1">
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
@@ -613,7 +759,6 @@
           </button>
         </div>
 
-        <!-- Couleurs & Épaisseur -->
         <div class="flex items-center space-x-3">
           <div class="flex items-center space-x-1">
             <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 border border-slate-300"></button>
@@ -631,12 +776,10 @@
         </div>
       </div>
 
-      <!-- Canvas Area -->
       <div class="flex-1 relative flex items-center justify-center overflow-hidden bg-slate-950 rounded-2xl p-2 min-h-[300px]">
         <canvas id="photoDrawCanvas" class="max-w-full max-h-[55vh] object-contain rounded-lg cursor-crosshair"></canvas>
       </div>
 
-      <!-- Bottom Actions -->
       <div class="flex items-center justify-between pt-2 border-t dark:border-slate-800">
         <div class="flex items-center space-x-2">
           <button type="button" id="undoDrawBtn" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium flex items-center space-x-1">
@@ -667,7 +810,7 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><i data-lucide="edit-3" class="w-4 h-4"></i></div>
-          <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Modifier le projet</h3>
+          <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Nouveau projet</h3>
         </div>
         <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
@@ -694,7 +837,6 @@
           </select>
         </div>
 
-        <!-- REMARQUE : BOUTON PHOTOS DU PROJET -->
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Photos du projet</label>
           <input type="file" id="projectPhotosInput" accept="image/*" multiple class="hidden" />
@@ -755,11 +897,11 @@
       { id: 'trees', label: 'Espace vert' }
     ];
 
-    const DEFAULT_COMPANIES = [];
+    const DEFAULT_COMPANIES = ['Gros Œuvre', 'Électricité', 'Plomberie', 'Peinture', 'Menuiserie'];
 
     const state = {
       darkMode: false,
-      currentView: 'home',
+      currentView: 'home', // 'home', 'projectHub', 'project', 'reunion'
       activeProjectId: null,
       availableCompanies: [...DEFAULT_COMPANIES],
       editingPinId: null,
@@ -782,7 +924,6 @@
 
     let currentProjectPhotosTemp = [];
 
-    // Global Drawing state
     const drawState = {
       activePhotoIndex: null,
       currentTool: 'pen',
@@ -818,19 +959,34 @@
     }
 
     function render() {
-      if (state.darkMode) { document.documentElement.classList.add('dark'); document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); } 
-      else { document.documentElement.classList.remove('dark'); document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); }
+      if (state.darkMode) { 
+        document.documentElement.classList.add('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
+      } else { 
+        document.documentElement.classList.remove('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
+      }
 
       const homeView = document.getElementById('homeView');
+      const projectHubView = document.getElementById('projectHubView');
       const projectView = document.getElementById('projectView');
-      const backBtn = document.getElementById('backToHomeBtn');
+      const reunionView = document.getElementById('reunionView');
+      
+      const backBtn = document.getElementById('backToPreviousBtn');
       const editProjBtn = document.getElementById('openEditProjectBtn');
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
 
-      if (state.currentView === 'home' || !getActiveProject()) {
+      // Masquer toutes les vues
+      homeView.classList.add('hidden');
+      projectHubView.classList.add('hidden');
+      projectView.classList.add('hidden');
+      projectView.classList.remove('flex');
+      reunionView.classList.add('hidden');
+
+      const activeProject = getActiveProject();
+
+      if (state.currentView === 'home' || !activeProject) {
         homeView.classList.remove('hidden');
-        projectView.classList.add('hidden');
-        projectView.classList.remove('flex');
         backBtn.classList.add('hidden');
         backBtn.classList.remove('inline-flex');
         editProjBtn.classList.add('hidden');
@@ -838,19 +994,37 @@
         openReportConfigBtn.classList.add('hidden');
         openReportConfigBtn.classList.remove('inline-flex');
         renderProjectsGrid();
-      } else {
-        homeView.classList.add('hidden');
+      } else if (state.currentView === 'projectHub') {
+        projectHubView.classList.remove('hidden');
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('inline-flex');
+        document.getElementById('backToPreviousText').textContent = "Mes projets";
+        editProjBtn.classList.add('hidden');
+        openReportConfigBtn.classList.add('hidden');
+        renderProjectHub();
+      } else if (state.currentView === 'project') {
         projectView.classList.remove('hidden');
         projectView.classList.add('flex');
         backBtn.classList.remove('hidden');
         backBtn.classList.add('inline-flex');
+        document.getElementById('backToPreviousText').textContent = "Choix du module";
         editProjBtn.classList.remove('hidden');
         editProjBtn.classList.add('inline-flex');
         openReportConfigBtn.classList.remove('hidden');
         openReportConfigBtn.classList.add('inline-flex');
         renderActiveProject();
+      } else if (state.currentView === 'reunion') {
+        reunionView.classList.remove('hidden');
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('inline-flex');
+        document.getElementById('backToPreviousText').textContent = "Choix du module";
+        editProjBtn.classList.remove('hidden');
+        editProjBtn.classList.add('inline-flex');
+        openReportConfigBtn.classList.add('hidden');
+        renderReunionModule();
       }
-      lucide.createIcons();
+
+      setTimeout(() => lucide.createIcons(), 10);
     }
 
     function renderProjectsGrid() {
@@ -916,12 +1090,35 @@
 
         card.addEventListener('click', () => {
           state.activeProjectId = proj.id;
-          state.currentView = 'project';
+          state.currentView = 'projectHub';
           render();
         });
         grid.appendChild(card);
       });
       lucide.createIcons();
+    }
+
+    function renderProjectHub() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      document.getElementById('hubProjectName').textContent = proj.name;
+      document.getElementById('hubLocationText').textContent = proj.location || 'Aucune adresse enregistrée';
+      document.getElementById('hubStatusBadge').textContent = proj.status || 'En cours';
+
+      document.getElementById('selectModuleReserves').onclick = () => {
+        state.currentView = 'project';
+        render();
+      };
+
+      document.getElementById('selectModuleReunion').onclick = () => {
+        state.currentView = 'reunion';
+        render();
+      };
+
+      document.getElementById('hubEditProjectBtn').onclick = () => {
+        openEditProjectModal(proj);
+      };
     }
 
     function renderActiveProject() {
@@ -1016,6 +1213,204 @@
       }
     }
 
+    // MODULE REUNION DE CHANTIER
+    function renderReunionModule() {
+      const proj = getActiveProject();
+      if (!proj) return;
+      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
+
+      if (!proj.reunion) {
+        proj.reunion = {
+          number: 1,
+          date: new Date().toISOString().slice(0, 10),
+          nextDate: '',
+          subject: '',
+          attendees: [
+            { name: 'Maître d\'Ouvrage / Client', status: 'present' },
+            { name: 'Architecte / Maitre d\'œuvre', status: 'present' }
+          ],
+          notes: []
+        };
+      }
+
+      const r = proj.reunion;
+      document.getElementById('reunionInputNumber').value = r.number || 1;
+      document.getElementById('reunionInputDate').value = r.date || '';
+      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
+      document.getElementById('reunionInputSubject').value = r.subject || '';
+
+      renderReunionAttendees();
+      renderReunionNotes();
+    }
+
+    function renderReunionAttendees() {
+      const proj = getActiveProject();
+      if (!proj || !proj.reunion) return;
+      const container = document.getElementById('reunionAttendeesContainer');
+      container.innerHTML = '';
+
+      proj.reunion.attendees.forEach((att, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border dark:border-slate-800';
+        item.innerHTML = `
+          <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[150px]">${att.name}</span>
+          <div class="flex items-center space-x-1">
+            <select class="att-status-select bg-white dark:bg-slate-900 border rounded px-1.5 py-0.5 text-[10px]">
+              <option value="present" ${att.status === 'present' ? 'selected' : ''}>Présent</option>
+              <option value="excused" ${att.status === 'excused' ? 'selected' : ''}>Excusé</option>
+              <option value="absent" ${att.status === 'absent' ? 'selected' : ''}>Absent</option>
+            </select>
+            <button class="remove-att-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+        `;
+
+        item.querySelector('.att-status-select').onchange = (e) => {
+          att.status = e.target.value;
+        };
+
+        item.querySelector('.remove-att-btn').onclick = () => {
+          proj.reunion.attendees.splice(idx, 1);
+          renderReunionAttendees();
+        };
+
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function renderReunionNotes() {
+      const proj = getActiveProject();
+      if (!proj || !proj.reunion) return;
+      const container = document.getElementById('reunionNotesContainer');
+      container.innerHTML = '';
+
+      if (proj.reunion.notes.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl">Aucune remarque consignée pour cette réunion.</p>`;
+        return;
+      }
+
+      proj.reunion.notes.forEach((note, idx) => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-2xl border dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2 text-xs';
+        div.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" value="${note.company || ''}" placeholder="Lot / Entreprise..." class="note-company-input px-2.5 py-1 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold w-1/2 outline-none" />
+            <button class="remove-note-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+          <textarea placeholder="Remarque, décision ou action à mener..." class="note-text-input w-full p-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 outline-none text-xs" rows="2">${note.text || ''}</textarea>
+        `;
+
+        div.querySelector('.note-company-input').onchange = (e) => { note.company = e.target.value; };
+        div.querySelector('.note-text-input').onchange = (e) => { note.text = e.target.value; };
+        div.querySelector('.remove-note-btn').onclick = () => {
+          proj.reunion.notes.splice(idx, 1);
+          renderReunionNotes();
+        };
+
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    document.getElementById('addAttendeeBtn').onclick = () => {
+      const input = document.getElementById('newAttendeeName');
+      const val = input.value.trim();
+      if (val) {
+        const proj = getActiveProject();
+        if (proj && proj.reunion) {
+          proj.reunion.attendees.push({ name: val, status: 'present' });
+          input.value = '';
+          renderReunionAttendees();
+        }
+      }
+    };
+
+    document.getElementById('addReunionNoteBtn').onclick = () => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) {
+        proj.reunion.notes.push({ company: '', text: '' });
+        renderReunionNotes();
+      }
+    };
+
+    // EXPORT PDF COMPTE-RENDU REUNION
+    document.getElementById('exportReunionPdfBtn').onclick = () => {
+      const proj = getActiveProject();
+      if (!proj || !proj.reunion) return;
+      const r = proj.reunion;
+
+      const printWin = window.open('', '_blank');
+      if (!printWin) return alert('Veuillez autoriser les popups.');
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Compte-Rendu N°${r.number} - ${proj.name}</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; font-size: 12px; color: #1e293b; line-height: 1.5; }
+            h1 { font-size: 20px; border-bottom: 2px solid #4f46e5; padding-bottom: 8px; color: #312e81; }
+            .meta { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+            th { background: #f1f5f9; }
+          </style>
+        </head>
+        <body>
+          <h1>Compte-Rendu de Réunion N°${r.number}</h1>
+          <div class="meta">
+            <div class="grid">
+              <div><strong>Projet :</strong> ${proj.name}</div>
+              <div><strong>Date :</strong> ${r.date || 'Non précisée'}</div>
+              <div><strong>Lieu :</strong> ${proj.location || 'Chantier'}</div>
+              <div><strong>Prochaine Réunion :</strong> ${r.nextDate || 'À déterminer'}</div>
+            </div>
+            <div style="margin-top:10px;"><strong>Ordre du jour :</strong> ${r.subject || 'Suivi général'}</div>
+          </div>
+
+          <h3>1. Présences & Intervenants</h3>
+          <table>
+            <thead><tr><th>Nom / Entreprise</th><th>Statut</th></tr></thead>
+            <tbody>
+              ${r.attendees.map(a => `<tr><td>${a.name}</td><td>${a.status.toUpperCase()}</td></tr>`).join('')}
+            </tbody>
+          </table>
+
+          <h3>2. Remarques & Actions à mener</h3>
+          <table>
+            <thead><tr><th style="width:25%;">Entreprise / Lot</th><th>Remarques & Consignes</th></tr></thead>
+            <tbody>
+              ${r.notes.map(n => `<tr><td><strong>${n.company || 'Général'}</strong></td><td>${n.text || '-'}</td></tr>`).join('')}
+            </tbody>
+          </table>
+
+          <div style="margin-top:30px; text-align:center;">
+            <button onclick="window.print()" style="padding:10px 20px; background:#4f46e5; color:white; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">Imprimer / Sauvegarder en PDF</button>
+          </div>
+        </body>
+        </html>
+      `;
+
+      printWin.document.write(html);
+      printWin.document.close();
+    };
+
+    // EVENTS NAVIGATION
+    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
+      if (state.currentView === 'project' || state.currentView === 'reunion') {
+        state.currentView = 'projectHub';
+      } else if (state.currentView === 'projectHub') {
+        state.currentView = 'home';
+      }
+      render();
+    });
+
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'home';
+      render();
+    });
+
     document.getElementById('lotSelect').addEventListener('change', (e) => {
       const proj = getActiveProject();
       if(proj && e.target.value) {
@@ -1070,18 +1465,10 @@
         
         const isCompleted = (pin.progress || 0) == 100;
         const colorClass = isCompleted ? 'bg-emerald-500' : 'bg-rose-500';
-        const companiesCount = (pin.companies && pin.companies.length) || 0;
-        const photosCount = (pin.photos && pin.photos.length) || 0;
 
         pinEl.innerHTML = `
           <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-white font-bold text-[10px] sm:text-xs shadow-lg ring-4 ring-white dark:ring-slate-900 transition-transform hover:scale-125 ${colorClass}">
             ${pin.number || 1}
-          </div>
-          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-start bg-slate-900/90 text-white text-xs py-2 px-3 rounded-xl backdrop-blur-md shadow-2xl whitespace-nowrap z-30 space-y-0.5">
-            <span class="font-bold">${pin.title || 'Réserve n°' + pin.number}</span>
-            <span class="text-[10px] text-slate-300">Avancement : ${pin.progress || 0}%</span>
-            ${photosCount > 0 ? `<span class="text-[10px] text-emerald-300">${photosCount} photo(s) attachée(s)</span>` : ''}
-            ${companiesCount > 0 ? `<span class="text-[10px] text-blue-300">${companiesCount} lot(s) / entreprise(s)</span>` : ''}
           </div>
         `;
 
@@ -1105,35 +1492,22 @@
 
       lot.pins.forEach(pin => {
         const item = document.createElement('div');
-        item.className = 'p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer space-y-2';
+        item.className = 'p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer space-y-1';
         
         const isCompleted = (pin.progress || 0) == 100;
         const colorClass = isCompleted ? 'bg-emerald-500' : 'bg-rose-500';
-        const companies = pin.companies || [];
-        const photos = pin.photos || [];
 
         item.innerHTML = `
-          <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center justify-between gap-2">
             <div class="flex items-center space-x-2 truncate">
               <div class="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ${colorClass}">
                 ${pin.number}
               </div>
               <span class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate">${pin.title}</span>
             </div>
-            <div class="flex items-center space-x-1 shrink-0">
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'}">
-                ${pin.progress || 0}%
-              </span>
-            </div>
-          </div>
-
-          ${pin.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 italic">${pin.description}</p>` : ''}
-
-          <div class="flex flex-wrap items-center justify-between gap-1 pt-1">
-            <div class="flex flex-wrap gap-1">
-              ${companies.map(c => `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium truncate max-w-[130px]">${c}</span>`).join('')}
-            </div>
-            ${photos.length > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 font-medium flex items-center"><i data-lucide="image" class="w-3 h-3 mr-1 shrink-0"></i>${photos.length}</span>` : ''}
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-500'}">
+              ${pin.progress || 0}%
+            </span>
           </div>
         `;
 
@@ -1143,419 +1517,183 @@
       lucide.createIcons();
     }
 
-    // GENERATION DE L'IMAGE COMPOSITE DU PLAN AVEC REPERES (POUR RAPPORT PDF)
-    function generateCompositePlanImage(lot) {
-      return new Promise((resolve) => {
-        if (!lot || !lot.planImage) return resolve(null);
-        
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          
-          // Dessin du plan
-          ctx.drawImage(img, 0, 0);
+    // GESTION DU CANVAS ET PLACEMENT D'ÉPINGLES
+    const activeCanvas = document.getElementById('activeCanvas');
+    activeCanvas.addEventListener('click', (e) => {
+      if (state.activeTool !== 'pin') return;
+      const img = document.getElementById('planImageView');
+      const rect = img.getBoundingClientRect();
 
-          // Dessin des pastilles de repères sur le plan
-          if (lot.pins && lot.pins.length > 0) {
-            lot.pins.forEach(pin => {
-              const px = (pin.x / 100) * img.width;
-              const py = (pin.y / 100) * img.height;
-              const radius = Math.max(14, Math.min(img.width, img.height) * 0.02);
+      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
 
-              // Cercles
-              ctx.beginPath();
-              ctx.arc(px, py, radius, 0, 2 * Math.PI);
-              ctx.fillStyle = (pin.progress == 100) ? '#10b981' : '#f43f5e';
-              ctx.fill();
-              ctx.lineWidth = radius * 0.25;
-              ctx.strokeStyle = '#ffffff';
-              ctx.stroke();
+      if (xPercent >= 0 && xPercent <= 100 && yPercent >= 0 && yPercent <= 100) {
+        const lot = getActiveLot();
+        if (!lot) return;
+        if (!lot.pins) lot.pins = [];
 
-              // Numéro
-              ctx.fillStyle = '#ffffff';
-              ctx.font = `bold ${radius * 1.1}px sans-serif`;
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(pin.number || '1', px, py);
-            });
-          }
-          resolve(canvas.toDataURL('image/png'));
+        const newPin = {
+          id: 'pin_' + Date.now(),
+          number: lot.pins.length + 1,
+          x: Math.round(xPercent * 100) / 100,
+          y: Math.round(yPercent * 100) / 100,
+          title: `Réserve n°${lot.pins.length + 1}`,
+          progress: 0,
+          description: '',
+          companies: [],
+          photos: []
         };
-        img.onerror = () => resolve(null);
-        img.src = lot.planImage;
-      });
-    }
 
-    // CONFIGURATION ET GENERATION RAPPORTS
-    const reportConfigModal = document.getElementById('reportConfigModal');
-    
-    document.getElementById('openReportConfigBtn').addEventListener('click', () => {
-      reportConfigModal.classList.remove('hidden');
-      reportConfigModal.classList.add('flex');
+        lot.pins.push(newPin);
+        render();
+        openPinModal(newPin);
+      }
     });
 
-    document.getElementById('closeReportConfigBtn').addEventListener('click', () => {
-      reportConfigModal.classList.add('hidden');
-      reportConfigModal.classList.remove('flex');
-    });
+    document.getElementById('toolSelectBtn').onclick = () => { state.activeTool = 'select'; render(); };
+    document.getElementById('toolPinBtn').onclick = () => { state.activeTool = 'pin'; render(); };
 
-    const logoFileInput = document.getElementById('logoFileInput');
-    document.getElementById('uploadLogoBtn').addEventListener('click', () => logoFileInput.click());
+    // IMPORT DE PLAN (PDF/IMAGE)
+    const fileInput = document.getElementById('fileInput');
+    document.getElementById('importPlanBtn').onclick = () => fileInput.click();
+    document.getElementById('replacePlanBtn').onclick = () => fileInput.click();
 
-    logoFileInput.addEventListener('change', (e) => {
+    fileInput.addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
-      if(file) {
+      if (!file) return;
+
+      const lot = getActiveLot();
+      if (!lot) return;
+
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+          const typedarray = new Uint8Array(this.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 2 });
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+                lot.planImage = canvas.toDataURL('image/png');
+                render();
+              });
+            });
+          });
+        };
+        fileReader.readAsArrayBuffer(file);
+      } else {
         const reader = new FileReader();
         reader.onload = (evt) => {
-          state.reportConfig.logoUrl = evt.target.result;
-          updateLogoPreview();
+          lot.planImage = evt.target.result;
+          render();
         };
         reader.readAsDataURL(file);
       }
     });
 
-    document.getElementById('removeLogoBtn').addEventListener('click', () => {
-      state.reportConfig.logoUrl = '';
-      updateLogoPreview();
-    });
+    // MODALE PROJET
+    function openEditProjectModal(proj) {
+      state.projectModalMode = proj ? 'edit' : 'create';
+      document.getElementById('projectModalTitle').textContent = proj ? 'Modifier le projet' : 'Créer un nouveau projet';
+      document.getElementById('projectInputName').value = proj ? proj.name : '';
+      document.getElementById('projectInputClient').value = proj ? (proj.client || '') : '';
+      document.getElementById('projectInputSurface').value = proj ? (proj.surfaceTotal || '') : '';
+      document.getElementById('projectInputLocation').value = proj ? (proj.location || '') : '';
+      document.getElementById('projectInputStatus').value = proj ? proj.status : 'En conception';
 
-    function updateLogoPreview() {
-      const container = document.getElementById('logoPreviewContainer');
-      const removeBtn = document.getElementById('removeLogoBtn');
-      if(state.reportConfig.logoUrl) {
-        container.innerHTML = `<img src="${state.reportConfig.logoUrl}" class="w-full h-full object-contain" alt="Logo" />`;
-        removeBtn.classList.remove('hidden');
-      } else {
-        container.innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucun logo</span>`;
-        removeBtn.classList.add('hidden');
-      }
+      document.getElementById('editProjectModal').classList.remove('hidden');
+      document.getElementById('editProjectModal').classList.add('flex');
     }
 
-    const reportColorInput = document.getElementById('reportColorInput');
-    const reportColorHex = document.getElementById('reportColorHex');
-    reportColorInput.addEventListener('input', (e) => {
-      state.reportConfig.primaryColor = e.target.value;
-      reportColorHex.textContent = e.target.value;
-    });
+    document.getElementById('createNewProjectBtn').onclick = () => openEditProjectModal(null);
+    document.getElementById('closeProjectModalBtn').onclick = () => {
+      document.getElementById('editProjectModal').classList.add('hidden');
+      document.getElementById('editProjectModal').classList.remove('flex');
+    };
+    document.getElementById('cancelProjectModalBtn').onclick = () => {
+      document.getElementById('editProjectModal').classList.add('hidden');
+      document.getElementById('editProjectModal').classList.remove('flex');
+    };
 
-    document.getElementById('reportLayoutSelect').addEventListener('change', (e) => {
-      state.reportConfig.layoutStyle = e.target.value;
-    });
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('projectInputName').value;
+      const client = document.getElementById('projectInputClient').value;
+      const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const location = document.getElementById('projectInputLocation').value;
+      const status = document.getElementById('projectInputStatus').value;
 
-    document.getElementById('reportIncludePhotosCheckbox').addEventListener('change', (e) => {
-      state.reportConfig.includePhotos = e.target.checked;
-    });
-
-    // EXPORT PDF RAPPORT AVEC REMARQUES DE MISE EN PAGE ET SANS CADRES NOIRS
-    document.getElementById('exportPdfReportBtn').addEventListener('click', async () => {
-      const proj = getActiveProject();
-      if(!proj) return;
-      const config = state.reportConfig;
-
-      const printWin = window.open('', '_blank');
-      if(!printWin) return alert('Veuillez autoriser les fenêtres surgissantes (popups) pour générer le rapport.');
-
-      const todayStr = '28/07/2026';
-
-      // Génération des vues composites des plans
-      const planComposites = {};
-      if(proj.lots && proj.lots.length > 0) {
-        for(let lot of proj.lots) {
-          planComposites[lot.id] = await generateCompositePlanImage(lot);
+      if (state.projectModalMode === 'create') {
+        const newProj = {
+          id: 'proj_' + Date.now(),
+          name, client, surfaceTotal: surface, location, status,
+          lots: [{ id: 'lot_1', name: 'Zone 1', icon: 'building-2', surface: '', planImage: null, pins: [] }],
+          activeLotId: 'lot_1'
+        };
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
+        state.currentView = 'projectHub';
+      } else {
+        const proj = getActiveProject();
+        if (proj) {
+          proj.name = name; proj.client = client; proj.surfaceTotal = surface;
+          proj.location = location; proj.status = status;
         }
       }
 
-      const totalPages = (proj.lots ? proj.lots.length : 0) + 1;
+      document.getElementById('editProjectModal').classList.add('hidden');
+      document.getElementById('editProjectModal').classList.remove('flex');
+      render();
+    });
 
-      // REMARQUE : En-tête tout ce qui est au-dessus du trait marron/couleur inclus
-      const headerHtml = `
-        <table class="header-table">
-          <tr>
-            <td>
-              <h1 class="header-title">Rapport de Chantiers & Réserves</h1>
-            </td>
-            <td style="text-align: right;">
-              <div class="logo-box">
-                ${config.logoUrl ? `<img src="${config.logoUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" />` : ''}
-              </div>
-            </td>
-          </tr>
-        </table>
-      `;
+    // MODALE ZONE / LOT
+    function openEditLotModal(lot) {
+      state.editingLotId = lot.id;
+      document.getElementById('lotInputName').value = lot.name || '';
+      document.getElementById('lotInputSurface').value = lot.surface ? lot.surface.replace('m²', '').trim() : '';
 
-      // REMARQUE : Intitulé dans le pied de page
-      const footerHtml = (pageNum) => `
-        <div class="page-footer">
-          Généré via M78 (orion BTP) le ${todayStr}
-          <div class="page-num">${pageNum} / ${totalPages}</div>
-        </div>
-      `;
+      const grid = document.getElementById('iconGridContainer');
+      grid.innerHTML = '';
+      AVAILABLE_ICONS.forEach(ic => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-2 rounded-xl border flex flex-col items-center space-y-1 text-xs ${lot.icon === ic.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600' : 'border-slate-200 dark:border-slate-700'}`;
+        btn.innerHTML = `<i data-lucide="${ic.id}" class="w-5 h-5"></i><span>${ic.label}</span>`;
+        btn.onclick = () => {
+          lot.icon = ic.id;
+          openEditLotModal(lot);
+        };
+        grid.appendChild(btn);
+      });
 
-      // REMARQUE : Première photo du projet
-      const firstProjectPhoto = (proj.photos && proj.photos.length > 0) ? proj.photos[0] : null;
+      document.getElementById('editLotModal').classList.remove('hidden');
+      document.getElementById('editLotModal').classList.add('flex');
+      lucide.createIcons();
+    }
 
-      let html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Rapport de Chantiers & Réserves - ${proj.name}</title>
-          <style>
-            @page { size: A4; margin: 15mm; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; color: #1e293b; line-height: 1.4; font-size: 12px; }
-            
-            /* REMARQUE : En-tête avec la ligne de couleur (primaryColor) */
-            .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 12px; }
-            .header-title { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; }
-            
-            /* REMARQUE : Suppression du cadre noir sur le logo */
-            .logo-box { width: 180px; height: 60px; display: flex; align-items: center; justify-content: flex-end; text-align: right; font-weight: bold; font-size: 12px; float: right; overflow: hidden; }
-            
-            .meta-card { background: #f8fafc; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-            .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; }
-            .meta-item { font-size: 11px; }
-            .meta-item strong { color: #334155; }
+    document.getElementById('closeLotModalBtn').onclick = () => {
+      document.getElementById('editLotModal').classList.add('hidden');
+      document.getElementById('editLotModal').classList.remove('flex');
+    };
 
-            /* REMARQUE : Suppression du cadre noir sur la photo du projet */
-            .project-photo-box { width: 85%; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #000; background: transparent; text-align: center; }
-
-            .page-footer { text-align: center; font-size: 10px; color: #64748b; margin-top: 20px; margin-bottom: 10px; }
-            .page-footer .page-num { font-weight: bold; color: #0f172a; margin-top: 4px; }
-
-            .zone-header { font-size: 18px; color: ${config.primaryColor}; font-weight: 700; margin-top: 20px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-
-            table.reserves-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-            table.reserves-table th, table.reserves-table td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
-            table.reserves-table th { background-color: #f1f5f9; font-weight: 700; color: #334155; text-align: left; }
-
-            .badge-progress { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; background-color: #ffe4e6; color: #e11d48; text-align: center; }
-            .badge-success { background-color: #dcfce7; color: #15803d; }
-
-            .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; margin-right: 4px; margin-bottom: 4px; }
-
-            /* REMARQUE : Suppression du cadre noir sur la photo de la zone / plan */
-            .plan-box { width: 90%; min-height: 220px; margin: 20px auto; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; font-size: 16px; background: transparent; padding: 8px; }
-            .plan-box img { max-width: 100%; max-height: 380px; object-fit: contain; }
-
-            .page-break { page-break-after: always; }
-            @media print { button { display: none !important; } }
-          </style>
-        </head>
-        <body>
-
-          <!-- PAGE 1 : COUVERTURE AVEC EN-TETE ET PIED DE PAGE -->
-          ${headerHtml}
-
-          <div class="meta-card">
-            <div class="meta-grid">
-              <div class="meta-item"><strong>Projet :</strong> ${proj.name}</div>
-              <div class="meta-item"><strong>Client :</strong> ${proj.client || 'Non renseigné'}</div>
-              <div class="meta-item"><strong>Adresse :</strong> ${proj.location || 'Non renseignée'}</div>
-              <div class="meta-item"><strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</div>
-              <div class="meta-item"><strong>Statut :</strong> ${proj.status || 'En cours'}</div>
-              <div class="meta-item"><strong>Total zones :</strong> ${proj.lots ? proj.lots.length : 0}</div>
-            </div>
-          </div>
-
-          <!-- REMARQUE : PREMIERE PHOTO DU PROJET SANS CADRE NOIR -->
-          <div class="project-photo-box">
-            ${firstProjectPhoto ? `<img src="${firstProjectPhoto}" style="max-width:100%; max-height:260px; object-fit:contain;" />` : ''}
-          </div>
-
-          ${footerHtml(1)}
-
-          <div class="page-break"></div>
-      `;
-
-      // PAGES PAR ZONE / LOGEMENT AVEC EN-TETE ET PIED DE PAGE REPETE
-      if (proj.lots && proj.lots.length > 0) {
-        proj.lots.forEach((lot, idx) => {
-          const pinsCount = lot.pins ? lot.pins.length : 0;
-          const compositeImg = planComposites[lot.id];
-
-          html += `
-            ${headerHtml}
-
-            <div class="zone-header">${lot.name} (${lot.surface || 'N/A'}) - ${pinsCount} réserve(s)</div>
-          `;
-
-          if (!lot.pins || lot.pins.length === 0) {
-            html += `<p style="color: #94a3b8; font-style: italic; margin-bottom: 20px;">Aucune réserve enregistrée pour cette zone.</p>`;
-          } else {
-            html += `
-              <table class="reserves-table">
-                <thead>
-                  <tr>
-                    <th style="width: 18%;">Entreprises</th>
-                    <th style="width: 5%; text-align: center;">N°</th>
-                    <th style="width: 18%;">Intitulé</th>
-                    <th style="width: 24%;">Description</th>
-                    ${config.includePhotos ? '<th style="width: 15%;">Photos</th>' : ''}
-                    <th style="width: 12%;">Dates</th>
-                    <th style="width: 8%; text-align: center;">Avancement</th>
-                  </tr>
-                </thead>
-                <tbody>
-            `;
-
-            lot.pins.forEach(pin => {
-              const isDone = (pin.progress || 0) == 100;
-              const companiesText = (pin.companies && pin.companies.length) ? pin.companies.join(', ') : '-';
-              
-              html += `
-                <tr>
-                  <td>${companiesText}</td>
-                  <td style="text-align: center; font-weight: bold;">${pin.number}</td>
-                  <td><strong>${pin.title}</strong></td>
-                  <td>${pin.description || '-'}</td>
-                  ${config.includePhotos ? `
-                    <td>
-                      ${(pin.photos && pin.photos.length) ? pin.photos.map(p => `<img src="${p}" class="photo-thumb" />`).join('') : '-'}
-                    </td>
-                  ` : ''}
-                  <td style="font-size: 10px; line-height: 1.3;">
-                    <strong>posé le :</strong> ${todayStr}<br/>
-                    <strong>constaté le :</strong> ${todayStr}
-                  </td>
-                  <td style="text-align: center;">
-                    <span class="badge-progress ${isDone ? 'badge-success' : ''}">${pin.progress || 0}%</span>
-                  </td>
-                </tr>
-              `;
-            });
-
-            html += `</tbody></table>`;
-          }
-
-          // PLAN DU LOGEMENT SANS CADRE NOIR
-          html += `
-            <div class="plan-box">
-              ${compositeImg ? `<img src="${compositeImg}" />` : ''}
-            </div>
-
-            ${footerHtml(idx + 2)}
-          `;
-
-          if (idx < proj.lots.length - 1) {
-            html += `<div class="page-break"></div>`;
-          }
-        });
+    document.getElementById('lotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lot = getActiveLot();
+      if (lot) {
+        lot.name = document.getElementById('lotInputName').value;
+        const surf = document.getElementById('lotInputSurface').value;
+        lot.surface = surf ? `${surf} m²` : '';
       }
-
-      html += `
-          <div style="margin-top: 30px; text-align: center;">
-            <button onclick="window.print()" style="padding: 12px 24px; background: ${config.primaryColor}; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">Imprimer / Enregistrer en PDF</button>
-          </div>
-        </body>
-        </html>
-      `;
-
-      printWin.document.write(html);
-      printWin.document.close();
-      reportConfigModal.classList.add('hidden');
-      reportConfigModal.classList.remove('flex');
+      document.getElementById('editLotModal').classList.add('hidden');
+      document.getElementById('editLotModal').classList.remove('flex');
+      render();
     });
 
-    // EXPORT WORD (.doc)
-    document.getElementById('exportWordReportBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if(!proj) return;
-      const config = state.reportConfig;
-
-      let wordHtml = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-        <head><meta charset="utf-8"><title>Rapport - ${proj.name}</title></head>
-        <body style="font-family: Arial, sans-serif; color: #1e293b; padding: 20px; line-height: 1.5;">
-          ${config.logoUrl ? `<div style="text-align:right; margin-bottom:20px;"><img src="${config.logoUrl}" style="max-height:80px;" /></div>` : ''}
-          <h1 style="color: ${config.primaryColor}; border-bottom: 2px solid ${config.primaryColor}; padding-bottom: 10px;">Rapport de Chantiers & Réserves</h1>
-          <p><strong>Projet :</strong> ${proj.name} | <strong>Client :</strong> ${proj.client || 'N/A'}</p>
-          <p><strong>Adresse :</strong> ${proj.location || 'N/A'} | <strong>Surface :</strong> ${proj.surfaceTotal || 0} m²</p>
-          <hr style="border:0; border-top:1px solid #ccc; margin: 20px 0;"/>
-      `;
-
-      if (proj.lots && proj.lots.length > 0) {
-        proj.lots.forEach(lot => {
-          wordHtml += `<h2 style="color: ${config.primaryColor}; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px;">${lot.name} (${lot.surface || 'N/A'})</h2>`;
-          if (!lot.pins || lot.pins.length === 0) {
-            wordHtml += `<p style="color: #666; font-style: italic;">Aucune réserve enregistrée.</p>`;
-          } else {
-            lot.pins.forEach(pin => {
-              const isDone = (pin.progress || 0) == 100;
-              wordHtml += `
-                <div style="border: 1px solid #cbd5e1; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8fafc;">
-                  <h3 style="margin: 0 0 8px 0; color: #0f172a;">N°${pin.number} - ${pin.title} <span style="font-size: 11px; font-weight: normal; color: ${isDone ? '#166534' : '#991b1b'};">(${pin.progress || 0}%)</span></h3>
-                  <p style="margin: 4px 0;"><strong>Description :</strong> ${pin.description || 'Aucune'}</p>
-                  <p style="margin: 4px 0;"><strong>Entreprises :</strong> ${(pin.companies && pin.companies.length) ? pin.companies.join(', ') : 'Aucune'}</p>
-                  ${config.includePhotos && pin.photos && pin.photos.length > 0 ? `
-                    <div style="margin-top: 10px;">
-                      <strong>Photos :</strong><br/>
-                      ${pin.photos.map(p => `<img src="${p}" style="width: 100px; height: 100px; object-fit: cover; margin-right: 6px; margin-top: 6px; border: 1px solid #ccc;" />`).join('')}
-                    </div>
-                  ` : ''}
-                </div>
-              `;
-            });
-          }
-        });
-      }
-
-      wordHtml += `</body></html>`;
-
-      const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword' });
-      const url = URL.createObjectURL(blob);
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.href = url;
-      downloadAnchor.download = `Rapport_${proj.name.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-
-      reportConfigModal.classList.add('hidden');
-      reportConfigModal.classList.remove('flex');
-    });
-
-    // EXPORT / IMPORT PROJETS (JSON)
-    document.getElementById('exportProjectsBtn').addEventListener('click', () => {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `M78_Sauvegarde_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    });
-
-    const importProjectsInput = document.getElementById('importProjectsInput');
-    document.getElementById('importProjectsBtn').addEventListener('click', () => importProjectsInput.click());
-
-    importProjectsInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        try {
-          const imported = JSON.parse(evt.target.result);
-          if (Array.isArray(imported)) {
-            state.projects = imported;
-            state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
-            render();
-            alert("Projets importés avec succès !");
-          } else {
-            alert("Fichier JSON invalide.");
-          }
-        } catch(err) {
-          alert("Erreur lors de la lecture du fichier de sauvegarde JSON.");
-        }
-      };
-      reader.readAsText(file);
-      e.target.value = '';
-    });
-
-    // MODALE REPERE & MULTIMEDIA DESSIN
+    // MODALE REPERE / PIN
     const editPinModal = document.getElementById('editPinModal');
 
     function openPinModal(pin) {
@@ -1580,11 +1718,6 @@
     function renderPinCompaniesCheckboxes(assignedCompanies) {
       const container = document.getElementById('pinCompaniesList');
       container.innerHTML = '';
-
-      if (state.availableCompanies.length === 0) {
-        container.innerHTML = `<span class="text-[11px] text-slate-400 italic col-span-2">Aucun lot/entreprise défini. Saisissez-en un ci-dessous.</span>`;
-        return;
-      }
 
       state.availableCompanies.forEach((companyName) => {
         const isChecked = assignedCompanies.includes(companyName);
@@ -1613,25 +1746,13 @@
         wrapper.innerHTML = `
           <img src="${photoSrc}" class="w-full h-full object-cover" />
           <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
-            <button type="button" class="p-1.5 rounded-lg bg-blue-600 text-white edit-photo-btn" title="Annoter / Dessiner">
-              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-            </button>
-            <button type="button" class="p-1.5 rounded-lg bg-rose-600 text-white remove-photo-btn" title="Supprimer">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
+            <button type="button" class="p-1.5 rounded-lg bg-blue-600 text-white edit-photo-btn" title="Annoter"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="p-1.5 rounded-lg bg-rose-600 text-white remove-photo-btn" title="Supprimer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         `;
 
-        wrapper.querySelector('.edit-photo-btn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          openDrawModal(photoSrc, idx);
-        });
-
-        wrapper.querySelector('.remove-photo-btn').addEventListener('click', (e) => {
-          e.stopPropagation();
-          photos.splice(idx, 1);
-          renderPinPhotos(photos);
-        });
+        wrapper.querySelector('.edit-photo-btn').onclick = (e) => { e.stopPropagation(); openDrawModal(photoSrc, idx); };
+        wrapper.querySelector('.remove-photo-btn').onclick = (e) => { e.stopPropagation(); photos.splice(idx, 1); renderPinPhotos(photos); };
 
         container.appendChild(wrapper);
       });
@@ -1656,53 +1777,22 @@
       });
     }
 
-    document.getElementById('pinGalleryInput').addEventListener('change', (e) => {
-      handlePhotoFiles(e.target.files);
-      e.target.value = '';
-    });
+    document.getElementById('pinGalleryInput').onchange = (e) => { handlePhotoFiles(e.target.files); e.target.value = ''; };
+    document.getElementById('pinCameraInput').onchange = (e) => { handlePhotoFiles(e.target.files); e.target.value = ''; };
 
-    document.getElementById('pinCameraInput').addEventListener('change', (e) => {
-      handlePhotoFiles(e.target.files);
-      e.target.value = '';
-    });
+    document.getElementById('closePinModalBtn').onclick = () => { editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex'); };
+    document.getElementById('cancelPinModalBtn').onclick = () => { editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex'); };
 
-    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
-      document.getElementById('pinInputProgress').value = e.target.value;
-    });
-
-    document.getElementById('addCompanyBtn').addEventListener('click', () => {
-      const input = document.getElementById('newCompanyInput');
-      const val = input.value.trim();
-      if (val) {
-        if (!state.availableCompanies.includes(val)) {
-          state.availableCompanies.push(val);
-        }
-        const currentChecked = Array.from(document.querySelectorAll('.pin-company-checkbox:checked')).map(cb => cb.value);
-        currentChecked.push(val);
-        renderPinCompaniesCheckboxes(currentChecked);
-        input.value = '';
-      }
-    });
-
-    const closePinModal = () => {
-      editPinModal.classList.add('hidden');
-      editPinModal.classList.remove('flex');
-      state.editingPinId = null;
-    };
-
-    document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
-    document.getElementById('cancelPinModalBtn').addEventListener('click', closePinModal);
-
-    document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
+    document.getElementById('deletePinFromModalBtn').onclick = () => {
       const lot = getActiveLot();
       if (lot && lot.pins && state.editingPinId) {
         lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
-        closePinModal();
+        editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex');
         render();
       }
-    });
+    };
 
-    document.getElementById('pinForm').addEventListener('submit', (e) => {
+    document.getElementById('pinForm').onsubmit = (e) => {
       e.preventDefault();
       const lot = getActiveLot();
       if (!lot) return;
@@ -1716,14 +1806,15 @@
         pin.companies = Array.from(checkboxes).map(cb => cb.value);
       }
 
-      closePinModal();
+      editPinModal.classList.add('hidden'); editPinModal.classList.remove('flex');
       render();
-    });
+    };
 
-    // ==================== SYSTEME DE DESSIN SUR PHOTO ====================
+    // SYSTEME DE DESSIN SUR PHOTO
     const drawModal = document.getElementById('drawPhotoModal');
     const drawCanvas = document.getElementById('photoDrawCanvas');
     const drawCtx = drawCanvas.getContext('2d');
+    let drawIsMouseDown = false;
 
     function openDrawModal(photoSrc, photoIdx) {
       drawState.activePhotoIndex = photoIdx;
@@ -1735,7 +1826,6 @@
         drawState.baseImage = img;
         drawCanvas.width = img.width;
         drawCanvas.height = img.height;
-        
         drawCtx.drawImage(img, 0, 0);
         saveDrawHistory();
 
@@ -1749,520 +1839,121 @@
       drawState.history.push(drawCanvas.toDataURL());
     }
 
-    document.getElementById('undoDrawBtn').addEventListener('click', () => {
-      if (drawState.history.length > 1) {
-        drawState.history.pop();
-        const prevImgSrc = drawState.history[drawState.history.length - 1];
-        const img = new Image();
-        img.onload = () => {
-          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-          drawCtx.drawImage(img, 0, 0);
-        };
-        img.src = prevImgSrc;
-      }
-    });
-
-    document.getElementById('clearDrawBtn').addEventListener('click', () => {
-      if (drawState.baseImage) {
-        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        drawCtx.drawImage(drawState.baseImage, 0, 0);
-        saveDrawHistory();
-      }
-    });
-
-    // Tool switching
-    document.querySelectorAll('.draw-tool-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.draw-tool-btn').forEach(b => {
-          b.classList.remove('active', 'bg-blue-600', 'text-white');
-          b.classList.add('hover:bg-slate-200', 'dark:hover:bg-slate-700');
-        });
-        const target = e.currentTarget;
-        target.classList.add('active', 'bg-blue-600', 'text-white');
-        
-        const toolId = target.id;
-        if(toolId === 'toolPen') drawState.currentTool = 'pen';
-        else if(toolId === 'toolLine') drawState.currentTool = 'line';
-        else if(toolId === 'toolArrow') drawState.currentTool = 'arrow';
-        else if(toolId === 'toolCircle') drawState.currentTool = 'circle';
-        else if(toolId === 'toolRect') drawState.currentTool = 'rect';
-        else if(toolId === 'toolText') drawState.currentTool = 'text';
-      });
-    });
-
-    // Color & Line thickness
-    document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        drawState.color = e.currentTarget.getAttribute('data-color');
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'dark:ring-slate-900'));
-        e.currentTarget.classList.add('ring-2', 'ring-white', 'dark:ring-slate-900');
-      });
-    });
-
-    document.getElementById('drawLineWidth').addEventListener('change', (e) => {
-      drawState.lineWidth = parseInt(e.target.value);
-    });
-
-    // Drawing Canvas Events
-    function getCanvasCoords(e) {
+    drawCanvas.addEventListener('mousedown', (e) => {
+      drawIsMouseDown = true;
       const rect = drawCanvas.getBoundingClientRect();
       const scaleX = drawCanvas.width / rect.width;
       const scaleY = drawCanvas.height / rect.height;
-
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
-    }
-
-    function startDrawing(e) {
-      drawState.isDrawing = true;
-      const coords = getCanvasCoords(e);
-      drawState.startX = coords.x;
-      drawState.startY = coords.y;
+      drawState.startX = (e.clientX - rect.left) * scaleX;
+      drawState.startY = (e.clientY - rect.top) * scaleY;
 
       if (drawState.currentTool === 'pen') {
         drawCtx.beginPath();
-        drawCtx.moveTo(coords.x, coords.y);
+        drawCtx.moveTo(drawState.startX, drawState.startY);
+        drawCtx.strokeStyle = drawState.color;
+        drawCtx.lineWidth = drawState.lineWidth;
+        drawCtx.lineCap = 'round';
+      }
+    });
+
+    drawCanvas.addEventListener('mousemove', (e) => {
+      if (!drawIsMouseDown) return;
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+      const currentX = (e.clientX - rect.left) * scaleX;
+      const currentY = (e.clientY - rect.top) * scaleY;
+
+      if (drawState.currentTool === 'pen') {
+        drawCtx.lineTo(currentX, currentY);
+        drawCtx.stroke();
+      }
+    });
+
+    drawCanvas.addEventListener('mouseup', (e) => {
+      if (!drawIsMouseDown) return;
+      drawIsMouseDown = false;
+
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+      const endX = (e.clientX - rect.left) * scaleX;
+      const endY = (e.clientY - rect.top) * scaleY;
+
+      drawCtx.strokeStyle = drawState.color;
+      drawCtx.fillStyle = drawState.color;
+      drawCtx.lineWidth = drawState.lineWidth;
+
+      if (drawState.currentTool === 'line') {
+        drawCtx.beginPath();
+        drawCtx.moveTo(drawState.startX, drawState.startY);
+        drawCtx.lineTo(endX, endY);
+        drawCtx.stroke();
+      } else if (drawState.currentTool === 'rect') {
+        drawCtx.strokeRect(drawState.startX, drawState.startY, endX - drawState.startX, endY - drawState.startY);
+      } else if (drawState.currentTool === 'circle') {
+        const radius = Math.sqrt(Math.pow(endX - drawState.startX, 2) + Math.pow(endY - drawState.startY, 2));
+        drawCtx.beginPath();
+        drawCtx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
+        drawCtx.stroke();
       } else if (drawState.currentTool === 'text') {
         const text = prompt("Entrez votre texte :");
         if (text) {
-          drawCtx.fillStyle = drawState.color;
-          drawCtx.font = `bold ${drawState.lineWidth * 6 + 12}px sans-serif`;
-          drawCtx.fillText(text, coords.x, coords.y);
-          saveDrawHistory();
+          drawCtx.font = `bold ${drawState.lineWidth * 6}px sans-serif`;
+          drawCtx.fillText(text, drawState.startX, drawState.startY);
         }
-        drawState.isDrawing = false;
       }
-    }
 
-    function draw(e) {
-      if (!drawState.isDrawing) return;
-      e.preventDefault();
-      const coords = getCanvasCoords(e);
+      saveDrawHistory();
+    });
 
-      if (drawState.currentTool === 'pen') {
-        drawCtx.strokeStyle = drawState.color;
-        drawCtx.lineWidth = drawState.lineWidth * 2;
-        drawCtx.lineCap = 'round';
-        drawCtx.lineTo(coords.x, coords.y);
-        drawCtx.stroke();
-      } else {
-        const lastImg = new Image();
-        lastImg.onload = () => {
-          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-          drawCtx.drawImage(lastImg, 0, 0);
-
-          drawCtx.strokeStyle = drawState.color;
-          drawCtx.fillStyle = drawState.color;
-          drawCtx.lineWidth = drawState.lineWidth * 2;
-
-          if (drawState.currentTool === 'line') {
-            drawCtx.beginPath();
-            drawCtx.moveTo(drawState.startX, drawState.startY);
-            drawCtx.lineTo(coords.x, coords.y);
-            drawCtx.stroke();
-          } else if (drawState.currentTool === 'arrow') {
-            drawArrow(drawState.startX, drawState.startY, coords.x, coords.y);
-          } else if (drawState.currentTool === 'circle') {
-            const radius = Math.hypot(coords.x - drawState.startX, coords.y - drawState.startY);
-            drawCtx.beginPath();
-            drawCtx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
-            drawCtx.stroke();
-          } else if (drawState.currentTool === 'rect') {
-            drawCtx.beginPath();
-            drawCtx.strokeRect(drawState.startX, drawState.startY, coords.x - drawState.startX, coords.y - drawState.startY);
-          }
-        };
-        lastImg.src = drawState.history[drawState.history.length - 1];
-      }
-    }
-
-    function stopDrawing() {
-      if (drawState.isDrawing) {
-        drawState.isDrawing = false;
-        saveDrawHistory();
-      }
-    }
-
-    function drawArrow(fromx, fromy, tox, toy) {
-      const headlen = drawState.lineWidth * 4 + 8;
-      const dx = tox - fromx;
-      const dy = toy - fromy;
-      const angle = Math.atan2(dy, dx);
-
-      drawCtx.beginPath();
-      drawCtx.moveTo(fromx, fromy);
-      drawCtx.lineTo(tox, toy);
-      drawCtx.stroke();
-
-      drawCtx.beginPath();
-      drawCtx.moveTo(tox, toy);
-      drawCtx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-      drawCtx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-      drawCtx.closePath();
-      drawCtx.fill();
-    }
-
-    drawCanvas.addEventListener('mousedown', startDrawing);
-    drawCanvas.addEventListener('mousemove', draw);
-    drawCanvas.addEventListener('mouseup', stopDrawing);
-
-    drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
-    drawCanvas.addEventListener('touchmove', draw, { passive: false });
-    drawCanvas.addEventListener('touchend', stopDrawing);
-
-    const closeDrawModal = () => {
-      drawModal.classList.add('hidden');
-      drawModal.classList.remove('flex');
-    };
-
-    document.getElementById('closeDrawModalBtn').addEventListener('click', closeDrawModal);
-
-    document.getElementById('saveDrawBtn').addEventListener('click', () => {
+    document.getElementById('saveDrawBtn').onclick = () => {
       const lot = getActiveLot();
-      const pin = lot && lot.pins && lot.pins.find(p => p.id === state.editingPinId);
+      if (!lot) return;
+      const pin = lot.pins && lot.pins.find(p => p.id === state.editingPinId);
       if (pin && pin.photos && drawState.activePhotoIndex !== null) {
         pin.photos[drawState.activePhotoIndex] = drawCanvas.toDataURL('image/png');
         renderPinPhotos(pin.photos);
       }
-      closeDrawModal();
-    });
-
-    // IMPORT PLAN / CANVAS LOGIC
-    async function handleFileImport(file) {
-      if(!file) return;
-      const activeLot = getActiveLot();
-      if(!activeLot) return alert("Veuillez d'abord créer une zone.");
-      
-      if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onload = async function() {
-          try {
-            const typedarray = new Uint8Array(this.result);
-            const pdf = await pdfjsLib.getDocument(typedarray).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 2.0 });
-            
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            activeLot.planImage = canvas.toDataURL('image/png');
-            state.zoom = 1; state.pan = { x: 0, y: 0 };
-            render();
-          } catch(e) {
-            alert("Erreur lors de la lecture du PDF.");
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } 
-      else if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          activeLot.planImage = evt.target.result;
-          state.zoom = 1; state.pan = { x: 0, y: 0 };
-          render();
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Format non supporté.");
-      }
-    }
-
-    const fileInput = document.getElementById('fileInput');
-    document.getElementById('importPlanBtn').addEventListener('click', () => {
-      if(!getActiveLot()) return alert("Veuillez d'abord créer une zone.");
-      fileInput.click();
-    });
-    document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', (e) => {
-      handleFileImport(e.target.files && e.target.files[0]);
-      e.target.value = '';
-    });
-
-    const viewport = document.getElementById('canvasViewport');
-    viewport.addEventListener('dragover', (e) => { e.preventDefault(); viewport.classList.add('drag-over-active'); });
-    viewport.addEventListener('dragleave', () => viewport.classList.remove('drag-over-active'));
-    viewport.addEventListener('drop', (e) => {
-      e.preventDefault(); viewport.classList.remove('drag-over-active');
-      handleFileImport(e.dataTransfer.files && e.dataTransfer.files[0]);
-    });
-
-    document.getElementById('toolSelectBtn').addEventListener('click', () => { state.activeTool = 'select'; render(); });
-    document.getElementById('toolPinBtn').addEventListener('click', () => { state.activeTool = 'pin'; render(); });
-    document.getElementById('addPinQuickBtn').addEventListener('click', () => {
-      const l = getActiveLot(); 
-      if(!l) return alert("Veuillez d'abord créer une zone.");
-      if(!l.planImage){ fileInput.click(); return; }
-      state.activeTool = 'pin'; render();
-    });
-
-    document.getElementById('zoomInBtn').addEventListener('click', () => { 
-      state.zoom = Math.min(state.zoom + 0.25, 4); 
-      updateCanvasTransform();
-    });
-    document.getElementById('zoomOutBtn').addEventListener('click', () => { 
-      state.zoom = Math.max(state.zoom - 0.25, 0.4); 
-      updateCanvasTransform();
-    });
-    document.getElementById('zoomResetBtn').addEventListener('click', () => { 
-      state.zoom = 1; state.pan = { x: 0, y: 0 }; 
-      updateCanvasTransform();
-    });
-
-    const activeCanvas = document.getElementById('activeCanvas');
-    
-    activeCanvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomIntensity = 0.15;
-      if (e.deltaY < 0) {
-        state.zoom = Math.min(state.zoom + zoomIntensity, 4);
-      } else {
-        state.zoom = Math.max(state.zoom - zoomIntensity, 0.4);
-      }
-      updateCanvasTransform();
-    }, { passive: false });
-
-    activeCanvas.addEventListener('mousedown', (e) => {
-      if (state.activeTool === 'select') {
-        state.isDraggingCanvas = true;
-        state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
-        activeCanvas.style.cursor = 'grabbing';
-      }
-    });
-    window.addEventListener('mousemove', (e) => {
-      if (state.isDraggingCanvas && state.activeTool === 'select') {
-        state.pan = { x: e.clientX - state.dragStart.x, y: e.clientY - state.dragStart.y };
-        updateCanvasTransform();
-      }
-    });
-    window.addEventListener('mouseup', () => { if (state.isDraggingCanvas) { state.isDraggingCanvas = false; if (state.activeTool === 'select') activeCanvas.style.cursor = 'grab'; } });
-
-    // PLACEMENT REPERE
-    activeCanvas.addEventListener('click', (e) => {
-      if (state.activeTool === 'pin') {
-        const imageEl = document.getElementById('planImageView');
-        const imgRect = imageEl.getBoundingClientRect();
-        
-        if (e.clientX >= imgRect.left && e.clientX <= imgRect.right && e.clientY >= imgRect.top && e.clientY <= imgRect.bottom) {
-          const xPercent = Math.round(((e.clientX - imgRect.left) / imgRect.width) * 100);
-          const yPercent = Math.round(((e.clientY - imgRect.top) / imgRect.height) * 100);
-
-          const lot = getActiveLot();
-          if(!lot) return;
-          if(!lot.pins) lot.pins = [];
-
-          const nextNum = lot.pins.length > 0 ? Math.max(...lot.pins.map(p => p.number || 0)) + 1 : 1;
-          
-          const newPin = {
-            id: 'pin_' + Date.now(),
-            number: nextNum,
-            progress: 0,
-            x: xPercent,
-            y: yPercent,
-            title: 'Réserve n°' + nextNum,
-            description: '',
-            companies: [],
-            photos: []
-          };
-
-          lot.pins.push(newPin);
-          state.activeTool = 'select';
-          render();
-          openPinModal(newPin);
-        }
-      }
-    });
-
-    document.getElementById('navLogoBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
-    document.getElementById('backToHomeBtn').addEventListener('click', () => { state.currentView = 'home'; render(); });
-    document.getElementById('themeToggleBtn').addEventListener('click', () => { state.darkMode = !state.darkMode; render(); });
-
-    // MODALE PROJET ET GESTION DES PHOTOS
-    const editProjectModal = document.getElementById('editProjectModal');
-    const projectPhotosInput = document.getElementById('projectPhotosInput');
-    const uploadProjectPhotosBtn = document.getElementById('uploadProjectPhotosBtn');
-    
-    function openProjectModal(mode) {
-      state.projectModalMode = mode;
-      if (mode === 'create') {
-        document.getElementById('projectModalTitle').textContent = 'Créer un nouveau projet';
-        document.getElementById('projectInputName').value = '';
-        document.getElementById('projectInputClient').value = '';
-        document.getElementById('projectInputSurface').value = '';
-        document.getElementById('projectInputLocation').value = '';
-        currentProjectPhotosTemp = [];
-      } else {
-        const p = getActiveProject();
-        if(!p) return;
-        document.getElementById('projectModalTitle').textContent = 'Modifier le projet';
-        document.getElementById('projectInputName').value = p.name || '';
-        document.getElementById('projectInputClient').value = p.client || '';
-        document.getElementById('projectInputSurface').value = p.surfaceTotal || '';
-        document.getElementById('projectInputLocation').value = p.location || '';
-        document.getElementById('projectInputStatus').value = p.status || 'En cours d\'aménagement';
-        currentProjectPhotosTemp = p.photos ? [...p.photos] : [];
-      }
-      renderProjectPhotosPreview();
-      editProjectModal.classList.remove('hidden');
-      editProjectModal.classList.add('flex');
-    }
-
-    document.getElementById('createNewProjectBtn').addEventListener('click', () => openProjectModal('create'));
-    document.getElementById('openEditProjectBtn').addEventListener('click', () => openProjectModal('edit'));
-
-    if (uploadProjectPhotosBtn && projectPhotosInput) {
-      uploadProjectPhotosBtn.addEventListener('click', () => projectPhotosInput.click());
-
-      projectPhotosInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files || []);
-        files.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-              currentProjectPhotosTemp.push(evt.target.result);
-              renderProjectPhotosPreview();
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-        e.target.value = '';
-      });
-    }
-
-    function renderProjectPhotosPreview() {
-      const container = document.getElementById('projectPhotosPreview');
-      if (!container) return;
-      container.innerHTML = '';
-      currentProjectPhotosTemp.forEach((src, idx) => {
-        const imgWrap = document.createElement('div');
-        imgWrap.className = 'relative w-16 h-16 rounded-2xl border dark:border-slate-700 overflow-hidden bg-slate-100 group';
-        imgWrap.innerHTML = `
-          <img src="${src}" class="w-full h-full object-cover" />
-          <button type="button" class="absolute top-1 right-1 p-1 bg-rose-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" title="Supprimer">
-            <i data-lucide="x" class="w-3 h-3"></i>
-          </button>
-        `;
-        imgWrap.querySelector('button').addEventListener('click', () => {
-          currentProjectPhotosTemp.splice(idx, 1);
-          renderProjectPhotosPreview();
-        });
-        container.appendChild(imgWrap);
-      });
-      lucide.createIcons();
-    }
-
-    const closeProjectModal = () => {
-      editProjectModal.classList.add('hidden');
-      editProjectModal.classList.remove('flex');
+      drawModal.classList.add('hidden'); drawModal.classList.remove('flex');
     };
 
-    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjectModal);
-    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjectModal);
+    document.getElementById('closeDrawModalBtn').onclick = () => {
+      drawModal.classList.add('hidden'); drawModal.classList.remove('flex');
+    };
 
-    document.getElementById('projectForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('projectInputName').value;
-      const client = document.getElementById('projectInputClient').value;
-      const surfaceTotal = document.getElementById('projectInputSurface').value;
-      const location = document.getElementById('projectInputLocation').value;
-      const status = document.getElementById('projectInputStatus').value;
+    // MENU UTILISATEUR ET THEME
+    document.getElementById('themeToggleBtn').onclick = () => { state.darkMode = !state.darkMode; render(); };
+    document.getElementById('userMenuBtn').onclick = () => { document.getElementById('userDropdownMenu').classList.toggle('hidden'); };
+    document.getElementById('dropdownLoginBtn').onclick = () => { document.getElementById('loginModal').classList.remove('hidden'); document.getElementById('loginModal').classList.add('flex'); };
+    document.getElementById('closeLoginModalBtn').onclick = () => { document.getElementById('loginModal').classList.add('hidden'); document.getElementById('loginModal').classList.remove('flex'); };
+    document.getElementById('dropdownPrivacyBtn').onclick = () => { document.getElementById('privacyModal').classList.remove('hidden'); document.getElementById('privacyModal').classList.add('flex'); };
+    document.getElementById('confirmPrivacyBtn').onclick = () => { document.getElementById('privacyModal').classList.add('hidden'); document.getElementById('privacyModal').classList.remove('flex'); };
+    document.getElementById('closePrivacyModalBtn').onclick = () => { document.getElementById('privacyModal').classList.add('hidden'); document.getElementById('privacyModal').classList.remove('flex'); };
 
-      if (state.projectModalMode === 'create') {
-        const newProj = {
-          id: 'proj_' + Date.now(),
-          name: name,
-          client: client,
-          surfaceTotal: surfaceTotal,
-          location: location,
-          status: status,
-          lots: [],
-          photos: [...currentProjectPhotosTemp],
-          activeLotId: null
-        };
-        state.projects.push(newProj);
-        state.activeProjectId = newProj.id;
-        state.currentView = 'project';
-      } else {
-        const p = getActiveProject();
-        if (p) {
-          p.name = name;
-          p.client = client;
-          p.surfaceTotal = surfaceTotal;
-          p.location = location;
-          p.status = status;
-          p.photos = [...currentProjectPhotosTemp];
-        }
+    // INITIALISATION DE L'APPLICATION
+    window.addEventListener('DOMContentLoaded', () => {
+      // Données de démo par défaut si aucun projet
+      if (state.projects.length === 0) {
+        state.projects = [
+          {
+            id: 'proj_demo_1',
+            name: 'Résidence Les Clématites',
+            client: 'Promogim BTP',
+            location: '12 Rue des Fleurs, 75015 Paris',
+            surfaceTotal: 850,
+            status: "En cours d'aménagement",
+            lots: [
+              { id: 'lot_1', name: 'Appartement A101', surface: '65 m²', icon: 'layers', planImage: null, pins: [] }
+            ],
+            activeLotId: 'lot_1'
+          }
+        ];
       }
 
-      closeProjectModal();
       render();
-    });
-
-    // MODALE ZONE / LOT
-    const editLotModal = document.getElementById('editLotModal');
-
-    function openEditLotModal(lot) {
-      state.editingLotId = lot ? lot.id : null;
-      document.getElementById('lotInputName').value = lot ? lot.name : '';
-      document.getElementById('lotInputSurface').value = lot ? lot.surface || '' : '';
-      state.selectedIconForModal = lot ? (lot.icon || AVAILABLE_ICONS[0].id) : AVAILABLE_ICONS[0].id;
-
-      renderIconGrid();
-      editLotModal.classList.remove('hidden');
-      editLotModal.classList.add('flex');
-    }
-
-    function renderIconGrid() {
-      const container = document.getElementById('iconGridContainer');
-      container.innerHTML = '';
-      AVAILABLE_ICONS.forEach(icon => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        const isSelected = icon.id === state.selectedIconForModal;
-        btn.className = `p-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all ${isSelected ? 'border-blue-500 bg-blue-50 dark:bg-slate-800 text-blue-600' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`;
-        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] truncate max-w-full">${icon.label}</span>`;
-        btn.addEventListener('click', () => {
-          state.selectedIconForModal = icon.id;
-          renderIconGrid();
-        });
-        container.appendChild(btn);
-      });
       lucide.createIcons();
-    }
-
-    document.getElementById('closeLotModalBtn').addEventListener('click', () => {
-      editLotModal.classList.add('hidden');
-      editLotModal.classList.remove('flex');
     });
-
-    document.getElementById('lotForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const lot = getActiveLot();
-      if (lot) {
-        lot.name = document.getElementById('lotInputName').value;
-        lot.surface = document.getElementById('lotInputSurface').value ? document.getElementById('lotInputSurface').value + ' m²' : '';
-        lot.icon = state.selectedIconForModal;
-      }
-      editLotModal.classList.add('hidden');
-      editLotModal.classList.remove('flex');
-      render();
-    });
-
-    document.getElementById('editActiveLotBtn').addEventListener('click', () => {
-      const lot = getActiveLot();
-      if(lot) openEditLotModal(lot);
-    });
-
-    // INITIALISATION
-    render();
   </script>
 </body>
 </html>
