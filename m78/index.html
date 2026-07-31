@@ -859,53 +859,7 @@
       { id: 'box', label: 'Espace' },
       { id: 'trees', label: 'Espace vert' }
     ];
-
-    const DEFAULT_COMPANIES = ['Gros Œuvre', 'Électricité', 'Plomberie', 'Peinture', 'Menuiserie'];
-
-    const state = {
-      darkMode: false,
-      currentView: 'home', // 'home', 'projectHub', 'project', 'reunion'
-      activeProjectId: null,
-      availableCompanies: [...DEFAULT_COMPANIES],
-      editingPinId: null,
-      reportConfig: {
-        logoUrl: '',
-        primaryColor: '#0071e3',
-        layoutStyle: 'standard',
-        includePhotos: true
-      },
-      projects: [
-        {
-          id: 'proj_demo',
-          name: 'Résidence les Pins',
-          client: 'Promoteur ABC',
-          surfaceTotal: 1200,
-          location: '12 Rue de Paris, Lyon',
-          status: 'En cours d\'aménagement',
-          activeLotId: 'lot_demo_1',
-          lots: [
-            {
-              id: 'lot_demo_1',
-              name: 'Zone A - RDC',
-              icon: 'building-2',
-              surface: '450 m²',
-              planImage: null,
-              pins: []
-            }
-          ],
-          reunion: {
-            number: 1,
-            date: new Date().toISOString().slice(0, 10),
-            nextDate: '',
-            subject: 'Lancement du chantier',
-            attendees: [
-              { name: 'Maître d\'Ouvrage', status: 'present' },
-              { name: 'Architecte', status: 'present' }
-            ],
-            notes: []
-          }
-        }
-      ],
+   
       selectedIconForModal: 'building-2',
       editingLotId: null,
       zoom: 1,
