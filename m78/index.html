@@ -67,12 +67,12 @@
           </div>
         </button>
 
-        <!-- Texte cliquable ACCUEIL / MES PROJETS (style screenshot) -->
+        <!-- Texte cliquable ACCUEIL / MES PROJETS -->
         <a id="homeNavBtn" href="#" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           <span>Mes projets</span>
         </a>
 
-        <!-- Texte cliquable RETOUR (Mes projets / Choix du module) (style screenshot) -->
+        <!-- Texte cliquable RETOUR -->
         <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           <span id="backToPreviousText">Mes projets</span>
         </button>
@@ -294,7 +294,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- MODULE 1 : REUNION DE CHANTIER (PLACÉ À GAUCHE - BLEU) -->
+        <!-- MODULE 1 : REUNION DE CHANTIER -->
         <div id="selectModuleReunion" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -313,7 +313,7 @@
           </div>
         </div>
 
-        <!-- MODULE 2 : LEVE DE RESERVES (PLACÉ À DROITE - BLEU) -->
+        <!-- MODULE 2 : LEVE DE RESERVES -->
         <div id="selectModuleReserves" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -334,9 +334,8 @@
       </div>
     </div>
 
-    <!-- MODULE REUNION DE CHANTIER (HARMONISÉ AVEC LE CADRE DU MODULE RESERVES) -->
+    <!-- MODULE REUNION DE CHANTIER -->
     <div id="reunionView" class="hidden space-y-6">
-      <!-- Encadré Projet Identique au Module Réserves -->
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg shadow-slate-200/40 dark:shadow-black/20 transition-all duration-300">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div class="space-y-2">
@@ -377,7 +376,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
               <div>
                 <label class="block text-slate-500 font-medium mb-1">N° Réunion</label>
-                <input type="number" id="reunionInputNumber" value="1" min="1" class="w-full px-3 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+                <input type="number" id="reunionInputNumber" min="1" class="w-full px-3 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
               </div>
               <div>
                 <label class="block text-slate-500 font-medium mb-1">Date</label>
@@ -578,7 +577,7 @@
 
   </main>
 
-  <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS (COMMUN AUX MODULES RESERVES & REUNION) -->
+  <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS -->
   <div id="reportConfigModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -859,7 +858,22 @@
       { id: 'box', label: 'Espace' },
       { id: 'trees', label: 'Espace vert' }
     ];
-   
+
+    const DEFAULT_COMPANIES = [];
+
+    const state = {
+      darkMode: false,
+      currentView: 'home',
+      activeProjectId: null,
+      availableCompanies: [...DEFAULT_COMPANIES],
+      editingPinId: null,
+      reportConfig: {
+        logoUrl: '',
+        primaryColor: '#0071e3',
+        layoutStyle: 'standard',
+        includePhotos: true
+      },
+      projects: [],
       selectedIconForModal: 'building-2',
       editingLotId: null,
       zoom: 1,
@@ -912,7 +926,6 @@
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
       const reportBtnLabel = document.getElementById('reportBtnLabel');
 
-      // Masquer toutes les vues
       homeView.classList.add('hidden');
       projectHubView.classList.add('hidden');
       projectView.classList.add('hidden');
@@ -1173,10 +1186,7 @@
           date: new Date().toISOString().slice(0, 10),
           nextDate: '',
           subject: '',
-          attendees: [
-            { name: 'Maître d\'Ouvrage / Client', status: 'present' },
-            { name: 'Architecte / Maitre d\'œuvre', status: 'present' }
-          ],
+          attendees: [],
           notes: []
         };
       }
@@ -1687,16 +1697,17 @@
     function renderPinCompanies(pin) {
       const container = document.getElementById('pinCompaniesList');
       container.innerHTML = '';
+      if (!pin.companies) pin.companies = [];
+
       state.availableCompanies.forEach(comp => {
-        const checked = pin.companies && pin.companies.includes(comp);
+        const checked = pin.companies.includes(comp);
         const label = document.createElement('label');
-        label.className = 'flex items-center space-x-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none';
+        label.className = 'flex items-center space-x-2 text-xs cursor-pointer select-none p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors';
         label.innerHTML = `
-          <input type="checkbox" value="${comp}" ${checked ? 'checked' : ''} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" />
-          <span>${comp}</span>
+          <input type="checkbox" value="${comp}" ${checked ? 'checked' : ''} class="pin-comp-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4" />
+          <span class="text-slate-700 dark:text-slate-300 font-medium truncate">${comp}</span>
         `;
-        label.querySelector('input').addEventListener('change', (e) => {
-          if (!pin.companies) pin.companies = [];
+        label.querySelector('.pin-comp-checkbox').addEventListener('change', (e) => {
           if (e.target.checked) {
             if (!pin.companies.includes(comp)) pin.companies.push(comp);
           } else {
@@ -1710,136 +1721,236 @@
     function renderPinPhotos(pin) {
       const container = document.getElementById('pinPhotosContainer');
       container.innerHTML = '';
-      if (!pin.photos || pin.photos.length === 0) {
-        container.innerHTML = `<span class="text-[10px] text-slate-400 italic">Aucune photo pour le moment</span>`;
+      if (!pin.photos) pin.photos = [];
+
+      if (pin.photos.length === 0) {
+        container.innerHTML = `<span class="text-xs text-slate-400 italic p-2">Aucune photo pour cette réserve</span>`;
         return;
       }
-      pin.photos.forEach((photo, idx) => {
-        const div = document.createElement('div');
-        div.className = 'relative group w-14 h-14 rounded-xl overflow-hidden border dark:border-slate-700 shrink-0';
-        div.innerHTML = `
-          <img src="${photo}" class="w-full h-full object-cover" />
-          <button type="button" class="delete-photo-btn absolute top-0.5 right-0.5 bg-rose-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x" class="w-3 h-3"></i></button>
+
+      pin.photos.forEach((photoSrc, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative group w-20 h-20 rounded-xl overflow-hidden border dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0';
+        wrapper.innerHTML = `
+          <img src="${photoSrc}" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
+            <button type="button" class="draw-photo-btn p-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-500" title="Annoter"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="delete-photo-btn p-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-500" title="Supprimer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
         `;
-        div.querySelector('.delete-photo-btn').onclick = (e) => {
-          e.stopPropagation();
+
+        wrapper.querySelector('.draw-photo-btn').addEventListener('click', () => {
+          openPhotoDrawModal(photoSrc, (newImageSrc) => {
+            pin.photos[idx] = newImageSrc;
+            renderPinPhotos(pin);
+          });
+        });
+
+        wrapper.querySelector('.delete-photo-btn').addEventListener('click', () => {
           pin.photos.splice(idx, 1);
           renderPinPhotos(pin);
-        };
-        container.appendChild(div);
+        });
+
+        container.appendChild(wrapper);
       });
       lucide.createIcons();
     }
 
-    document.getElementById('addCompanyBtn').onclick = () => {
+    document.getElementById('addCompanyBtn').addEventListener('click', () => {
       const input = document.getElementById('newCompanyInput');
       const val = input.value.trim();
-      if (val && !state.availableCompanies.includes(val)) {
-        state.availableCompanies.push(val);
+      if (val) {
+        if (!state.availableCompanies.includes(val)) {
+          state.availableCompanies.push(val);
+        }
         const activeLot = getActiveLot();
-        const pin = activeLot ? activeLot.pins.find(p => p.id === state.editingPinId) : null;
-        if (pin) {
-          if (!pin.companies) pin.companies = [];
-          pin.companies.push(val);
-          renderPinCompanies(pin);
+        if (activeLot && state.editingPinId) {
+          const pin = activeLot.pins.find(p => p.id === state.editingPinId);
+          if (pin) {
+            if (!pin.companies) pin.companies = [];
+            if (!pin.companies.includes(val)) pin.companies.push(val);
+            renderPinCompanies(pin);
+          }
         }
         input.value = '';
       }
-    };
+    });
 
-    document.getElementById('pinInputStatusSelect').onchange = (e) => {
-      document.getElementById('pinInputProgress').value = e.target.value;
-    };
-
-    document.getElementById('closePinModalBtn').onclick = () => {
-      document.getElementById('editPinModal').classList.add('hidden');
-      document.getElementById('editPinModal').classList.remove('flex');
-    };
-
-    document.getElementById('cancelPinModalBtn').onclick = () => {
-      document.getElementById('editPinModal').classList.add('hidden');
-      document.getElementById('editPinModal').classList.remove('flex');
-    };
-
-    document.getElementById('deletePinFromModalBtn').onclick = () => {
-      const lot = getActiveLot();
-      if (lot && state.editingPinId) {
-        lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
-        document.getElementById('editPinModal').classList.add('hidden');
-        document.getElementById('editPinModal').classList.remove('flex');
-        render();
-      }
-    };
-
-    document.getElementById('pinForm').onsubmit = (e) => {
-      e.preventDefault();
-      const lot = getActiveLot();
-      if (lot && state.editingPinId) {
-        const pin = lot.pins.find(p => p.id === state.editingPinId);
-        if (pin) {
-          pin.title = document.getElementById('pinInputTitle').value;
-          pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
-          pin.description = document.getElementById('pinInputDescription').value;
-        }
-      }
-      document.getElementById('editPinModal').classList.add('hidden');
-      document.getElementById('editPinModal').classList.remove('flex');
-      render();
-    };
-
-    document.getElementById('pinGalleryInput').onchange = (e) => {
-      const files = Array.from(e.target.files);
-      const lot = getActiveLot();
-      const pin = lot ? lot.pins.find(p => p.id === state.editingPinId) : null;
+    function handlePhotoUpload(e) {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+      const activeLot = getActiveLot();
+      if (!activeLot || !state.editingPinId) return;
+      const pin = activeLot.pins.find(p => p.id === state.editingPinId);
       if (!pin) return;
-      if (!pin.photos) pin.photos = [];
-      files.forEach(f => {
+
+      Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = (evt) => {
+          if (!pin.photos) pin.photos = [];
           pin.photos.push(evt.target.result);
           renderPinPhotos(pin);
         };
-        reader.readAsDataURL(f);
+        reader.readAsDataURL(file);
       });
-    };
+      e.target.value = '';
+    }
 
-    document.getElementById('themeToggleBtn').onclick = () => {
-      state.darkMode = !state.darkMode;
-      render();
-    };
+    document.getElementById('pinGalleryInput').addEventListener('change', handlePhotoUpload);
+    document.getElementById('pinCameraInput').addEventListener('change', handlePhotoUpload);
 
-    // DRAG & DROP CANVAS + CREATION DE RESERVE
+    document.getElementById('pinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const activeLot = getActiveLot();
+      if (!activeLot || !state.editingPinId) return;
+      const pin = activeLot.pins.find(p => p.id === state.editingPinId);
+      if (pin) {
+        pin.title = document.getElementById('pinInputTitle').value;
+        pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
+        pin.description = document.getElementById('pinInputDescription').value;
+      }
+      closePinModal();
+      renderActiveProject();
+    });
+
+    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
+      document.getElementById('pinInputProgress').value = e.target.value;
+    });
+
+    document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
+      const activeLot = getActiveLot();
+      if (!activeLot || !state.editingPinId) return;
+      if (confirm('Voulez-vous supprimer ce repère / réserve ?')) {
+        activeLot.pins = activeLot.pins.filter(p => p.id !== state.editingPinId);
+        closePinModal();
+        renderActiveProject();
+      }
+    });
+
+    document.getElementById('cancelPinModalBtn').addEventListener('click', closePinModal);
+    document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
+
+    function closePinModal() {
+      state.editingPinId = null;
+      document.getElementById('editPinModal').classList.add('hidden');
+      document.getElementById('editPinModal').classList.remove('flex');
+    }
+
+    let photoDrawCallback = null;
+    let currentColor = '#ef4444';
+
+    function openPhotoDrawModal(src, callback) {
+      photoDrawCallback = callback;
+      const modal = document.getElementById('drawPhotoModal');
+      const canvas = document.getElementById('photoDrawCanvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      };
+      img.src = src;
+
+      let drawing = false;
+      let lastPos = { x: 0, y: 0 };
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
+      function startDraw(e) {
+        drawing = true;
+        lastPos = getPos(e);
+      }
+
+      function draw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(lastPos.x, lastPos.y);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = Math.max(3, canvas.width / 200);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        lastPos = pos;
+      }
+
+      function stopDraw() {
+        drawing = false;
+      }
+
+      canvas.onmousedown = startDraw;
+      canvas.onmousemove = draw;
+      canvas.onmouseup = stopDraw;
+      canvas.ontouchstart = startDraw;
+      canvas.ontouchmove = draw;
+      canvas.ontouchend = stopDraw;
+    }
+
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        currentColor = e.currentTarget.getAttribute('data-color');
+      });
+    });
+
+    document.getElementById('closeDrawModalBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('photoDrawCanvas');
+      if (photoDrawCallback) {
+        photoDrawCallback(canvas.toDataURL());
+      }
+      document.getElementById('drawPhotoModal').classList.add('hidden');
+      document.getElementById('drawPhotoModal').classList.remove('flex');
+    });
+
+    const canvasViewport = document.getElementById('canvasViewport');
     const activeCanvas = document.getElementById('activeCanvas');
+
+    document.getElementById('toolSelectBtn').addEventListener('click', () => {
+      state.activeTool = 'select';
+      renderActiveProject();
+    });
+
+    document.getElementById('toolPinBtn').addEventListener('click', () => {
+      state.activeTool = 'pin';
+      renderActiveProject();
+    });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      state.zoom = Math.min(state.zoom + 0.2, 4);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      state.zoom = Math.max(state.zoom - 0.2, 0.5);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomResetBtn').addEventListener('click', () => {
+      state.zoom = 1;
+      state.pan = { x: 0, y: 0 };
+      updateCanvasTransform();
+    });
 
     activeCanvas.addEventListener('mousedown', (e) => {
       if (state.activeTool === 'select') {
         state.isDraggingCanvas = true;
         state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
         activeCanvas.style.cursor = 'grabbing';
-      } else if (state.activeTool === 'pin') {
-        const lot = getActiveLot();
-        if (!lot) return;
-        const rect = document.getElementById('planImageView').getBoundingClientRect();
-        const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-        const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-
-        if (xPct >= 0 && xPct <= 100 && yPct >= 0 && yPct <= 100) {
-          if (!lot.pins) lot.pins = [];
-          const newPin = {
-            id: 'pin_' + Date.now(),
-            number: lot.pins.length + 1,
-            x: Math.round(xPct * 10) / 10,
-            y: Math.round(yPct * 10) / 10,
-            title: 'Nouvelle réserve',
-            progress: 0,
-            companies: [],
-            photos: [],
-            description: ''
-          };
-          lot.pins.push(newPin);
-          renderActiveProject();
-          openPinModal(newPin);
-        }
       }
     });
 
@@ -1860,135 +1971,293 @@
       }
     });
 
-    document.getElementById('toolSelectBtn').onclick = () => { state.activeTool = 'select'; renderActiveProject(); };
-    document.getElementById('toolPinBtn').onclick = () => { state.activeTool = 'pin'; renderActiveProject(); };
-    document.getElementById('zoomInBtn').onclick = () => { state.zoom = Math.min(state.zoom + 0.2, 4); updateCanvasTransform(); };
-    document.getElementById('zoomOutBtn').onclick = () => { state.zoom = Math.max(state.zoom - 0.2, 0.5); updateCanvasTransform(); };
-    document.getElementById('zoomResetBtn').onclick = () => { state.zoom = 1; state.pan = { x: 0, y: 0 }; updateCanvasTransform(); };
+    activeCanvas.addEventListener('click', (e) => {
+      if (state.activeTool === 'pin') {
+        const img = document.getElementById('planImageView');
+        const rect = img.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          const activeLot = getActiveLot();
+          if (activeLot) {
+            if (!activeLot.pins) activeLot.pins = [];
+            const newPin = {
+              id: 'pin_' + Date.now(),
+              number: activeLot.pins.length + 1,
+              x: parseFloat(x.toFixed(2)),
+              y: parseFloat(y.toFixed(2)),
+              title: '',
+              progress: 0,
+              description: '',
+              companies: [],
+              photos: []
+            };
+            activeLot.pins.push(newPin);
+            renderActiveProject();
+            openPinModal(newPin);
+          }
+        }
+      }
+    });
 
-    // IMPORT DE PLAN
-    document.getElementById('importPlanBtn').onclick = () => document.getElementById('fileInput').click();
-    document.getElementById('replacePlanBtn').onclick = () => document.getElementById('fileInput').click();
+    function handlePlanUpload(file) {
+      if (!file) return;
+      const activeLot = getActiveLot();
+      if (!activeLot) return;
 
-    document.getElementById('fileInput').onchange = (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (file) {
-        const lot = getActiveLot();
-        if (!lot) return;
+      if (file.type === 'application/pdf') {
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+          const typedarray = new Uint8Array(this.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 1.5 });
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
+                activeLot.planImage = canvas.toDataURL('image/png');
+                renderActiveProject();
+              });
+            });
+          });
+        };
+        fileReader.readAsArrayBuffer(file);
+      } else {
         const reader = new FileReader();
-        reader.onload = (evt) => {
-          lot.planImage = evt.target.result;
-          render();
+        reader.onload = (e) => {
+          activeLot.planImage = e.target.result;
+          renderActiveProject();
         };
         reader.readAsDataURL(file);
       }
-    };
-
-    // MODALE LOT
-    function openEditLotModal(lot) {
-      state.editingLotId = lot ? lot.id : null;
-      document.getElementById('lotInputName').value = lot ? lot.name : '';
-      document.getElementById('lotInputSurface').value = lot ? parseInt(lot.surface) || '' : '';
-      renderIconGrid(lot ? lot.icon : 'building-2');
-      document.getElementById('editLotModal').classList.remove('hidden');
-      document.getElementById('editLotModal').classList.add('flex');
     }
 
-    function renderIconGrid(selectedIcon) {
-      const container = document.getElementById('iconGridContainer');
-      container.innerHTML = '';
-      AVAILABLE_ICONS.forEach(iconObj => {
-        const div = document.createElement('div');
-        const isSel = iconObj.id === selectedIcon;
-        div.className = `p-2.5 rounded-2xl border text-center cursor-pointer transition-all flex flex-col items-center justify-center space-y-1 ${isSel ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/40 text-blue-600' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'}`;
-        div.innerHTML = `<i data-lucide="${iconObj.id}" class="w-5 h-5"></i><span class="text-[10px] font-medium">${iconObj.label}</span>`;
-        div.onclick = () => {
-          state.selectedIconForModal = iconObj.id;
-          renderIconGrid(iconObj.id);
-        };
-        container.appendChild(div);
-      });
-      lucide.createIcons();
-    }
+    document.getElementById('importPlanBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+    document.getElementById('replacePlanBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+    document.getElementById('fileInput').addEventListener('change', (e) => handlePlanUpload(e.target.files[0]));
 
-    document.getElementById('closeLotModalBtn').onclick = () => { document.getElementById('editLotModal').classList.add('hidden'); document.getElementById('editLotModal').classList.remove('flex'); };
-    document.getElementById('lotForm').onsubmit = (e) => {
+    canvasViewport.addEventListener('dragover', (e) => {
       e.preventDefault();
-      const lot = getActiveLot();
-      if (lot) {
-        lot.name = document.getElementById('lotInputName').value;
-        const surfVal = document.getElementById('lotInputSurface').value;
-        lot.surface = surfVal ? surfVal + ' m²' : '';
-        lot.icon = state.selectedIconForModal;
+      canvasViewport.classList.add('drag-over-active');
+    });
+    canvasViewport.addEventListener('dragleave', () => canvasViewport.classList.remove('drag-over-active'));
+    canvasViewport.addEventListener('drop', (e) => {
+      e.preventDefault();
+      canvasViewport.classList.remove('drag-over-active');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handlePlanUpload(e.dataTransfer.files[0]);
       }
-      document.getElementById('editLotModal').classList.add('hidden');
-      document.getElementById('editLotModal').classList.remove('flex');
-      render();
-    };
+    });
 
-    // MODALE PROJET
-    document.getElementById('createNewProjectBtn').onclick = () => {
-      const newProj = {
-        id: 'proj_' + Date.now(),
-        name: 'Nouveau Projet',
-        client: '',
-        surfaceTotal: 0,
-        location: '',
-        status: 'En cours d\'aménagement',
-        activeLotId: null,
-        lots: []
-      };
-      state.projects.push(newProj);
-      state.activeProjectId = newProj.id;
-      openEditProjectModal(newProj);
-    };
+    function openEditProjectModal(proj = null) {
+      state.projectModalMode = proj ? 'edit' : 'create';
+      document.getElementById('projectModalTitle').textContent = proj ? 'Modifier le projet' : 'Nouveau projet';
+      document.getElementById('projectInputName').value = proj ? proj.name : '';
+      document.getElementById('projectInputClient').value = proj ? proj.client || '' : '';
+      document.getElementById('projectInputSurface').value = proj ? proj.surfaceTotal || '' : '';
+      document.getElementById('projectInputLocation').value = proj ? proj.location || '' : '';
+      document.getElementById('projectInputStatus').value = proj ? proj.status || 'En conception' : 'En conception';
 
-    function openEditProjectModal(proj) {
-      document.getElementById('projectInputName').value = proj.name || '';
-      document.getElementById('projectInputClient').value = proj.client || '';
-      document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
-      document.getElementById('projectInputLocation').value = proj.location || '';
-      document.getElementById('projectInputStatus').value = proj.status || 'En cours d\'aménagement';
       document.getElementById('editProjectModal').classList.remove('hidden');
       document.getElementById('editProjectModal').classList.add('flex');
     }
 
-    document.getElementById('openEditProjectBtn').onclick = () => {
-      const proj = getActiveProject();
-      if(proj) openEditProjectModal(proj);
-    };
+    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
+    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
+    document.getElementById('closeProjectModalBtn').addEventListener('click', closeProjectModal);
+    document.getElementById('cancelProjectModalBtn').addEventListener('click', closeProjectModal);
 
-    document.getElementById('closeProjectModalBtn').onclick = () => { document.getElementById('editProjectModal').classList.add('hidden'); document.getElementById('editProjectModal').classList.remove('flex'); };
-    document.getElementById('cancelProjectModalBtn').onclick = () => { document.getElementById('editProjectModal').classList.add('hidden'); document.getElementById('editProjectModal').classList.remove('flex'); };
-
-    document.getElementById('projectForm').onsubmit = (e) => {
-      e.preventDefault();
-      const proj = getActiveProject();
-      if (proj) {
-        proj.name = document.getElementById('projectInputName').value;
-        proj.client = document.getElementById('projectInputClient').value;
-        proj.surfaceTotal = parseInt(document.getElementById('projectInputSurface').value) || 0;
-        proj.location = document.getElementById('projectInputLocation').value;
-        proj.status = document.getElementById('projectInputStatus').value;
-      }
+    function closeProjectModal() {
       document.getElementById('editProjectModal').classList.add('hidden');
       document.getElementById('editProjectModal').classList.remove('flex');
-      render();
-    };
+    }
 
-    // EXPORT & IMPORT JSON DE PROJETS
-    document.getElementById('exportProjectsBtn').onclick = () => {
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('projectInputName').value.trim();
+      if (!name) return;
+
+      if (state.projectModalMode === 'create') {
+        const newProj = {
+          id: 'proj_' + Date.now(),
+          name: name,
+          client: document.getElementById('projectInputClient').value.trim(),
+          surfaceTotal: parseFloat(document.getElementById('projectInputSurface').value) || 0,
+          location: document.getElementById('projectInputLocation').value.trim(),
+          status: document.getElementById('projectInputStatus').value,
+          activeLotId: null,
+          lots: [],
+          reunion: {
+            number: 1,
+            date: new Date().toISOString().slice(0, 10),
+            nextDate: '',
+            subject: '',
+            attendees: [],
+            notes: []
+          }
+        };
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
+        state.currentView = 'projectHub';
+      } else {
+        const proj = getActiveProject();
+        if (proj) {
+          proj.name = name;
+          proj.client = document.getElementById('projectInputClient').value.trim();
+          proj.surfaceTotal = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+          proj.location = document.getElementById('projectInputLocation').value.trim();
+          proj.status = document.getElementById('projectInputStatus').value;
+        }
+      }
+      closeProjectModal();
+      render();
+    });
+
+    function openEditLotModal(lot) {
+      state.editingLotId = lot ? lot.id : null;
+      state.selectedIconForModal = lot ? lot.icon || 'building-2' : 'building-2';
+      document.getElementById('lotInputName').value = lot ? lot.name : '';
+      document.getElementById('lotInputSurface').value = lot ? (lot.surface ? lot.surface.replace(' m²', '') : '') : '';
+      renderIconGrid();
+      document.getElementById('editLotModal').classList.remove('hidden');
+      document.getElementById('editLotModal').classList.add('flex');
+    }
+
+    function renderIconGrid() {
+      const grid = document.getElementById('iconGridContainer');
+      grid.innerHTML = '';
+      AVAILABLE_ICONS.forEach(iconObj => {
+        const isSelected = iconObj.id === state.selectedIconForModal;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-3 rounded-2xl border flex flex-col items-center justify-center space-y-1 transition-all ${isSelected ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`;
+        btn.innerHTML = `
+          <i data-lucide="${iconObj.id}" class="w-5 h-5"></i>
+          <span class="text-[10px]">${iconObj.label}</span>
+        `;
+        btn.addEventListener('click', () => {
+          state.selectedIconForModal = iconObj.id;
+          renderIconGrid();
+        });
+        grid.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    document.getElementById('closeLotModalBtn').addEventListener('click', closeLotModal);
+
+    function closeLotModal() {
+      state.editingLotId = null;
+      document.getElementById('editLotModal').classList.add('hidden');
+      document.getElementById('editLotModal').classList.remove('flex');
+    }
+
+    document.getElementById('lotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (!proj || !state.editingLotId) return;
+      const lot = proj.lots.find(l => l.id === state.editingLotId);
+      if (lot) {
+        lot.name = document.getElementById('lotInputName').value.trim();
+        const surf = document.getElementById('lotInputSurface').value.trim();
+        lot.surface = surf ? `${surf} m²` : '';
+        lot.icon = state.selectedIconForModal;
+      }
+      closeLotModal();
+      render();
+    });
+
+    document.getElementById('editActiveLotBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      if (lot) openEditLotModal(lot);
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      render();
+    });
+
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', () => {
+      if (!userDropdownMenu.classList.contains('hidden')) {
+        userDropdownMenu.classList.add('hidden');
+      }
+    });
+
+    const loginModal = document.getElementById('loginModal');
+    const reportIssueModal = document.getElementById('reportIssueModal');
+    const privacyModal = document.getElementById('privacyModal');
+
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden'); loginModal.classList.add('flex');
+    });
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden'); loginModal.classList.add('flex');
+    });
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => {
+      loginModal.classList.add('hidden'); loginModal.classList.remove('flex');
+    });
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      if (email) {
+        document.getElementById('headerUserName').textContent = email.split('@')[0];
+        document.getElementById('dropdownUserStatus').textContent = email;
+      }
+      loginModal.classList.add('hidden'); loginModal.classList.remove('flex');
+    });
+
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      reportIssueModal.classList.remove('hidden'); reportIssueModal.classList.add('flex');
+    });
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => {
+      reportIssueModal.classList.add('hidden'); reportIssueModal.classList.remove('flex');
+    });
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Votre signalement a été envoyé avec succès au support technique.');
+      reportIssueModal.classList.add('hidden'); reportIssueModal.classList.remove('flex');
+    });
+
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      privacyModal.classList.remove('hidden'); privacyModal.classList.add('flex');
+    });
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden'); privacyModal.classList.remove('flex');
+    });
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden'); privacyModal.classList.remove('flex');
+    });
+
+    document.getElementById('exportProjectsBtn').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `Sauvegarde_Projets_OrionBTP_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `orion_btp_projects_${new Date().toISOString().slice(0, 10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-    };
+    });
 
-    document.getElementById('importProjectsBtn').onclick = () => document.getElementById('importProjectsInput').click();
-    document.getElementById('importProjectsInput').onchange = (e) => {
+    document.getElementById('importProjectsBtn').addEventListener('click', () => {
+      document.getElementById('importProjectsInput').click();
+    });
+
+    document.getElementById('importProjectsInput').addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -1997,100 +2266,23 @@
             const imported = JSON.parse(evt.target.result);
             if (Array.isArray(imported)) {
               state.projects = imported;
-              if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
+              if (state.projects.length > 0) {
+                state.activeProjectId = state.projects[0].id;
+              }
               render();
               alert('Projets importés avec succès !');
+            } else {
+              alert('Le fichier JSON n\'a pas un format valide.');
             }
-          } catch(err) {
-            alert('Fichier JSON invalide.');
+          } catch (err) {
+            alert('Erreur lors de la lecture du fichier JSON.');
           }
         };
         reader.readAsText(file);
       }
-    };
-
-    // MENU UTILISATEUR & MODALES SECONDAIRES
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
-
-    userMenuBtn.onclick = (e) => {
-      e.stopPropagation();
-      userDropdownMenu.classList.toggle('hidden');
-    };
-
-    window.onclick = () => {
-      if (!userDropdownMenu.classList.contains('hidden')) {
-        userDropdownMenu.classList.add('hidden');
-      }
-    };
-
-    document.getElementById('dropdownLoginBtn').onclick = () => {
-      userDropdownMenu.classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('hidden');
-      document.getElementById('loginModal').classList.add('flex');
-    };
-
-    document.getElementById('dropdownRegisterBtn').onclick = () => {
-      userDropdownMenu.classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('hidden');
-      document.getElementById('loginModal').classList.add('flex');
-    };
-
-    document.getElementById('closeLoginModalBtn').onclick = () => {
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('flex');
-    };
-
-    document.getElementById('loginForm').onsubmit = (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      document.getElementById('headerUserName').textContent = email.split('@')[0];
-      document.getElementById('dropdownUserStatus').textContent = email;
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('flex');
-    };
-
-    document.getElementById('dropdownReportIssueBtn').onclick = () => {
-      userDropdownMenu.classList.add('hidden');
-      document.getElementById('reportIssueModal').classList.remove('hidden');
-      document.getElementById('reportIssueModal').classList.add('flex');
-    };
-
-    document.getElementById('closeReportIssueModalBtn').onclick = () => {
-      document.getElementById('reportIssueModal').classList.add('hidden');
-      document.getElementById('reportIssueModal').classList.remove('flex');
-    };
-
-    document.getElementById('reportIssueForm').onsubmit = (e) => {
-      e.preventDefault();
-      alert('Signalement transmis au support technique.');
-      document.getElementById('reportIssueModal').classList.add('hidden');
-      document.getElementById('reportIssueModal').classList.remove('flex');
-    };
-
-    document.getElementById('dropdownPrivacyBtn').onclick = () => {
-      userDropdownMenu.classList.add('hidden');
-      document.getElementById('privacyModal').classList.remove('hidden');
-      document.getElementById('privacyModal').classList.add('flex');
-    };
-
-    document.getElementById('closePrivacyModalBtn').onclick = () => {
-      document.getElementById('privacyModal').classList.add('hidden');
-      document.getElementById('privacyModal').classList.remove('flex');
-    };
-
-    document.getElementById('confirmPrivacyBtn').onclick = () => {
-      document.getElementById('privacyModal').classList.add('hidden');
-      document.getElementById('privacyModal').classList.remove('flex');
-    };
-
-    // INITIALISATION
-    window.addEventListener('DOMContentLoaded', () => {
-      if (state.projects.length > 0) {
-        state.activeProjectId = state.projects[0].id;
-      }
-      render();
     });
+
+    render();
   </script>
 </body>
 </html>
