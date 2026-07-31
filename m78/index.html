@@ -135,7 +135,99 @@
       </div>
     </div>
   </header>
+ <!-- MODAL : CONNEXION -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Connexion / Inscription</h3>
+            <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
+          </div>
+        </div>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
 
+      <form id="loginForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Se connecter</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : SIGNALER UN PROBLEME -->
+  <div id="reportIssueModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Signaler un problème</h3>
+            <p class="text-xs text-slate-400">Support & Assistance Technique</p>
+          </div>
+        </div>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="reportIssueForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Sujet de la demande</label>
+          <input type="text" required placeholder="ex: Bug d'affichage des plans PDF..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Description de l'incident</label>
+          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement ou votre question..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
+          <span>Envoyer le signalement</span>
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : POLITIQUE DE CONFIDENTIALITE -->
+  <div id="privacyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Politique de confidentialité</h3>
+            <p class="text-xs text-slate-400">Protection des données & sécurité</p>
+          </div>
+        </div>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p><strong>1. Stockage Local :</strong> Les données de vos projets et plans importés sur Orion BTP sont conservées localement au niveau de votre navigateur afin d'assurer la confidentialité intégrale de vos chantiers.</p>
+        <p><strong>2. Données Personnelles :</strong> Aucune donnée confidentielle ou image d'inspection de réserve n'est partagée sans votre consentement préalable.</p>
+        <p><strong>3. Exports de Rapports :</strong> Tous les documents générés (.PDF, .DOC) restent sous votre pleine propriété.</p>
+      </div>
+
+      <button id="confirmPrivacyBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        Compris & Accepter
+      </button>
+    </div>
+  </div>
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
