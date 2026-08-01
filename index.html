@@ -55,6 +55,13 @@
     .star-glow { animation: pulseGlow 4s infinite ease-in-out; }
     .star-twinkle { animation: starTwinkle 2.5s infinite ease-in-out; }
   </style>
+
+  <!-- SCRIPT ANTI-FLASH : Applique le dark mode avant même le rendu de la page -->
+  <script>
+    if (localStorage.getItem("themeOrionBTP") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300 flex flex-col">
 
@@ -647,9 +654,9 @@
       authorizedPassword: '123'
     };
 
-    // État central de l'application
+    // État central de l'application (MODIFIÉ POUR LIRE LE LOCALSTORAGE)
     const state = {
-      darkMode: false,
+      darkMode: localStorage.getItem('themeOrionBTP') === 'dark',
       currentView: 'landing', // 'landing', 'admin'
       currentUser: null,
 
@@ -851,9 +858,17 @@
       });
     }
 
-    // Gestion du thème
+    // Gestion du thème (MODIFIÉ POUR SAUVEGARDER LE LOCALSTORAGE)
     document.getElementById('themeToggleBtn').addEventListener('click', () => {
       state.darkMode = !state.darkMode;
+      
+      // Sauvegarde dans le navigateur
+      if (state.darkMode) {
+        localStorage.setItem('themeOrionBTP', 'dark');
+      } else {
+        localStorage.setItem('themeOrionBTP', 'light');
+      }
+      
       render();
     });
 
