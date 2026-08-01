@@ -817,25 +817,6 @@
           </select>
         </div>
 
-        <!-- CHAMP AJOUTE : PHOTOS DU PROJET -->
-        <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Photos du projet / chantier</label>
-          <div class="flex flex-wrap items-center gap-2 mb-2">
-            <label class="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-medium text-[11px] sm:text-xs cursor-pointer hover:bg-blue-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm">
-              <i data-lucide="image" class="w-3.5 h-3.5 shrink-0"></i>
-              <span class="truncate">Ajouter des photos</span>
-              <input type="file" id="projectPhotosInput" accept="image/*" multiple class="hidden" />
-            </label>
-            <label class="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-medium text-[11px] sm:text-xs cursor-pointer hover:bg-emerald-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm">
-              <i data-lucide="camera" class="w-3.5 h-3.5 shrink-0"></i>
-              <span class="truncate">Prendre une photo</span>
-              <input type="file" id="projectCameraInput" accept="image/*" capture="environment" class="hidden" />
-            </label>
-          </div>
-          <!-- Container de prévisualisation des photos du projet -->
-          <div id="projectPhotosContainer" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2.5 border dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30"></div>
-        </div>
-
         <div class="flex items-center justify-end space-x-2 sm:space-x-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelProjectModalBtn" class="flex-1 sm:flex-none justify-center px-4 sm:px-5 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
           <button type="submit" class="flex-1 sm:flex-none justify-center px-5 sm:px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center space-x-1.5">
@@ -897,7 +878,6 @@
         client: 'SCI Mimosas',
         surfaceTotal: 450,
         status: 'En cours d\'aménagement',
-        photos: [], // Tableau de photos du projet
         activeLotId: 'lot_1',
         reunion: {
           number: 1,
@@ -957,8 +937,7 @@
       isDraggingCanvas: false,
       dragStart: { x: 0, y: 0 },
       activeTool: 'select',
-      projectModalMode: 'edit',
-      modalProjectPhotos: [] // Tampon temporaire pour les photos du projet dans le modal
+      projectModalMode: 'edit'
     };
 
     if (state.projects.length > 0) {
@@ -1108,36 +1087,23 @@
           });
         }
 
-        const hasPhotos = proj.photos && proj.photos.length > 0;
         const card = document.createElement('div');
-        card.className = 'group relative rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer overflow-hidden flex flex-col justify-between';
-        
+        card.className = 'group relative p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer';
         card.innerHTML = `
-          ${hasPhotos ? `
-            <div class="h-32 w-full overflow-hidden relative">
-              <img src="${proj.photos[0]}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="Bannière projet" />
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-              <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-slate-900/70 text-white text-[10px] font-semibold flex items-center gap-1 backdrop-blur-sm">
-                <i data-lucide="image" class="w-3 h-3"></i> ${proj.photos.length}
-              </span>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 flex items-center justify-center">
+              <i data-lucide="folder" class="w-5 h-5"></i>
             </div>
-          ` : ''}
-          <div class="p-5 flex-1">
-            <div class="flex items-start justify-between mb-4">
-              <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 flex items-center justify-center shrink-0">
-                <i data-lucide="folder" class="w-5 h-5"></i>
-              </div>
-              <div class="flex items-center space-x-2">
-                <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status && proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${proj.status || 'En cours'}</span>
-                <button type="button" class="delete-project-btn p-1.5 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-colors" title="Supprimer le projet">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${proj.status}</span>
+              <button type="button" class="delete-project-btn p-1.5 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-colors" title="Supprimer le projet">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
             </div>
-            <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate">${proj.name}</h3>
-            <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${proj.location || 'Aucune adresse'}</span></p>
           </div>
-          <div class="px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500 bg-slate-50/50 dark:bg-slate-800/20">
+          <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate">${proj.name}</h3>
+          <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${proj.location || 'Aucune adresse'}</span></p>
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
             <span>${proj.lots ? proj.lots.length : 0} Zone(s)</span>
             <span class="font-medium"><span class="text-emerald-600 dark:text-emerald-400 font-bold">${resolvedPins}</span>/${totalPins} réserves</span>
             <span>${proj.surfaceTotal || 0} m²</span>
@@ -1399,21 +1365,22 @@
 
       pin.photos.forEach((photoUrl, pIdx) => {
         const div = document.createElement('div');
-        div.className = 'relative group w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0';
+        div.className = 'relative group w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-black shrink-0 cursor-pointer';
         div.innerHTML = `
           <img src="${photoUrl}" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
-            <button type="button" class="p-1 bg-white/80 rounded-md text-slate-800 hover:bg-white" title="Annoter"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
-            <button type="button" class="p-1 bg-rose-500/80 rounded-md text-white hover:bg-rose-500" title="Supprimer"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
+            <button type="button" class="draw-photo-btn p-1 bg-white/80 rounded-lg text-slate-800 hover:bg-white"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="del-photo-btn p-1 bg-rose-500/80 rounded-lg text-white hover:bg-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         `;
 
-        const btns = div.querySelectorAll('button');
-        btns[0].addEventListener('click', () => openPhotoAnnotationModal(photoUrl, (annotatedUrl) => {
-          pin.photos[pIdx] = annotatedUrl;
-          renderPinPhotos(pin);
-        }));
-        btns[1].addEventListener('click', () => {
+        div.querySelector('.draw-photo-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openDrawPhotoModal(pin, pIdx);
+        });
+
+        div.querySelector('.del-photo-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
           pin.photos.splice(pIdx, 1);
           renderPinPhotos(pin);
         });
@@ -1423,164 +1390,95 @@
       lucide.createIcons();
     }
 
-    // ANNOTATION PHOTOS
-    function openPhotoAnnotationModal(photoUrl, onSaveCallback) {
-      const canvas = document.getElementById('photoDrawCanvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      let isDrawing = false;
-      let currentColor = '#ef4444';
+    // ANNOTATION / DESSIN SUR PHOTO
+    let currentDrawingPin = null;
+    let currentDrawingPhotoIndex = -1;
+    let drawingColor = '#ef4444';
+    let isDrawing = false;
+    let canvasCtx = null;
 
+    function openDrawPhotoModal(pin, photoIndex) {
+      currentDrawingPin = pin;
+      currentDrawingPhotoIndex = photoIndex;
+      const canvas = document.getElementById('photoDrawCanvas');
+      canvasCtx = canvas.getContext('2d');
+
+      const img = new Image();
       img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        canvasCtx.drawImage(img, 0, 0);
+        showModal('drawPhotoModal');
       };
-      img.src = photoUrl;
+      img.src = pin.photos[photoIndex];
+    }
 
-      showModal('drawPhotoModal');
-
-      const colorBtns = document.querySelectorAll('.color-btn');
-      colorBtns.forEach(btn => {
-        btn.onclick = () => {
-          currentColor = btn.getAttribute('data-color');
-        };
-      });
-
-      function getCoords(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        let clientX = e.clientX;
-        let clientY = e.clientY;
-        if (e.touches && e.touches.length > 0) {
-          clientX = e.touches[0].clientX;
-          clientY = e.touches[0].clientY;
-        }
+    const drawCanvas = document.getElementById('photoDrawCanvas');
+    if (drawCanvas) {
+      const getPos = (e) => {
+        const rect = drawCanvas.getBoundingClientRect();
+        const scaleX = drawCanvas.width / rect.width;
+        const scaleY = drawCanvas.height / rect.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         return {
           x: (clientX - rect.left) * scaleX,
           y: (clientY - rect.top) * scaleY
         };
-      }
-
-      function startDraw(e) {
-        isDrawing = true;
-        const coords = getCoords(e);
-        ctx.beginPath();
-        ctx.moveTo(coords.x, coords.y);
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = Math.max(3, canvas.width / 150);
-        ctx.lineCap = 'round';
-      }
-
-      function draw(e) {
-        if (!isDrawing) return;
-        const coords = getCoords(e);
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-      }
-
-      function stopDraw() {
-        if (isDrawing) {
-          isDrawing = false;
-          ctx.closePath();
-        }
-      }
-
-      canvas.onmousedown = startDraw;
-      canvas.onmousemove = draw;
-      canvas.onmouseup = stopDraw;
-
-      canvas.ontouchstart = (e) => { e.preventDefault(); startDraw(e); };
-      canvas.ontouchmove = (e) => { e.preventDefault(); draw(e); };
-      canvas.ontouchend = (e) => { e.preventDefault(); stopDraw(); };
-
-      document.getElementById('closeDrawModalBtn').onclick = () => {
-        const dataUrl = canvas.toDataURL('image/png');
-        if (onSaveCallback) onSaveCallback(dataUrl);
-        hideModal('drawPhotoModal');
       };
+
+      const startDraw = (e) => {
+        isDrawing = true;
+        const pos = getPos(e);
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(pos.x, pos.y);
+        canvasCtx.strokeStyle = drawingColor;
+        canvasCtx.lineWidth = 5;
+        canvasCtx.lineCap = 'round';
+      };
+
+      const drawMove = (e) => {
+        if (!isDrawing) return;
+        const pos = getPos(e);
+        canvasCtx.lineTo(pos.x, pos.pos ? pos.pos : pos.y);
+        canvasCtx.stroke();
+      };
+
+      const stopDraw = () => { isDrawing = false; };
+
+      drawCanvas.addEventListener('mousedown', startDraw);
+      drawCanvas.addEventListener('mousemove', drawMove);
+      drawCanvas.addEventListener('mouseup', stopDraw);
+      drawCanvas.addEventListener('touchstart', startDraw);
+      drawCanvas.addEventListener('touchmove', drawMove);
+      drawCanvas.addEventListener('touchend', stopDraw);
     }
 
-    // FONCTION RENOUVELEE : GESTION DU MODAL PROJET (PROPERTIES & PHOTOS)
-    function openEditProjectModal(projectToEdit = null) {
-      const nameInput = document.getElementById('projectInputName');
-      const clientInput = document.getElementById('projectInputClient');
-      const surfaceInput = document.getElementById('projectInputSurface');
-      const locationInput = document.getElementById('projectInputLocation');
-      const statusInput = document.getElementById('projectInputStatus');
-      const title = document.getElementById('projectModalTitle');
-
-      if (projectToEdit) {
-        state.projectModalMode = 'edit';
-        title.textContent = "Modifier le projet";
-        nameInput.value = projectToEdit.name || '';
-        clientInput.value = projectToEdit.client || '';
-        surfaceInput.value = projectToEdit.surfaceTotal || '';
-        locationInput.value = projectToEdit.location || '';
-        statusInput.value = projectToEdit.status || 'En cours d\'aménagement';
-        state.modalProjectPhotos = projectToEdit.photos ? [...projectToEdit.photos] : [];
-      } else {
-        state.projectModalMode = 'create';
-        title.textContent = "Nouveau projet";
-        nameInput.value = '';
-        clientInput.value = '';
-        surfaceInput.value = '';
-        locationInput.value = '';
-        statusInput.value = 'En cours d\'aménagement';
-        state.modalProjectPhotos = [];
-      }
-
-      renderModalProjectPhotos();
-      showModal('editProjectModal');
-    }
-
-    function renderModalProjectPhotos() {
-      const container = document.getElementById('projectPhotosContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (!state.modalProjectPhotos || state.modalProjectPhotos.length === 0) {
-        container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Aucune photo sélectionnée pour ce projet</span>`;
-        return;
-      }
-
-      state.modalProjectPhotos.forEach((photoUrl, idx) => {
-        const div = document.createElement('div');
-        div.className = 'relative group w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0';
-        div.innerHTML = `
-          <img src="${photoUrl}" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <button type="button" class="p-1 bg-rose-500/80 rounded-md text-white hover:bg-rose-500" title="Supprimer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
-        `;
-
-        div.querySelector('button').addEventListener('click', () => {
-          state.modalProjectPhotos.splice(idx, 1);
-          renderModalProjectPhotos();
-        });
-
-        container.appendChild(div);
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        drawingColor = e.currentTarget.getAttribute('data-color');
       });
-      lucide.createIcons();
-    }
+    });
 
-    function handleProjectPhotoFiles(files) {
-      Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          state.modalProjectPhotos.push(e.target.result);
-          renderModalProjectPhotos();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+    document.getElementById('closeDrawModalBtn').addEventListener('click', () => {
+      if (currentDrawingPin && currentDrawingPhotoIndex >= 0) {
+        const canvas = document.getElementById('photoDrawCanvas');
+        currentDrawingPin.photos[currentDrawingPhotoIndex] = canvas.toDataURL('image/png');
+        renderPinPhotos(currentDrawingPin);
+      }
+      hideModal('drawPhotoModal');
+    });
 
-    // MODULE REUNION DE CHANTIER - RENDER
+    // MODULE REUNION DE CHANTIER
     function renderReunionModule() {
       const proj = getActiveProject();
       if (!proj) return;
+
+      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
+      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
+      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
+      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
+      document.getElementById('reunionProjectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status || 'En cours'}</span>`;
 
       if (!proj.reunion) {
         proj.reunion = {
@@ -1593,516 +1491,677 @@
         };
       }
 
-      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
-      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
-      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
-      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
-      document.getElementById('reunionProjectStatusBadge').textContent = proj.status || 'En cours';
+      const r = proj.reunion;
+      document.getElementById('reunionInputNumber').value = r.number || 1;
+      document.getElementById('reunionInputDate').value = r.date || '';
+      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
+      document.getElementById('reunionInputSubject').value = r.subject || '';
 
-      document.getElementById('reunionInputNumber').value = proj.reunion.number || 1;
-      document.getElementById('reunionInputDate').value = proj.reunion.date || '';
-      document.getElementById('reunionInputNextDate').value = proj.reunion.nextDate || '';
-      document.getElementById('reunionInputSubject').value = proj.reunion.subject || '';
-
-      renderReunionAttendees(proj.reunion);
-      renderReunionNotes(proj.reunion);
+      renderReunionAttendees();
+      renderReunionNotes();
     }
 
-    function renderReunionAttendees(reunion) {
+    function renderReunionAttendees() {
+      const proj = getActiveProject();
+      if (!proj || !proj.reunion) return;
       const container = document.getElementById('reunionAttendeesContainer');
       container.innerHTML = '';
 
-      if (!reunion.attendees || reunion.attendees.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic py-2">Aucun participant saisi</div>`;
-        return;
-      }
-
-      reunion.attendees.forEach((att, idx) => {
-        const div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800';
-        div.innerHTML = `
-          <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">${att.name}</span>
-          <div class="flex items-center space-x-2">
-            <select class="attendee-status-select px-2 py-1 rounded-lg text-[10px] bg-white dark:bg-slate-800 border dark:border-slate-700 font-semibold">
+      proj.reunion.attendees.forEach((att, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border dark:border-slate-800';
+        item.innerHTML = `
+          <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[150px]">${att.name}</span>
+          <div class="flex items-center space-x-1">
+            <select class="att-status-select bg-white dark:bg-slate-900 border rounded px-1.5 py-0.5 text-[10px]">
               <option value="present" ${att.status === 'present' ? 'selected' : ''}>Présent</option>
-              <option value="absent" ${att.status === 'absent' ? 'selected' : ''}>Absent</option>
               <option value="excused" ${att.status === 'excused' ? 'selected' : ''}>Excusé</option>
+              <option value="absent" ${att.status === 'absent' ? 'selected' : ''}>Absent</option>
             </select>
-            <button type="button" class="text-slate-400 hover:text-rose-500 p-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+            <button class="remove-att-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         `;
 
-        div.querySelector('.attendee-status-select').addEventListener('change', (e) => {
+        item.querySelector('.att-status-select').onchange = (e) => {
           att.status = e.target.value;
           saveData();
-        });
+        };
 
-        div.querySelector('button').addEventListener('click', () => {
-          reunion.attendees.splice(idx, 1);
+        item.querySelector('.remove-att-btn').onclick = () => {
+          proj.reunion.attendees.splice(idx, 1);
           saveData();
-          renderReunionAttendees(reunion);
-        });
+          renderReunionAttendees();
+        };
 
-        container.appendChild(div);
+        container.appendChild(item);
       });
       lucide.createIcons();
     }
 
-    function renderReunionNotes(reunion) {
+    function renderReunionNotes() {
+      const proj = getActiveProject();
+      if (!proj || !proj.reunion) return;
       const container = document.getElementById('reunionNotesContainer');
       container.innerHTML = '';
 
-      if (!reunion.notes || reunion.notes.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic py-3 text-center border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucune remarque enregistrée.</div>`;
+      if (proj.reunion.notes.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl">Aucune remarque consignée pour cette réunion.</p>`;
         return;
       }
 
-      reunion.notes.forEach((note, idx) => {
+      proj.reunion.notes.forEach((note, idx) => {
         const div = document.createElement('div');
-        div.className = 'p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2';
+        div.className = 'p-3 rounded-2xl border dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2 text-xs';
         div.innerHTML = `
-          <div class="flex items-center justify-between">
-            <input type="text" value="${note.company || ''}" placeholder="Lot / Entreprise..." class="note-company-input px-2 py-1 rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-blue-600 dark:text-blue-400 outline-none w-1/2" />
-            <button type="button" class="delete-note-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" value="${note.company || ''}" placeholder="Lot / Entreprise..." class="note-company-input px-2.5 py-1 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold w-1/2 outline-none" />
+            <button class="remove-note-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </div>
-          <textarea rows="2" placeholder="Saisir les remarques, demandes ou consignes..." class="note-text-input w-full px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs outline-none">${note.text || ''}</textarea>
+          <textarea placeholder="Remarque, décision ou action à mener..." class="note-text-input w-full p-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 outline-none text-xs" rows="2">${note.text || ''}</textarea>
         `;
 
-        div.querySelector('.note-company-input').addEventListener('input', (e) => {
-          note.company = e.target.value;
+        div.querySelector('.note-company-input').onchange = (e) => { note.company = e.target.value; saveData(); };
+        div.querySelector('.note-text-input').onchange = (e) => { note.text = e.target.value; saveData(); };
+        div.querySelector('.remove-note-btn').onclick = () => {
+          proj.reunion.notes.splice(idx, 1);
           saveData();
-        });
-
-        div.querySelector('.note-text-input').addEventListener('input', (e) => {
-          note.text = e.target.value;
-          saveData();
-        });
-
-        div.querySelector('.delete-note-btn').addEventListener('click', () => {
-          reunion.notes.splice(idx, 1);
-          saveData();
-          renderReunionNotes(reunion);
-        });
+          renderReunionNotes();
+        };
 
         container.appendChild(div);
       });
       lucide.createIcons();
     }
 
-    // INITIALISATION ET LISTENERS D'EVENEMENTS
-    document.addEventListener('DOMContentLoaded', () => {
+    // LISTENER NAVIGATION & BOUTONS
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'home';
+      render();
+    });
 
-      // Navigation
-      document.getElementById('navLogoBtn').onclick = () => {
+    document.getElementById('homeNavBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      state.currentView = 'home';
+      render();
+    });
+
+    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
+      if (state.currentView === 'project' || state.currentView === 'reunion') {
+        state.currentView = 'projectHub';
+      } else if (state.currentView === 'projectHub') {
         state.currentView = 'home';
-        render();
-      };
+      }
+      render();
+    });
 
-      document.getElementById('homeNavBtn').onclick = (e) => {
-        e.preventDefault();
-        state.currentView = 'home';
-        render();
-      };
+    // MENU UTILISATEUR & DROPDOWNS
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
 
-      document.getElementById('backToPreviousBtn').onclick = () => {
-        if (state.currentView === 'project' || state.currentView === 'reunion') {
-          state.currentView = 'projectHub';
-        } else if (state.currentView === 'projectHub') {
-          state.currentView = 'home';
-        }
-        render();
-      };
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    });
 
-      // Theme toggle
-      document.getElementById('themeToggleBtn').onclick = () => {
-        state.darkMode = !state.darkMode;
-        localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
-        render();
-      };
+    document.addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+    });
 
-      // User Dropdown
-      const userBtn = document.getElementById('userMenuBtn');
-      const userMenu = document.getElementById('userDropdownMenu');
-      userBtn.onclick = (e) => {
-        e.stopPropagation();
-        userMenu.classList.toggle('hidden');
-      };
-      document.addEventListener('click', () => userMenu.classList.add('hidden'));
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('loginModal');
+    });
 
-      // Modals utilisateur
-      document.getElementById('dropdownLoginBtn').onclick = () => showModal('loginModal');
-      document.getElementById('dropdownRegisterBtn').onclick = () => showModal('loginModal');
-      document.getElementById('closeLoginModalBtn').onclick = () => hideModal('loginModal');
-      document.getElementById('dropdownReportIssueBtn').onclick = () => showModal('reportIssueModal');
-      document.getElementById('closeReportIssueModalBtn').onclick = () => hideModal('reportIssueModal');
-      document.getElementById('dropdownPrivacyBtn').onclick = () => showModal('privacyModal');
-      document.getElementById('closePrivacyModalBtn').onclick = () => hideModal('privacyModal');
-      document.getElementById('confirmPrivacyBtn').onclick = () => hideModal('privacyModal');
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('loginModal');
+    });
 
-      // Export / Import global des projets JSON
-      document.getElementById('exportProjectsBtn').onclick = () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `orion_btp_sauvegarde_${new Date().toISOString().slice(0,10)}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-      };
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('reportIssueModal');
+    });
 
-      document.getElementById('importProjectsBtn').onclick = () => {
-        document.getElementById('importProjectsInput').click();
-      };
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('privacyModal');
+    });
 
-      document.getElementById('importProjectsInput').onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const imported = JSON.parse(event.target.result);
-            if (Array.isArray(imported)) {
-              state.projects = imported;
-              saveData();
-              if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
-              render();
-              alert('Importation réussie !');
-            }
-          } catch(err) {
-            alert('Erreur lors de l\'importation du fichier JSON.');
-          }
+    // FERMETURE MODALES
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => hideModal('loginModal'));
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => hideModal('reportIssueModal'));
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => hideModal('privacyModal'));
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => hideModal('privacyModal'));
+    document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
+    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
+
+    // SOUMISSION FORMULAIRES DE SERVICE
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      document.getElementById('headerUserName').textContent = email.split('@')[0];
+      document.getElementById('dropdownUserStatus').textContent = email;
+      hideModal('loginModal');
+    });
+
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Signalement envoyé avec succès ! Notre équipe technique va l\'analyser.');
+      hideModal('reportIssueModal');
+    });
+
+    // EDITION / CREATION DE PROJET
+    function openEditProjectModal(proj = null) {
+      if (proj) {
+        state.projectModalMode = 'edit';
+        document.getElementById('projectModalTitle').textContent = "Modifier le projet";
+        document.getElementById('projectInputName').value = proj.name || '';
+        document.getElementById('projectInputClient').value = proj.client || '';
+        document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
+        document.getElementById('projectInputLocation').value = proj.location || '';
+        document.getElementById('projectInputStatus').value = proj.status || 'En cours d\'aménagement';
+      } else {
+        state.projectModalMode = 'create';
+        document.getElementById('projectModalTitle').textContent = "Nouveau projet";
+        document.getElementById('projectForm').reset();
+      }
+      showModal('editProjectModal');
+    }
+
+    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
+    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
+    document.getElementById('closeProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
+    document.getElementById('cancelProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
+
+    document.getElementById('projectForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('projectInputName').value;
+      const client = document.getElementById('projectInputClient').value;
+      const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const location = document.getElementById('projectInputLocation').value;
+      const status = document.getElementById('projectInputStatus').value;
+
+      if (state.projectModalMode === 'create') {
+        const newProj = {
+          id: 'proj_' + Date.now(),
+          name,
+          client,
+          surfaceTotal: surface,
+          location,
+          status,
+          activeLotId: null,
+          lots: [],
+          reunion: { number: 1, date: new Date().toISOString().slice(0,10), nextDate:'', subject:'', attendees:[], notes:[] }
         };
-        reader.readAsText(file);
-      };
-
-      // Projet modal Listeners (Photos de projets)
-      document.getElementById('createNewProjectBtn').onclick = () => {
-        openEditProjectModal(null);
-      };
-
-      document.getElementById('openEditProjectBtn').onclick = () => {
-        openEditProjectModal(getActiveProject());
-      };
-
-      document.getElementById('closeProjectModalBtn').onclick = () => hideModal('editProjectModal');
-      document.getElementById('cancelProjectModalBtn').onclick = () => hideModal('editProjectModal');
-
-      // Ecouteurs pour le bouton d'ajout et appareil photo du projet
-      document.getElementById('projectPhotosInput').addEventListener('change', (e) => {
-        handleProjectPhotoFiles(e.target.files);
-      });
-      document.getElementById('projectCameraInput').addEventListener('change', (e) => {
-        handleProjectPhotoFiles(e.target.files);
-      });
-
-      document.getElementById('projectForm').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('projectInputName').value;
-        const client = document.getElementById('projectInputClient').value;
-        const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
-        const location = document.getElementById('projectInputLocation').value;
-        const status = document.getElementById('projectInputStatus').value;
-
-        if (state.projectModalMode === 'create') {
-          const newProj = {
-            id: 'proj_' + Date.now(),
-            name,
-            client,
-            surfaceTotal: surface,
-            location,
-            status,
-            photos: [...state.modalProjectPhotos],
-            activeLotId: null,
-            lots: []
-          };
-          state.projects.push(newProj);
-          state.activeProjectId = newProj.id;
-        } else {
-          const proj = getActiveProject();
-          if (proj) {
-            proj.name = name;
-            proj.client = client;
-            proj.surfaceTotal = surface;
-            proj.location = location;
-            proj.status = status;
-            proj.photos = [...state.modalProjectPhotos];
-          }
-        }
-
-        saveData();
-        hideModal('editProjectModal');
-        render();
-      };
-
-      // Choix Zone / Lot
-      document.getElementById('lotSelect').onchange = (e) => {
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
+        state.currentView = 'projectHub';
+      } else {
         const proj = getActiveProject();
         if (proj) {
-          proj.activeLotId = e.target.value;
-          state.zoom = 1;
-          state.pan = { x: 0, y: 0 };
-          saveData();
-          renderActiveProject();
+          proj.name = name;
+          proj.client = client;
+          proj.surfaceTotal = surface;
+          proj.location = location;
+          proj.status = status;
         }
-      };
+      }
 
-      document.getElementById('addNewLotBtn').onclick = () => {
+      saveData();
+      hideModal('editProjectModal');
+      render();
+    });
+
+    // ZONES / LOTS
+    function openEditLotModal(lot = null) {
+      const container = document.getElementById('iconGridContainer');
+      container.innerHTML = '';
+
+      if (lot) {
+        state.editingLotId = lot.id;
+        state.selectedIconForModal = lot.icon || 'building-2';
+        document.getElementById('lotInputName').value = lot.name || '';
+        document.getElementById('lotInputSurface').value = lot.surface || '';
+      } else {
         state.editingLotId = null;
-        document.getElementById('lotInputName').value = '';
-        document.getElementById('lotInputSurface').value = '';
-        showModal('editLotModal');
-      };
+        state.selectedIconForModal = 'building-2';
+        document.getElementById('lotForm').reset();
+      }
 
-      document.getElementById('closeLotModalBtn').onclick = () => hideModal('editLotModal');
+      AVAILABLE_ICONS.forEach(icon => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center space-y-1 transition-all ${state.selectedIconForModal === icon.id ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-600' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`;
+        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] font-medium">${icon.label}</span>`;
 
-      document.getElementById('lotForm').onsubmit = (e) => {
-        e.preventDefault();
-        const proj = getActiveProject();
-        if (!proj) return;
+        btn.addEventListener('click', () => {
+          state.selectedIconForModal = icon.id;
+          openEditLotModal(lot);
+        });
 
-        const lotName = document.getElementById('lotInputName').value;
-        const lotSurf = document.getElementById('lotInputSurface').value ? `${document.getElementById('lotInputSurface').value} m²` : '';
+        container.appendChild(btn);
+      });
 
-        if (!proj.lots) proj.lots = [];
+      lucide.createIcons();
+      showModal('editLotModal');
+    }
 
-        if (state.editingLotId) {
-          const lot = proj.lots.find(l => l.id === state.editingLotId);
-          if (lot) {
-            lot.name = lotName;
-            lot.surface = lotSurf;
-            lot.icon = state.selectedIconForModal;
-          }
-        } else {
-          const newLot = {
-            id: 'lot_' + Date.now(),
-            name: lotName,
-            surface: lotSurf,
-            icon: state.selectedIconForModal,
-            planImage: null,
-            pins: []
-          };
-          proj.lots.push(newLot);
-          proj.activeLotId = newLot.id;
-        }
+    document.getElementById('addNewLotBtn').addEventListener('click', () => openEditLotModal(null));
+    document.getElementById('quickEditLotBtn').addEventListener('click', () => openEditLotModal(getActiveLot()));
+    document.getElementById('editActiveLotBtn').addEventListener('click', () => openEditLotModal(getActiveLot()));
+    document.getElementById('closeLotModalBtn').addEventListener('click', () => hideModal('editLotModal'));
 
+    document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      const lot = getActiveLot();
+      if (!proj || !lot) return;
+
+      if (confirm(`Voulez-vous vraiment supprimer la zone "${lot.name}" ?`)) {
+        proj.lots = proj.lots.filter(l => l.id !== lot.id);
+        proj.activeLotId = proj.lots.length > 0 ? proj.lots[0].id : null;
         saveData();
-        hideModal('editLotModal');
         render();
-      };
+      }
+    });
 
-      // Fichier plan / dropzone
-      const importPlanBtn = document.getElementById('importPlanBtn');
-      const replacePlanBtn = document.getElementById('replacePlanBtn');
-      const fileInput = document.getElementById('fileInput');
+    document.getElementById('lotSelect').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj) {
+        proj.activeLotId = e.target.value;
+        saveData();
+        render();
+      }
+    });
 
-      if (importPlanBtn) importPlanBtn.onclick = () => fileInput.click();
-      if (replacePlanBtn) replacePlanBtn.onclick = () => fileInput.click();
+    document.getElementById('lotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (!proj) return;
 
-      fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+      const name = document.getElementById('lotInputName').value;
+      const surface = document.getElementById('lotInputSurface').value;
 
+      if (state.editingLotId) {
+        const lot = proj.lots.find(l => l.id === state.editingLotId);
+        if (lot) {
+          lot.name = name;
+          lot.surface = surface;
+          lot.icon = state.selectedIconForModal;
+        }
+      } else {
+        const newLot = {
+          id: 'lot_' + Date.now(),
+          name,
+          surface,
+          icon: state.selectedIconForModal,
+          planImage: null,
+          pins: []
+        };
+        if (!proj.lots) proj.lots = [];
+        proj.lots.push(newLot);
+        proj.activeLotId = newLot.id;
+      }
+
+      saveData();
+      hideModal('editLotModal');
+      render();
+    });
+
+    // PLAN IMPORTATION & CANVAS
+    const fileInput = document.getElementById('fileInput');
+
+    document.getElementById('importPlanBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const lot = getActiveLot();
+      if (!lot) return;
+
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const typedarray = new Uint8Array(evt.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 1.5 });
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+                lot.planImage = canvas.toDataURL();
+                saveData();
+                render();
+              });
+            });
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          lot.planImage = evt.target.result;
+          saveData();
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // OUTILS CANVAS
+    document.getElementById('toolSelectBtn').addEventListener('click', () => {
+      state.activeTool = 'select';
+      render();
+    });
+
+    document.getElementById('toolPinBtn').addEventListener('click', () => {
+      state.activeTool = 'pin';
+      render();
+    });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      state.zoom = Math.min(state.zoom + 0.2, 4);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      state.zoom = Math.max(state.zoom - 0.2, 0.4);
+      updateCanvasTransform();
+    });
+
+    document.getElementById('zoomResetBtn').addEventListener('click', () => {
+      state.zoom = 1;
+      state.pan = { x: 0, y: 0 };
+      updateCanvasTransform();
+    });
+
+    const activeCanvas = document.getElementById('activeCanvas');
+    activeCanvas.addEventListener('mousedown', (e) => {
+      if (state.activeTool === 'select') {
+        state.isDraggingCanvas = true;
+        state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
+        activeCanvas.style.cursor = 'grabbing';
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDraggingCanvas) {
+        state.pan.x = e.clientX - state.dragStart.x;
+        state.pan.y = e.clientY - state.dragStart.y;
+        updateCanvasTransform();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (state.isDraggingCanvas) {
+        state.isDraggingCanvas = false;
+        if (activeCanvas) activeCanvas.style.cursor = state.activeTool === 'select' ? 'grab' : 'crosshair';
+      }
+    });
+
+    // AJOUT D'UN REPERE EN CLIQUANT SUR LE PLAN
+    document.getElementById('planImageView').parentElement.addEventListener('click', (e) => {
+      if (state.activeTool !== 'pin') return;
+
+      const img = document.getElementById('planImageView');
+      const rect = img.getBoundingClientRect();
+
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+      if (x >= 0 && x <= 100 && y >= 0 && y <= 100) {
         const lot = getActiveLot();
         if (!lot) return;
 
-        if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-          const fileReader = new FileReader();
-          fileReader.onload = function() {
-            const typedarray = new Uint8Array(this.result);
-            pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-              pdf.getPage(1).then(page => {
-                const viewport = page.getViewport({ scale: 1.5 });
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+        const newPin = {
+          id: 'pin_' + Date.now(),
+          x: Math.round(x * 10) / 10,
+          y: Math.round(y * 10) / 10,
+          title: 'Nouvelle réserve',
+          status: '0',
+          progress: 0,
+          companies: [],
+          photos: [],
+          description: ''
+        };
 
-                page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
-                  lot.planImage = canvas.toDataURL('image/png');
-                  saveData();
-                  renderActiveProject();
-                });
-              });
-            });
-          };
-          fileReader.readAsArrayBuffer(file);
-        } else {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            lot.planImage = event.target.result;
-            saveData();
-            renderActiveProject();
-          };
-          reader.readAsDataURL(file);
+        if (!lot.pins) lot.pins = [];
+        lot.pins.push(newPin);
+        saveData();
+        render();
+        openEditPinModal(newPin);
+      }
+    });
+
+    // ENREGISTREMENT / SUPPRESSION DU REPERE DANS LA MODALE
+    document.getElementById('closePinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
+    document.getElementById('cancelPinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
+
+    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
+      document.getElementById('pinInputProgress').value = e.target.value;
+    });
+
+    document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
+      const lot = getActiveLot();
+      if (!lot || !state.editingPinId) return;
+
+      if (confirm("Supprimer définitivement ce repère ?")) {
+        lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
+        saveData();
+        hideModal('editPinModal');
+        render();
+      }
+    });
+
+    document.getElementById('pinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lot = getActiveLot();
+      if (!lot || !state.editingPinId) return;
+
+      const pin = lot.pins.find(p => p.id === state.editingPinId);
+      if (pin) {
+        pin.title = document.getElementById('pinInputTitle').value;
+        pin.status = document.getElementById('pinInputStatusSelect').value;
+        pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
+        pin.description = document.getElementById('pinInputDescription').value;
+      }
+
+      saveData();
+      hideModal('editPinModal');
+      render();
+    });
+
+    document.getElementById('addCompanyBtn').addEventListener('click', () => {
+      const input = document.getElementById('newCompanyInput');
+      const val = input.value.trim();
+      if (val) {
+        if (!state.availableCompanies.includes(val)) {
+          state.availableCompanies.push(val);
         }
-      };
-
-      // Zoom & Pan Canvas
-      const activeCanvas = document.getElementById('activeCanvas');
-      document.getElementById('zoomInBtn').onclick = () => { state.zoom *= 1.2; updateCanvasTransform(); };
-      document.getElementById('zoomOutBtn').onclick = () => { state.zoom /= 1.2; updateCanvasTransform(); };
-      document.getElementById('zoomResetBtn').onclick = () => { state.zoom = 1; state.pan = { x: 0, y: 0 }; updateCanvasTransform(); };
-
-      document.getElementById('toolSelectBtn').onclick = () => { state.activeTool = 'select'; renderActiveProject(); };
-      document.getElementById('toolPinBtn').onclick = () => { state.activeTool = 'pin'; renderActiveProject(); };
-
-      activeCanvas.onmousedown = (e) => {
-        if (state.activeTool === 'select') {
-          state.isDraggingCanvas = true;
-          state.dragStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
-        }
-      };
-
-      window.onmousemove = (e) => {
-        if (state.isDraggingCanvas) {
-          state.pan = { x: e.clientX - state.dragStart.x, y: e.clientY - state.dragStart.y };
-          updateCanvasTransform();
-        }
-      };
-
-      window.onmouseup = () => { state.isDraggingCanvas = false; };
-
-      activeCanvas.onclick = (e) => {
-        if (state.activeTool === 'pin') {
-          const img = document.getElementById('planImageView');
-          const rect = img.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-          if (x >= 0 && x <= 100 && y >= 0 && y <= 100) {
-            const lot = getActiveLot();
-            if (lot) {
-              if (!lot.pins) lot.pins = [];
-              const newPin = {
-                id: 'pin_' + Date.now(),
-                x: Math.round(x * 10) / 10,
-                y: Math.round(y * 10) / 10,
-                title: 'Nouvelle réserve',
-                status: '0',
-                progress: 0,
-                companies: [],
-                photos: [],
-                description: ''
-              };
-              lot.pins.push(newPin);
-              saveData();
-              renderActiveProject();
-              openEditPinModal(newPin);
-            }
-          }
-        }
-      };
-
-      // Formulaire de repère / réserve modal
-      document.getElementById('closePinModalBtn').onclick = () => hideModal('editPinModal');
-      document.getElementById('cancelPinModalBtn').onclick = () => hideModal('editPinModal');
-
-      document.getElementById('pinInputStatusSelect').onchange = (e) => {
-        document.getElementById('pinInputProgress').value = e.target.value;
-      };
-
-      document.getElementById('addCompanyBtn').onclick = () => {
-        const input = document.getElementById('newCompanyInput');
-        if (input.value.trim()) {
-          state.availableCompanies.push(input.value.trim());
-          const lot = getActiveLot();
-          const pin = lot.pins.find(p => p.id === state.editingPinId);
-          if (pin) renderPinCompanies(pin);
-          input.value = '';
-        }
-      };
-
-      // Import photos réserve
-      const handlePinPhotoFiles = (files) => {
-        const lot = getActiveLot();
-        const pin = lot ? lot.pins.find(p => p.id === state.editingPinId) : null;
-        if (!pin) return;
-        if (!pin.photos) pin.photos = [];
-
-        Array.from(files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            pin.photos.push(e.target.result);
-            renderPinPhotos(pin);
-          };
-          reader.readAsDataURL(file);
-        });
-      };
-
-      document.getElementById('pinGalleryInput').onchange = (e) => handlePinPhotoFiles(e.target.files);
-      document.getElementById('pinCameraInput').onchange = (e) => handlePinPhotoFiles(e.target.files);
-
-      document.getElementById('pinForm').onsubmit = (e) => {
-        e.preventDefault();
         const lot = getActiveLot();
         const pin = lot ? lot.pins.find(p => p.id === state.editingPinId) : null;
         if (pin) {
-          pin.title = document.getElementById('pinInputTitle').value;
-          pin.status = document.getElementById('pinInputStatusSelect').value;
-          pin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
-          pin.description = document.getElementById('pinInputDescription').value;
-          saveData();
-          renderActiveProject();
+          if (!pin.companies) pin.companies = [];
+          if (!pin.companies.includes(val)) pin.companies.push(val);
+          renderPinCompanies(pin);
         }
-        hideModal('editPinModal');
-      };
+        input.value = '';
+      }
+    });
 
-      document.getElementById('deletePinFromModalBtn').onclick = () => {
-        const lot = getActiveLot();
-        if (lot && state.editingPinId) {
-          lot.pins = lot.pins.filter(p => p.id !== state.editingPinId);
-          saveData();
-          renderActiveProject();
+    // AJOUT DE PHOTOS PAR GALERIE / CAMERA
+    function handlePhotoUpload(files) {
+      const lot = getActiveLot();
+      const pin = lot ? lot.pins.find(p => p.id === state.editingPinId) : null;
+      if (!pin) return;
+
+      if (!pin.photos) pin.photos = [];
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          pin.photos.push(e.target.result);
+          renderPinPhotos(pin);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('pinGalleryInput').addEventListener('change', (e) => handlePhotoUpload(e.target.files));
+    document.getElementById('pinCameraInput').addEventListener('change', (e) => handlePhotoUpload(e.target.files));
+
+    // IMPORTS & EXPORTS JSON
+    document.getElementById('exportProjectsBtn').addEventListener('click', () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `orion_btp_projets_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    document.getElementById('importProjectsBtn').addEventListener('click', () => {
+      document.getElementById('importProjectsInput').click();
+    });
+
+    document.getElementById('importProjectsInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (Array.isArray(imported)) {
+            state.projects = imported;
+            if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
+            saveData();
+            render();
+            alert("Projets importés avec succès !");
+          }
+        } catch (err) {
+          alert("Fichier JSON invalide.");
         }
-        hideModal('editPinModal');
       };
+      reader.readAsText(file);
+    });
 
-      // Module Réunion handlers
-      document.getElementById('addAttendeeBtn').onclick = () => {
-        const input = document.getElementById('newAttendeeName');
-        const proj = getActiveProject();
-        if (input.value.trim() && proj && proj.reunion) {
-          proj.reunion.attendees.push({ name: input.value.trim(), status: 'present' });
-          input.value = '';
-          saveData();
-          renderReunionAttendees(proj.reunion);
-        }
-      };
+    // EXPORTS RAPPORTS (PDF & WORD)
+    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
 
-      document.getElementById('addReunionNoteBtn').onclick = () => {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) {
-          if (!proj.reunion.notes) proj.reunion.notes = [];
-          proj.reunion.notes.push({ company: '', text: '' });
-          saveData();
-          renderReunionNotes(proj.reunion);
-        }
-      };
+      const win = window.open('', '_blank');
+      let html = `<html><head><title>Rapport - ${proj.name}</title>
+      <style>
+        body { font-family: sans-serif; padding: 20px; color: #333; }
+        h1 { color: ${state.reportConfig.primaryColor}; }
+        .pin-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+        .photo-img { max-width: 150px; margin-right: 10px; border-radius: 6px; }
+      </style></head><body>`;
 
-      document.getElementById('reunionInputNumber').oninput = (e) => {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) { proj.reunion.number = parseInt(e.target.value) || 1; saveData(); }
-      };
-      document.getElementById('reunionInputDate').onchange = (e) => {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) { proj.reunion.date = e.target.value; saveData(); }
-      };
-      document.getElementById('reunionInputNextDate').onchange = (e) => {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) { proj.reunion.nextDate = e.target.value; saveData(); }
-      };
-      document.getElementById('reunionInputSubject').oninput = (e) => {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) { proj.reunion.subject = e.target.value; saveData(); }
-      };
+      if (state.reportConfig.logoUrl) {
+        html += `<img src="${state.reportConfig.logoUrl}" style="max-height:60px; margin-bottom:15px;" /><br/>`;
+      }
+      html += `<h1>${proj.name}</h1>`;
+      html += `<p><strong>Client :</strong> ${proj.client || 'N/A'}<br/><strong>Adresse :</strong> ${proj.location || 'N/A'}</p><hr/>`;
 
-      // Modal de rapport
-      document.getElementById('openReportConfigBtn').onclick = () => showModal('reportConfigModal');
-      document.getElementById('closeReportConfigBtn').onclick = () => hideModal('reportConfigModal');
+      if (proj.lots) {
+        proj.lots.forEach(lot => {
+          html += `<h2>Zone : ${lot.name}</h2>`;
+          if (lot.pins && lot.pins.length > 0) {
+            lot.pins.forEach((pin, idx) => {
+              html += `<div class="pin-item">
+                <h3>#${idx + 1} - ${pin.title} (${pin.progress}%)</h3>
+                <p>${pin.description || 'Pas de description'}</p>
+                <p><strong>Lots/Entreprises :</strong> ${(pin.companies || []).join(', ')}</p>`;
+              if (state.reportConfig.includePhotos && pin.photos && pin.photos.length > 0) {
+                html += `<div>`;
+                pin.photos.forEach(p => {
+                  html += `<img src="${p}" class="photo-img"/>`;
+                });
+                html += `</div>`;
+              }
+              html += `</div>`;
+            });
+          } else {
+            html += `<p>Aucune réserve.</p>`;
+          }
+        });
+      }
 
-      // Premier rendu
+      html += `</body></html>`;
+      win.document.write(html);
+      win.document.close();
+      win.print();
+    });
+
+    document.getElementById('exportWordReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      let content = `<h1>Rapport de chantier - ${proj.name}</h1><p>Client: ${proj.client || ''}</p>`;
+      if (proj.lots) {
+        proj.lots.forEach(lot => {
+          content += `<h2>${lot.name}</h2>`;
+          if (lot.pins) {
+            lot.pins.forEach((pin, i) => {
+              content += `<p><strong>#${i + 1} ${pin.title}</strong> - ${pin.progress}%<br/>${pin.description || ''}</p>`;
+            });
+          }
+        });
+      }
+
+      const blob = new Blob(['\ufeff' + content], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Rapport_${proj.name}.doc`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+
+    // LOGO RAPPORT
+    document.getElementById('uploadLogoBtn').addEventListener('click', () => document.getElementById('logoFileInput').click());
+    document.getElementById('logoFileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          state.reportConfig.logoUrl = evt.target.result;
+          document.getElementById('logoPreviewContainer').innerHTML = `<img src="${evt.target.result}" class="w-full h-full object-contain" />`;
+          document.getElementById('removeLogoBtn').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('removeLogoBtn').addEventListener('click', () => {
+      state.reportConfig.logoUrl = '';
+      document.getElementById('logoPreviewContainer').innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucun logo</span>`;
+      document.getElementById('removeLogoBtn').classList.add('hidden');
+    });
+
+    document.getElementById('reportColorInput').addEventListener('input', (e) => {
+      state.reportConfig.primaryColor = e.target.value;
+      document.getElementById('reportColorHex').textContent = e.target.value;
+    });
+
+    // BASCULE DE THEME
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
       render();
     });
+
+    // INITIALISATION
+    render();
   </script>
 </body>
 </html>
