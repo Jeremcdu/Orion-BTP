@@ -2475,16 +2475,6 @@
       hideModal('reportIssueModal');
     });
 
-    document.getElementById('navLogoBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      state.currentView = 'home';
-      render();
-    });
-    document.getElementById('homeNavBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      state.currentView = 'home';
-      render();
-    });
     document.getElementById('backToPreviousBtn').addEventListener('click', () => {
       if (state.currentView === 'project' || state.currentView === 'reunion') {
         state.currentView = 'projectHub';
