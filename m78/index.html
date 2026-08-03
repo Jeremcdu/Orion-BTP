@@ -54,6 +54,7 @@
     .apple-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .drag-over-active { border-color: #0071e3 !important; background-color: rgba(0, 113, 227, 0.05) !important; }
     .pin-marker { transform-origin: center center; }
+    #activeCanvas { touch-action: none; }
   </style>
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
@@ -64,8 +65,7 @@
       
       <!-- Logo & Navigation -->
       <div class="flex items-center space-x-3 sm:space-x-4">
-        <!-- Remplacé par une balise <a> pour rediriger vers l'index -->
-        <a id="navLogoBtn" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+        <a id="navLogoBtn" href="#" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
             <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
@@ -76,7 +76,7 @@
         </a>
 
         <!-- Texte cliquable ACCUEIL -->
-        <a id="homeNavBtn" href="../index.html" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+        <a id="homeNavBtn" href="#" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           <span>Mes projets</span>
         </a>
 
@@ -331,7 +331,7 @@
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Levé de Réserves</h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Importez vos plans PDF/images, positionnez des repères géolocalisés, annotez vos photos et générez des rapports d'inspection complets (PDF/Word).
+                Importez vos plans PDF/images, positionnez des repères géolocalisés, annotez vos photos et générez des rapports d'inspection complets (PDF/Word/Excel).
               </p>
             </div>
           </div>
@@ -644,14 +644,18 @@
 
         <div class="pt-4 border-t dark:border-slate-800 space-y-3">
           <span class="block font-semibold text-slate-700 dark:text-slate-300 text-sm">Générer le rapport :</span>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button type="button" id="exportPdfReportBtn" class="px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-2 shadow-md shadow-rose-500/20 transition-all text-xs sm:text-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button type="button" id="exportPdfReportBtn" class="px-3 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-rose-500/20 transition-all text-xs sm:text-sm">
               <i data-lucide="file-text" class="w-4 h-4"></i>
-              <span>Rapport PDF</span>
+              <span>PDF</span>
             </button>
-            <button type="button" id="exportWordReportBtn" class="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center justify-center space-x-2 shadow-md shadow-blue-500/20 transition-all text-xs sm:text-sm">
+            <button type="button" id="exportWordReportBtn" class="px-3 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-blue-500/20 transition-all text-xs sm:text-sm">
               <i data-lucide="file-code" class="w-4 h-4"></i>
-              <span>Rapport Word (.doc)</span>
+              <span>Word</span>
+            </button>
+            <button type="button" id="exportExcelReportBtn" class="px-3 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-500/20 transition-all text-xs sm:text-sm">
+              <i data-lucide="sheet" class="w-4 h-4"></i>
+              <span>Excel</span>
             </button>
           </div>
         </div>
@@ -750,7 +754,7 @@
   <div id="drawPhotoModal" class="hidden fixed inset-0 z-50 items-center justify-center p-3 sm:p-6 bg-slate-950/80 apple-glass">
     <div class="w-full max-w-4xl rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-4 sm:p-6 flex flex-col max-h-[95vh] space-y-4">
       
-      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b dark:border-slate-800">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b dark:border-slate-800">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
             <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -759,17 +763,33 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl text-xs">
-          <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-blue-600 text-white flex items-center space-x-1">
+          <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-blue-600 text-white flex items-center space-x-1 font-medium shadow transition-all">
             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">Crayon</span>
           </button>
+          <button type="button" id="toolArrow" class="draw-tool-btn px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all">
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Flèche</span>
+          </button>
+          <button type="button" id="toolCircle" class="draw-tool-btn px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all">
+            <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Cercle</span>
+          </button>
+          <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-0.5"></div>
+          <button type="button" id="toolUndo" class="px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all" title="Réinitialiser les dessins">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Effacer</span>
+          </button>
         </div>
 
-        <div class="flex items-center space-x-3">
-          <div class="flex items-center space-x-1">
-            <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 border border-slate-300"></button>
+        <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-1.5">
+            <button type="button" data-color="#ef4444" class="color-btn w-6 h-6 rounded-full bg-red-500 ring-2 ring-blue-500 border border-slate-300"></button>
             <button type="button" data-color="#3b82f6" class="color-btn w-6 h-6 rounded-full bg-blue-500 border border-slate-300"></button>
             <button type="button" data-color="#22c55e" class="color-btn w-6 h-6 rounded-full bg-green-500 border border-slate-300"></button>
+            <button type="button" data-color="#eab308" class="color-btn w-6 h-6 rounded-full bg-yellow-500 border border-slate-300"></button>
+            <button type="button" data-color="#ffffff" class="color-btn w-6 h-6 rounded-full bg-white border border-slate-300"></button>
+            <button type="button" data-color="#000000" class="color-btn w-6 h-6 rounded-full bg-black border border-slate-300"></button>
           </div>
         </div>
       </div>
@@ -779,7 +799,8 @@
       </div>
 
       <div class="flex items-center justify-between pt-2 border-t dark:border-slate-800">
-        <button type="button" id="closeDrawModalBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-500 text-xs font-medium">Fermer & Enregistrer</button>
+        <button type="button" id="cancelDrawModalBtn" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium transition-colors">Annuler</button>
+        <button type="button" id="closeDrawModalBtn" class="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-500 text-xs font-medium shadow-md shadow-blue-500/20 transition-all">Enregistrer l'annotation</button>
       </div>
 
     </div>
@@ -848,27 +869,28 @@
   <div id="editLotModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-6 space-y-6">
       <div class="flex items-center justify-between">
-        <h3 class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
+        <h3 id="lotModalTitle" class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
         <button id="closeLotModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form id="lotForm" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-500 mb-1.5">Nom de la zone</label>
-          <input type="text" id="lotInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none" />
+          <label class="block text-slate-500 mb-1.5 font-medium">Nom de la zone</label>
+          <input type="text" id="lotInputName" required placeholder="ex: Étage 1, Zone Accueil..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-          <label class="block text-slate-500 mb-1.5">Surface estimée</label>
+          <label class="block text-slate-500 mb-1.5 font-medium">Surface estimée</label>
           <div class="relative flex items-center">
             <input type="number" step="any" id="lotInputSurface" placeholder="0" class="w-full pl-4 pr-12 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs" />
             <span class="absolute right-4 text-slate-400 font-semibold text-xs pointer-events-none">m²</span>
           </div>
         </div>
         <div>
-          <label class="block text-slate-500 mb-2">Choisir une icône</label>
+          <label class="block text-slate-500 mb-2 font-medium">Choisir une icône</label>
           <div id="iconGridContainer" class="grid grid-cols-3 gap-2 max-h-[180px] overflow-y-auto p-1"></div>
         </div>
         <div class="flex flex-col sm:flex-row items-center justify-end pt-4 border-t dark:border-slate-800 gap-2 sm:space-x-3">
-          <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium">Enregistrer</button>
+          <button type="button" id="cancelLotModalBtn" class="w-full sm:w-auto px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Annuler</button>
+          <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-md shadow-blue-500/20 transition-all">Enregistrer</button>
         </div>
       </form>
     </div>
@@ -879,14 +901,13 @@
       { id: 'building-2', label: 'Immeuble' },
       { id: 'home', label: 'Maison' },
       { id: 'building', label: 'Bâtiment' },
-      { id: 'layers', label: 'Appartement' },
-      { id: 'box', label: 'Espace' },
-      { id: 'trees', label: 'Espace vert' }
+      { id: 'layers', label: 'Étage / Appart' },
+      { id: 'box', label: 'Pièce' },
+      { id: 'trees', label: 'Extérieur' },
     ];
 
-    const DEFAULT_COMPANIES = []; // Suppression des entreprises d'exemple
-
-    const initialProjects = []; // Suppression des données d'exemple
+    const DEFAULT_COMPANIES = [];
+    const initialProjects = [];
 
     const state = {
       darkMode: localStorage.getItem('theme') === 'dark',
@@ -909,7 +930,7 @@
     };
 
     let currentEditingPin = null; 
-    let currentProjectPhoto = null; 
+    let currentProjectPhoto = null;
 
     if (state.projects.length > 0 && !state.activeProjectId) {
       state.activeProjectId = state.projects[0].id;
@@ -951,8 +972,17 @@
       });
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function render() {
-      // Synchro du thème visuel
       if (state.darkMode) { 
         document.documentElement.classList.add('dark'); 
         document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
@@ -1032,7 +1062,7 @@
     function renderProjectsGrid() {
       const grid = document.getElementById('projectsGrid');
       grid.innerHTML = '';
-      if(state.projects.length === 0) {
+      if(!state.projects || state.projects.length === 0) {
         grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500">
           <i data-lucide="folder-plus" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
           <p class="font-semibold text-slate-700 dark:text-slate-300">Aucun projet actif</p>
@@ -1056,7 +1086,6 @@
         const card = document.createElement('div');
         card.className = 'group relative flex flex-col rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer overflow-hidden';
         
-        // Layout d'intégration de la photo 
         const photoHtml = proj.photo 
           ? `<img src="${proj.photo}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />` 
           : `<div class="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800"><i data-lucide="image" class="w-8 h-8 text-slate-400"></i></div>`;
@@ -1065,7 +1094,7 @@
           <div class="h-32 w-full shrink-0 relative bg-slate-100 dark:bg-slate-800 border-b dark:border-slate-800 overflow-hidden">
             ${photoHtml}
             <div class="absolute top-3 right-3 flex items-center space-x-2">
-              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} shadow">${proj.status}</span>
+              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status && proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} shadow">${proj.status || 'En cours'}</span>
               <button type="button" class="delete-project-btn p-1.5 rounded-xl bg-white/90 dark:bg-slate-900/90 hover:bg-rose-500 text-slate-700 dark:text-slate-200 hover:text-white transition-colors backdrop-blur-sm shadow" title="Supprimer le projet">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
@@ -1076,9 +1105,9 @@
               <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 flex items-center justify-center shrink-0">
                 <i data-lucide="folder" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate ml-3 flex-1 text-right mt-2">${proj.name}</h3>
+              <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate ml-3 flex-1 text-right mt-2">${escapeHtml(proj.name)}</h3>
             </div>
-            <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${proj.location || 'Aucune adresse'}</span></p>
+            <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${escapeHtml(proj.location || 'Aucune adresse')}</span></p>
             <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
               <span>${proj.lots ? proj.lots.length : 0} Zone(s)</span>
               <span class="font-medium"><span class="text-emerald-600 dark:text-emerald-400 font-bold">${resolvedPins}</span>/${totalPins} réserves</span>
@@ -1150,6 +1179,9 @@
       lotSelect.innerHTML = '';
 
       if (proj.lots && proj.lots.length > 0) {
+        if (!proj.activeLotId || !proj.lots.some(l => l.id === proj.activeLotId)) {
+          proj.activeLotId = proj.lots[0].id;
+        }
         proj.lots.forEach((lot) => {
           const option = document.createElement('option');
           option.value = lot.id;
@@ -1223,9 +1255,337 @@
         document.getElementById('sidebarPinsCount').textContent = "0";
         document.getElementById('pinsListContainer').innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Créez une zone pour commencer.</div>`;
       }
+      lucide.createIcons();
     }
 
-    // GESTION DES REPERES ET DU CANVAS OVERLAY
+    function renderIconGrid() {
+      const container = document.getElementById('iconGridContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      AVAILABLE_ICONS.forEach(iconObj => {
+        const isSelected = state.selectedIconForModal === iconObj.id;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `p-2.5 rounded-2xl border flex flex-col items-center justify-center space-y-1 transition-all ${
+          isSelected 
+            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-semibold shadow-sm ring-2 ring-blue-500/20' 
+            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+        }`;
+        btn.innerHTML = `
+          <i data-lucide="${iconObj.id}" class="w-5 h-5"></i>
+          <span class="text-[10px] truncate max-w-full">${iconObj.label}</span>
+        `;
+        btn.addEventListener('click', () => {
+          state.selectedIconForModal = iconObj.id;
+          renderIconGrid();
+        });
+        container.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function openLotModal(lot = null) {
+      if (lot) {
+        state.editingLotId = lot.id;
+        document.getElementById('lotModalTitle').textContent = "Modifier la zone";
+        document.getElementById('lotInputName').value = lot.name || '';
+        document.getElementById('lotInputSurface').value = lot.surface ? parseFloat(lot.surface) || '' : '';
+        state.selectedIconForModal = lot.icon || 'building-2';
+      } else {
+        state.editingLotId = null;
+        document.getElementById('lotModalTitle').textContent = "Nouvelle zone";
+        document.getElementById('lotForm').reset();
+        state.selectedIconForModal = 'building-2';
+      }
+      renderIconGrid();
+      showModal('editLotModal');
+    }
+
+    document.getElementById('addNewLotBtn').addEventListener('click', () => openLotModal(null));
+    document.getElementById('quickEditLotBtn').addEventListener('click', () => openLotModal(getActiveLot()));
+    document.getElementById('editActiveLotBtn').addEventListener('click', () => openLotModal(getActiveLot()));
+    
+    document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
+      const activeLot = getActiveLot();
+      const proj = getActiveProject();
+      if (activeLot && proj) {
+        if (confirm(`Voulez-vous vraiment supprimer la zone "${activeLot.name}" ?`)) {
+          proj.lots = proj.lots.filter(l => l.id !== activeLot.id);
+          proj.activeLotId = proj.lots.length > 0 ? proj.lots[0].id : null;
+          saveData();
+          renderActiveProject();
+        }
+      }
+    });
+
+    document.getElementById('lotSelect').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj && e.target.value) {
+        proj.activeLotId = e.target.value;
+        saveData();
+        renderActiveProject();
+      }
+    });
+
+    document.getElementById('closeLotModalBtn').addEventListener('click', () => hideModal('editLotModal'));
+    document.getElementById('cancelLotModalBtn').addEventListener('click', () => hideModal('editLotModal'));
+
+    document.getElementById('lotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (!proj) return;
+      if (!proj.lots) proj.lots = [];
+
+      const nameVal = document.getElementById('lotInputName').value.trim();
+      const surfaceVal = document.getElementById('lotInputSurface').value.trim();
+      const surfaceFormatted = surfaceVal ? `${surfaceVal} m²` : '';
+
+      if (state.editingLotId) {
+        const lot = proj.lots.find(l => l.id === state.editingLotId);
+        if (lot) {
+          lot.name = nameVal;
+          lot.surface = surfaceFormatted;
+          lot.icon = state.selectedIconForModal;
+        }
+      } else {
+        const newLot = {
+          id: 'lot_' + Date.now(),
+          name: nameVal,
+          surface: surfaceFormatted,
+          icon: state.selectedIconForModal,
+          planImage: null,
+          pins: []
+        };
+        proj.lots.push(newLot);
+        proj.activeLotId = newLot.id;
+      }
+      saveData();
+      renderActiveProject();
+      hideModal('editLotModal');
+    });
+
+    // PLAN MANAGEMENT (PDF & IMAGE UPLOAD)
+    function loadPlanFile(file) {
+      if (!file) return;
+      const activeLot = getActiveLot();
+      if (!activeLot) {
+        alert("Veuillez d'abord créer une zone.");
+        return;
+      }
+
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const typedarray = new Uint8Array(ev.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 2 });
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+
+              const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+              };
+              page.render(renderContext).promise.then(() => {
+                activeLot.planImage = canvas.toDataURL('image/png');
+                saveData();
+                renderActiveProject();
+              });
+            });
+          }).catch(err => {
+            alert("Erreur lors de la lecture du fichier PDF : " + err.message);
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          activeLot.planImage = ev.target.result;
+          saveData();
+          renderActiveProject();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    const fileInput = document.getElementById('fileInput');
+    document.getElementById('importPlanBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => loadPlanFile(e.target.files[0]));
+
+    const dropzone = document.getElementById('canvasViewport');
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over-active'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over-active'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over-active');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPlanFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // CANVAS TOOLBAR & ZOOM / PAN
+    document.getElementById('toolSelectBtn').addEventListener('click', () => { state.activeTool = 'select'; renderActiveProject(); });
+    document.getElementById('toolPinBtn').addEventListener('click', () => { state.activeTool = 'pin'; renderActiveProject(); });
+    document.getElementById('zoomInBtn').addEventListener('click', () => { state.zoom = Math.min(5, state.zoom + 0.25); updateCanvasTransform(); });
+    document.getElementById('zoomOutBtn').addEventListener('click', () => { state.zoom = Math.max(0.3, state.zoom - 0.25); updateCanvasTransform(); });
+    document.getElementById('zoomResetBtn').addEventListener('click', () => { state.zoom = 1; state.pan = { x: 0, y: 0 }; updateCanvasTransform(); });
+
+    let isPanning = false;
+    let panStart = { x: 0, y: 0 };
+    const activeCanvas = document.getElementById('activeCanvas');
+
+    // MOUSE PAN & WHEEL ZOOM
+    activeCanvas.addEventListener('mousedown', (e) => {
+      if (state.activeTool === 'select') {
+        isPanning = true;
+        panStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
+        activeCanvas.style.cursor = 'grabbing';
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isPanning && state.activeTool === 'select') {
+        state.pan = { x: e.clientX - panStart.x, y: e.clientY - panStart.y };
+        updateCanvasTransform();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isPanning) {
+        isPanning = false;
+        if (state.activeTool === 'select') activeCanvas.style.cursor = 'grab';
+      }
+    });
+
+    // ZOOM A LA MOLETTE (PC)
+    activeCanvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      const newZoom = Math.min(5, Math.max(0.3, state.zoom * zoomFactor));
+      
+      const rect = activeCanvas.getBoundingClientRect();
+      const mouseX = e.clientX - (rect.left + rect.width / 2);
+      const mouseY = e.clientY - (rect.top + rect.height / 2);
+      
+      state.pan.x -= (mouseX - state.pan.x) * (newZoom / state.zoom - 1);
+      state.pan.y -= (mouseY - state.pan.y) * (newZoom / state.zoom - 1);
+      state.zoom = newZoom;
+      updateCanvasTransform();
+    }, { passive: false });
+
+    // TOUCH PAN & PINCH ZOOM (TACTILE / PORTABLE)
+    let touchStartDist = 0;
+    let touchStartZoom = 1;
+    let touchStartPan = { x: 0, y: 0 };
+    let touchStartCenter = { x: 0, y: 0 };
+    let isTouchPanning = false;
+
+    activeCanvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1 && state.activeTool === 'select') {
+        isTouchPanning = true;
+        panStart = { x: e.touches[0].clientX - state.pan.x, y: e.touches[0].clientY - state.pan.y };
+      } else if (e.touches.length === 2) {
+        isTouchPanning = false;
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        touchStartDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        touchStartZoom = state.zoom;
+        touchStartPan = { ...state.pan };
+        
+        const rect = activeCanvas.getBoundingClientRect();
+        touchStartCenter = {
+          x: ((t1.clientX + t2.clientX) / 2) - (rect.left + rect.width / 2),
+          y: ((t1.clientY + t2.clientY) / 2) - (rect.top + rect.height / 2)
+        };
+      }
+    }, { passive: false });
+
+    activeCanvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isTouchPanning && state.activeTool === 'select') {
+        e.preventDefault();
+        state.pan = {
+          x: e.touches[0].clientX - panStart.x,
+          y: e.touches[0].clientY - panStart.y
+        };
+        updateCanvasTransform();
+      } else if (e.touches.length === 2 && touchStartDist > 0) {
+        e.preventDefault();
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        
+        const rect = activeCanvas.getBoundingClientRect();
+        const currentCenter = {
+          x: ((t1.clientX + t2.clientX) / 2) - (rect.left + rect.width / 2),
+          y: ((t1.clientY + t2.clientY) / 2) - (rect.top + rect.height / 2)
+        };
+
+        const factor = dist / touchStartDist;
+        const newZoom = Math.min(5, Math.max(0.3, touchStartZoom * factor));
+
+        const dx = currentCenter.x - touchStartCenter.x;
+        const dy = currentCenter.y - touchStartCenter.y;
+
+        state.pan = {
+          x: touchStartPan.x + dx - (touchStartCenter.x - touchStartPan.x) * (newZoom / touchStartZoom - 1),
+          y: touchStartPan.y + dy - (touchStartCenter.y - touchStartPan.y) * (newZoom / touchStartZoom - 1)
+        };
+        state.zoom = newZoom;
+        updateCanvasTransform();
+      }
+    }, { passive: false });
+
+    activeCanvas.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        touchStartDist = 0;
+      }
+      if (e.touches.length === 0) {
+        isTouchPanning = false;
+      }
+    });
+
+    // PLACER UN REPERE SUR LE CANVAS
+    document.getElementById('pinsOverlay').addEventListener('click', (e) => {
+      if (state.activeTool !== 'pin') return;
+      const activeLot = getActiveLot();
+      if (!activeLot) return;
+
+      const img = document.getElementById('planImageView');
+      const rect = img.getBoundingClientRect();
+
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      const percentX = Math.round((clickX / rect.width) * 1000) / 10;
+      const percentY = Math.round((clickY / rect.height) * 1000) / 10;
+
+      if (percentX >= 0 && percentX <= 100 && percentY >= 0 && percentY <= 100) {
+        if (!activeLot.pins) activeLot.pins = [];
+        const newPin = {
+          id: 'pin_' + Date.now(),
+          title: 'Nouvelle réserve',
+          status: '0',
+          progress: 0,
+          description: '',
+          companies: [],
+          photos: [],
+          x: percentX,
+          y: percentY
+        };
+        activeLot.pins.push(newPin);
+        saveData();
+        renderPinsOverlay(activeLot);
+        renderPinsList(activeLot);
+        openEditPinModal(newPin);
+      }
+    });
+
+    // REPERES / RESERVES
     function renderPinsOverlay(lot) {
       const container = document.getElementById('pinsOverlay');
       if (!container) return;
@@ -1270,11 +1630,11 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <span class="w-5 h-5 rounded-full ${isResolved ? 'bg-emerald-500' : 'bg-rose-500'} text-white text-[10px] font-bold flex items-center justify-center shrink-0">${index + 1}</span>
-              <span class="font-semibold text-xs text-slate-800 dark:text-slate-100 truncate max-w-[140px]">${pin.title || 'Sans titre'}</span>
+              <span class="font-semibold text-xs text-slate-800 dark:text-slate-100 truncate max-w-[140px]">${escapeHtml(pin.title || 'Sans titre')}</span>
             </div>
             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isResolved ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${pin.progress || 0}%</span>
           </div>
-          ${pin.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${pin.description}</p>` : ''}
+          ${pin.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${escapeHtml(pin.description)}</p>` : ''}
         `;
 
         div.addEventListener('click', () => {
@@ -1291,7 +1651,7 @@
       const lot = getActiveLot();
       const index = lot ? lot.pins.findIndex(p => p.id === pin.id) : 0;
 
-      document.getElementById('modalPinBadge').textContent = index + 1;
+      document.getElementById('modalPinBadge').textContent = index >= 0 ? index + 1 : 1;
       document.getElementById('pinInputTitle').value = pin.title || '';
       document.getElementById('pinInputStatusSelect').value = pin.status || '0';
       document.getElementById('pinInputProgress').value = pin.progress || 0;
@@ -1312,8 +1672,8 @@
         const label = document.createElement('label');
         label.className = 'flex items-center space-x-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none';
         label.innerHTML = `
-          <input type="checkbox" value="${comp}" ${isChecked ? 'checked' : ''} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0" />
-          <span class="truncate">${comp}</span>
+          <input type="checkbox" value="${escapeHtml(comp)}" ${isChecked ? 'checked' : ''} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0" />
+          <span class="truncate">${escapeHtml(comp)}</span>
         `;
 
         label.querySelector('input').addEventListener('change', (e) => {
@@ -1344,8 +1704,8 @@
         div.innerHTML = `
           <img src="${photoUrl}" class="w-full h-full object-cover" />
           <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
-            <button type="button" class="draw-photo-btn p-1 bg-white/80 rounded-lg text-slate-800 hover:bg-white"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-            <button type="button" class="del-photo-btn p-1 bg-rose-500/80 rounded-lg text-white hover:bg-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="draw-photo-btn p-1 bg-white/80 rounded-lg text-slate-800 hover:bg-white" title="Annoter / Dessiner"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="del-photo-btn p-1 bg-rose-500/80 rounded-lg text-white hover:bg-rose-500" title="Supprimer la photo"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         `;
 
@@ -1395,12 +1755,16 @@
       }
     });
 
+    document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
+      document.getElementById('pinInputProgress').value = e.target.value;
+    });
+
     document.getElementById('pinForm').addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentEditingPin) return;
       currentEditingPin.title = document.getElementById('pinInputTitle').value;
       currentEditingPin.status = document.getElementById('pinInputStatusSelect').value;
-      currentEditingPin.progress = parseInt(document.getElementById('pinInputProgress').value);
+      currentEditingPin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
       currentEditingPin.description = document.getElementById('pinInputDescription').value;
       saveData();
       renderPinsOverlay(getActiveLot());
@@ -1408,9 +1772,8 @@
       hideModal('editPinModal');
     });
 
-    document.getElementById('cancelPinModalBtn').addEventListener('click', () => {
-      hideModal('editPinModal');
-    });
+    document.getElementById('cancelPinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
+    document.getElementById('closePinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
 
     document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
       if (confirm('Voulez-vous vraiment supprimer ce repère ?')) {
@@ -1425,12 +1788,16 @@
       }
     });
 
-    // ANNOTATION / DESSIN SUR PHOTO
+    // ANNOTATION & DESSIN SUR PHOTO (CRAYON, FLECHES ET CERCLES)
     let currentDrawingPin = null;
     let currentDrawingPhotoIndex = -1;
     let drawingColor = '#ef4444';
+    let currentDrawTool = 'pen';
     let isDrawing = false;
     let canvasCtx = null;
+    let startPos = { x: 0, y: 0 };
+    let baseImageData = null;
+    let snapshotImageData = null;
 
     function openDrawPhotoModal(pin, photoIndex) {
       currentDrawingPin = pin;
@@ -1443,316 +1810,138 @@
         canvas.width = img.width;
         canvas.height = img.height;
         canvasCtx.drawImage(img, 0, 0);
+        baseImageData = canvasCtx.getImageData(0, 0, canvas.width, canvas.height);
         showModal('drawPhotoModal');
       };
       img.src = pin.photos[photoIndex];
     }
 
     const drawCanvas = document.getElementById('photoDrawCanvas');
-    if (drawCanvas) {
-      const getPos = (e) => {
-        const rect = drawCanvas.getBoundingClientRect();
-        const scaleX = drawCanvas.width / rect.width;
-        const scaleY = drawCanvas.height / rect.height;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-          x: (clientX - rect.left) * scaleX,
-          y: (clientY - rect.top) * scaleY
-        };
+
+    function getCanvasPos(e) {
+      const rect = drawCanvas.getBoundingClientRect();
+      const scaleX = drawCanvas.width / rect.width;
+      const scaleY = drawCanvas.height / rect.height;
+      const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
       };
-
-      const startDraw = (e) => {
-        isDrawing = true;
-        const pos = getPos(e);
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(pos.x, pos.y);
-        canvasCtx.strokeStyle = drawingColor;
-        canvasCtx.lineWidth = 5;
-        canvasCtx.lineCap = 'round';
-      };
-
-      const drawMove = (e) => {
-        if (!isDrawing) return;
-        const pos = getPos(e);
-        canvasCtx.lineTo(pos.x, pos.pos ? pos.pos : pos.y);
-        canvasCtx.stroke();
-      };
-
-      const stopDraw = () => { isDrawing = false; };
-
-      drawCanvas.addEventListener('mousedown', startDraw);
-      drawCanvas.addEventListener('mousemove', drawMove);
-      drawCanvas.addEventListener('mouseup', stopDraw);
-      drawCanvas.addEventListener('touchstart', startDraw);
-      drawCanvas.addEventListener('touchmove', drawMove);
-      drawCanvas.addEventListener('touchend', stopDraw);
     }
 
-    document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        drawingColor = e.currentTarget.getAttribute('data-color');
+    document.querySelectorAll('.draw-tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.draw-tool-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-600', 'text-white');
+          b.classList.add('text-slate-700', 'dark:text-slate-300');
+        });
+        btn.classList.add('active', 'bg-blue-600', 'text-white');
+        btn.classList.remove('text-slate-700', 'dark:text-slate-300');
+        if (btn.id === 'toolPen') currentDrawTool = 'pen';
+        if (btn.id === 'toolArrow') currentDrawTool = 'arrow';
+        if (btn.id === 'toolCircle') currentDrawTool = 'circle';
       });
     });
 
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        drawingColor = btn.getAttribute('data-color');
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+        btn.classList.add('ring-2', 'ring-blue-500');
+      });
+    });
+
+    document.getElementById('toolUndo').addEventListener('click', () => {
+      if (baseImageData && canvasCtx) {
+        canvasCtx.putImageData(baseImageData, 0, 0);
+      }
+    });
+
+    function startDraw(e) {
+      if (!canvasCtx) return;
+      e.preventDefault();
+      isDrawing = true;
+      startPos = getCanvasPos(e);
+      snapshotImageData = canvasCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
+      if (currentDrawTool === 'pen') {
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(startPos.x, startPos.y);
+        canvasCtx.strokeStyle = drawingColor;
+        canvasCtx.lineWidth = Math.max(3, drawCanvas.width / 150);
+        canvasCtx.lineCap = 'round';
+        canvasCtx.lineJoin = 'round';
+      }
+    }
+
+    function moveDraw(e) {
+      if (!isDrawing || !canvasCtx) return;
+      e.preventDefault();
+      const currentPos = getCanvasPos(e);
+
+      if (currentDrawTool === 'pen') {
+        canvasCtx.lineTo(currentPos.x, currentPos.y);
+        canvasCtx.stroke();
+      } else {
+        canvasCtx.putImageData(snapshotImageData, 0, 0);
+        canvasCtx.beginPath();
+        canvasCtx.strokeStyle = drawingColor;
+        canvasCtx.lineWidth = Math.max(3, drawCanvas.width / 150);
+
+        if (currentDrawTool === 'arrow') {
+          drawArrow(canvasCtx, startPos.x, startPos.y, currentPos.x, currentPos.y);
+        } else if (currentDrawTool === 'circle') {
+          const rx = Math.abs(currentPos.x - startPos.x) / 2;
+          const ry = Math.abs(currentPos.y - startPos.y) / 2;
+          const cx = Math.min(startPos.x, currentPos.x) + rx;
+          const cy = Math.min(startPos.y, currentPos.y) + ry;
+          canvasCtx.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI);
+          canvasCtx.stroke();
+        }
+      }
+    }
+
+    function stopDraw() {
+      if (isDrawing) {
+        isDrawing = false;
+      }
+    }
+
+    function drawArrow(ctx, fromx, fromy, tox, toy) {
+      const headlen = Math.max(12, drawCanvas.width / 50);
+      const dx = tox - fromx;
+      const dy = toy - fromy;
+      const angle = Math.atan2(dy, dx);
+      ctx.moveTo(fromx, fromy);
+      ctx.lineTo(tox, toy);
+      ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+      ctx.moveTo(tox, toy);
+      ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+      ctx.stroke();
+    }
+
+    drawCanvas.addEventListener('mousedown', startDraw);
+    drawCanvas.addEventListener('mousemove', moveDraw);
+    window.addEventListener('mouseup', stopDraw);
+
+    drawCanvas.addEventListener('touchstart', startDraw, { passive: false });
+    drawCanvas.addEventListener('touchmove', moveDraw, { passive: false });
+    drawCanvas.addEventListener('touchend', stopDraw);
+
     document.getElementById('closeDrawModalBtn').addEventListener('click', () => {
       if (currentDrawingPin && currentDrawingPhotoIndex >= 0) {
-        const canvas = document.getElementById('photoDrawCanvas');
-        currentDrawingPin.photos[currentDrawingPhotoIndex] = canvas.toDataURL('image/png');
+        currentDrawingPin.photos[currentDrawingPhotoIndex] = drawCanvas.toDataURL('image/jpeg', 0.85);
         renderPinPhotos(currentDrawingPin);
+        saveData();
       }
       hideModal('drawPhotoModal');
     });
 
-    // MODULE REUNION DE CHANTIER
-    function renderReunionModule() {
-      const proj = getActiveProject();
-      if (!proj) return;
-
-      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
-      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
-      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
-      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
-      document.getElementById('reunionProjectStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shrink-0"></span><span class="truncate">${proj.status || 'En cours'}</span>`;
-
-      if (!proj.reunion) {
-        proj.reunion = {
-          number: 1,
-          date: new Date().toISOString().slice(0, 10),
-          nextDate: '',
-          subject: '',
-          attendees: [],
-          notes: []
-        };
-      }
-
-      const r = proj.reunion;
-      document.getElementById('reunionInputNumber').value = r.number || 1;
-      document.getElementById('reunionInputDate').value = r.date || '';
-      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
-      document.getElementById('reunionInputSubject').value = r.subject || '';
-
-      renderReunionAttendees();
-      renderReunionNotes();
-    }
-
-    const saveReunionFields = () => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) {
-        proj.reunion.number = parseInt(document.getElementById('reunionInputNumber').value) || 1;
-        proj.reunion.date = document.getElementById('reunionInputDate').value;
-        proj.reunion.nextDate = document.getElementById('reunionInputNextDate').value;
-        proj.reunion.subject = document.getElementById('reunionInputSubject').value;
-        saveData();
-      }
-    };
-    document.getElementById('reunionInputNumber').addEventListener('change', saveReunionFields);
-    document.getElementById('reunionInputDate').addEventListener('change', saveReunionFields);
-    document.getElementById('reunionInputNextDate').addEventListener('change', saveReunionFields);
-    document.getElementById('reunionInputSubject').addEventListener('change', saveReunionFields);
-
-    function renderReunionAttendees() {
-      const proj = getActiveProject();
-      if (!proj || !proj.reunion) return;
-      const container = document.getElementById('reunionAttendeesContainer');
-      container.innerHTML = '';
-
-      proj.reunion.attendees.forEach((att, idx) => {
-        const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border dark:border-slate-800';
-        item.innerHTML = `
-          <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[150px]">${att.name}</span>
-          <div class="flex items-center space-x-1">
-            <select class="att-status-select bg-white dark:bg-slate-900 border rounded px-1.5 py-0.5 text-[10px]">
-              <option value="present" ${att.status === 'present' ? 'selected' : ''}>Présent</option>
-              <option value="excused" ${att.status === 'excused' ? 'selected' : ''}>Excusé</option>
-              <option value="absent" ${att.status === 'absent' ? 'selected' : ''}>Absent</option>
-            </select>
-            <button class="remove-att-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
-        `;
-
-        item.querySelector('.att-status-select').onchange = (e) => {
-          att.status = e.target.value;
-          saveData();
-        };
-
-        item.querySelector('.remove-att-btn').onclick = () => {
-          proj.reunion.attendees.splice(idx, 1);
-          saveData();
-          renderReunionAttendees();
-        };
-
-        container.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    document.getElementById('addAttendeeBtn').addEventListener('click', () => {
-      const input = document.getElementById('newAttendeeName');
-      const val = input.value.trim();
-      if (val) {
-        const proj = getActiveProject();
-        if (proj && proj.reunion) {
-          proj.reunion.attendees.push({ name: val, status: 'present' });
-          input.value = '';
-          saveData();
-          renderReunionAttendees();
-        }
-      }
+    document.getElementById('cancelDrawModalBtn').addEventListener('click', () => {
+      hideModal('drawPhotoModal');
     });
 
-    function renderReunionNotes() {
-      const proj = getActiveProject();
-      if (!proj || !proj.reunion) return;
-      const container = document.getElementById('reunionNotesContainer');
-      container.innerHTML = '';
-
-      if (proj.reunion.notes.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl dark:border-slate-800">Aucune remarque consignée pour cette réunion.</p>`;
-        return;
-      }
-
-      proj.reunion.notes.forEach((note, idx) => {
-        const div = document.createElement('div');
-        div.className = 'p-3 rounded-2xl border dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2 text-xs';
-        div.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <input type="text" value="${note.company || ''}" placeholder="Lot / Entreprise..." class="note-company-input px-2.5 py-1 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold w-1/2 outline-none" />
-            <button class="remove-note-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-          </div>
-          <textarea placeholder="Remarque, décision ou action à mener..." class="note-text-input w-full p-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 outline-none text-xs" rows="2">${note.text || ''}</textarea>
-        `;
-
-        div.querySelector('.note-company-input').onchange = (e) => { note.company = e.target.value; saveData(); };
-        div.querySelector('.note-text-input').onchange = (e) => { note.text = e.target.value; saveData(); };
-        div.querySelector('.remove-note-btn').onclick = () => {
-          proj.reunion.notes.splice(idx, 1);
-          saveData();
-          renderReunionNotes();
-        };
-
-        container.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    document.getElementById('addReunionNoteBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) {
-        proj.reunion.notes.push({ company: '', text: '' });
-        saveData();
-        renderReunionNotes();
-      }
-    });
-
-    // LISTENER NAVIGATION & BOUTONS
-    document.getElementById('homeNavBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      state.currentView = 'home';
-      render();
-    });
-
-    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
-      if (state.currentView === 'project' || state.currentView === 'reunion') {
-        state.currentView = 'projectHub';
-      } else if (state.currentView === 'projectHub') {
-        state.currentView = 'home';
-      }
-      render();
-    });
-
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    themeToggleBtn.addEventListener('click', () => {
-      state.darkMode = !state.darkMode;
-      if (state.darkMode) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
-      }
-      lucide.createIcons();
-    });
-
-    // MENU UTILISATEUR & DROPDOWNS
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
-
-    userMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      userDropdownMenu.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', () => {
-      userDropdownMenu.classList.add('hidden');
-    });
-
-    document.getElementById('dropdownLoginBtn').addEventListener('click', () => { userDropdownMenu.classList.add('hidden'); showModal('loginModal'); });
-    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => { userDropdownMenu.classList.add('hidden'); showModal('loginModal'); });
-    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => { userDropdownMenu.classList.add('hidden'); showModal('reportIssueModal'); });
-    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => { userDropdownMenu.classList.add('hidden'); showModal('privacyModal'); });
-
-    // FERMETURE MODALES
-    document.getElementById('closeLoginModalBtn').addEventListener('click', () => hideModal('loginModal'));
-    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => hideModal('reportIssueModal'));
-    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => hideModal('privacyModal'));
-    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => hideModal('privacyModal'));
-    document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
-    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
-
-    // SOUMISSION FORMULAIRES DE SERVICE
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      document.getElementById('headerUserName').textContent = email.split('@')[0];
-      document.getElementById('dropdownUserStatus').textContent = email;
-      hideModal('loginModal');
-    });
-
-    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Signalement envoyé avec succès ! Notre équipe technique va l\'analyser.');
-      hideModal('reportIssueModal');
-    });
-
-    // EXPORT & IMPORT JSON
-    document.getElementById('exportProjectsBtn').addEventListener('click', () => {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects));
-      const downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "orion_btp_export.json");
-      document.body.appendChild(downloadAnchorNode);
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
-    });
-
-    const importProjectsInput = document.getElementById('importProjectsInput');
-    document.getElementById('importProjectsBtn').addEventListener('click', () => importProjectsInput.click());
-    
-    importProjectsInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const imported = JSON.parse(ev.target.result);
-          if (Array.isArray(imported)) {
-            state.projects = imported;
-            saveData();
-            render();
-            alert("Projets importés avec succès !");
-          }
-        } catch(err) {
-          alert("Erreur lors de l'importation du fichier JSON.");
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    // EDITION / CREATION DE PROJET (AVEC PHOTO)
+    // PROJET CREATION & MODIFICATION
     function openEditProjectModal(proj = null) {
       if (proj) {
         state.projectModalMode = 'edit';
@@ -1761,7 +1950,7 @@
         document.getElementById('projectInputClient').value = proj.client || '';
         document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
         document.getElementById('projectInputLocation').value = proj.location || '';
-        document.getElementById('projectInputStatus').value = proj.status || 'En cours d\'aménagement';
+        document.getElementById('projectInputStatus').value = proj.status || "En cours d'aménagement";
         currentProjectPhoto = proj.photo || null;
       } else {
         state.projectModalMode = 'create';
@@ -1769,11 +1958,11 @@
         document.getElementById('projectForm').reset();
         currentProjectPhoto = null;
       }
-      renderProjectPhotoPreview();
+      updateProjectPhotoPreview();
       showModal('editProjectModal');
     }
 
-    function renderProjectPhotoPreview() {
+    function updateProjectPhotoPreview() {
       const container = document.getElementById('projectPhotoPreview');
       const removeBtn = document.getElementById('removeProjectPhotoBtn');
       if (currentProjectPhoto) {
@@ -1785,15 +1974,17 @@
       }
     }
 
-    document.getElementById('uploadProjectPhotoBtn').addEventListener('click', () => document.getElementById('projectPhotoInput').click());
-    
+    document.getElementById('uploadProjectPhotoBtn').addEventListener('click', () => {
+      document.getElementById('projectPhotoInput').click();
+    });
+
     document.getElementById('projectPhotoInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (ev) => {
           currentProjectPhoto = ev.target.result;
-          renderProjectPhotoPreview();
+          updateProjectPhotoPreview();
         };
         reader.readAsDataURL(file);
       }
@@ -1801,333 +1992,514 @@
 
     document.getElementById('removeProjectPhotoBtn').addEventListener('click', () => {
       currentProjectPhoto = null;
-      document.getElementById('projectPhotoInput').value = '';
-      renderProjectPhotoPreview();
+      updateProjectPhotoPreview();
     });
 
-    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
-    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
     document.getElementById('closeProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
     document.getElementById('cancelProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
 
     document.getElementById('projectForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('projectInputName').value;
-      const client = document.getElementById('projectInputClient').value;
-      const surface = parseFloat(document.getElementById('projectInputSurface').value) || 0;
-      const location = document.getElementById('projectInputLocation').value;
-      const status = document.getElementById('projectInputStatus').value;
+      const nameVal = document.getElementById('projectInputName').value.trim();
+      const clientVal = document.getElementById('projectInputClient').value.trim();
+      const surfaceVal = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const locationVal = document.getElementById('projectInputLocation').value.trim();
+      const statusVal = document.getElementById('projectInputStatus').value;
 
-      if (state.projectModalMode === 'create') {
-        const newProj = {
-          id: 'proj_' + Date.now(),
-          name,
-          client,
-          surfaceTotal: surface,
-          location,
-          status,
-          photo: currentProjectPhoto,
-          activeLotId: null,
-          lots: [],
-          reunion: { number: 1, date: new Date().toISOString().slice(0,10), nextDate:'', subject:'', attendees:[], notes:[] }
-        };
-        state.projects.push(newProj);
-        state.activeProjectId = newProj.id;
-        state.currentView = 'projectHub';
-      } else {
+      if (state.projectModalMode === 'edit') {
         const proj = getActiveProject();
         if (proj) {
-          proj.name = name;
-          proj.client = client;
-          proj.surfaceTotal = surface;
-          proj.location = location;
-          proj.status = status;
+          proj.name = nameVal;
+          proj.client = clientVal;
+          proj.surfaceTotal = surfaceVal;
+          proj.location = locationVal;
+          proj.status = statusVal;
           proj.photo = currentProjectPhoto;
         }
-      }
-
-      saveData();
-      hideModal('editProjectModal');
-      render();
-    });
-
-    // ZONES / LOTS
-    function openEditLotModal(lot = null) {
-      const container = document.getElementById('iconGridContainer');
-      container.innerHTML = '';
-
-      if (lot) {
-        state.editingLotId = lot.id;
-        state.selectedIconForModal = lot.icon || 'building-2';
-        document.getElementById('lotInputName').value = lot.name || '';
-        document.getElementById('lotInputSurface').value = lot.surface || '';
       } else {
-        state.editingLotId = null;
-        state.selectedIconForModal = 'building-2';
-        document.getElementById('lotForm').reset();
-      }
-
-      AVAILABLE_ICONS.forEach(icon => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center space-y-1 transition-all ${state.selectedIconForModal === icon.id ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30 text-blue-600' : 'border-slate-200 dark:border-slate-700 text-slate-500'}`;
-        btn.innerHTML = `<i data-lucide="${icon.id}" class="w-5 h-5"></i><span class="text-[10px] font-medium">${icon.label}</span>`;
-
-        btn.addEventListener('click', () => {
-          state.selectedIconForModal = icon.id;
-          openEditLotModal(lot);
-        });
-
-        container.appendChild(btn);
-      });
-
-      lucide.createIcons();
-      showModal('editLotModal');
-    }
-
-    document.getElementById('addNewLotBtn').addEventListener('click', () => openEditLotModal(null));
-    document.getElementById('quickEditLotBtn').addEventListener('click', () => openEditLotModal(getActiveLot()));
-    document.getElementById('editActiveLotBtn').addEventListener('click', () => openEditLotModal(getActiveLot()));
-    document.getElementById('closeLotModalBtn').addEventListener('click', () => hideModal('editLotModal'));
-
-    document.getElementById('quickDeleteLotBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      const lot = getActiveLot();
-      if (!proj || !lot) return;
-
-      if (confirm(`Voulez-vous vraiment supprimer la zone "${lot.name}" ?`)) {
-        proj.lots = proj.lots.filter(l => l.id !== lot.id);
-        proj.activeLotId = proj.lots.length > 0 ? proj.lots[0].id : null;
-        saveData();
-        render();
-      }
-    });
-
-    document.getElementById('lotSelect').addEventListener('change', (e) => {
-      const proj = getActiveProject();
-      if (proj) {
-        proj.activeLotId = e.target.value;
-        saveData();
-        render();
-      }
-    });
-
-    document.getElementById('lotForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const proj = getActiveProject();
-      if (!proj) return;
-
-      const name = document.getElementById('lotInputName').value;
-      const surface = document.getElementById('lotInputSurface').value;
-
-      if (state.editingLotId) {
-        const lot = proj.lots.find(l => l.id === state.editingLotId);
-        if (lot) {
-          lot.name = name;
-          lot.surface = surface;
-          lot.icon = state.selectedIconForModal;
-        }
-      } else {
-        const newLot = {
-          id: 'lot_' + Date.now(),
-          name,
-          surface,
-          icon: state.selectedIconForModal,
-          planImage: null,
-          pins: []
+        const newProj = {
+          id: 'proj_' + Date.now(),
+          name: nameVal,
+          client: clientVal,
+          surfaceTotal: surfaceVal,
+          location: locationVal,
+          status: statusVal,
+          photo: currentProjectPhoto,
+          lots: [
+            {
+              id: 'lot_default_' + Date.now(),
+              name: 'Zone Principale',
+              surface: `${surfaceVal} m²`,
+              icon: 'building-2',
+              planImage: null,
+              pins: []
+            }
+          ],
+          activeLotId: null
         };
-        if (!proj.lots) proj.lots = [];
-        proj.lots.push(newLot);
-        proj.activeLotId = newLot.id;
+        newProj.activeLotId = newProj.lots[0].id;
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
       }
 
       saveData();
-      hideModal('editLotModal');
       render();
+      hideModal('editProjectModal');
     });
 
-    // PLAN IMPORTATION & CANVAS
-    const fileInput = document.getElementById('fileInput');
+    // EXPORT & IMPORT JSON PROJETS
+    document.getElementById('exportProjectsBtn').addEventListener('click', () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `orion_btp_projets_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
 
-    document.getElementById('importPlanBtn').addEventListener('click', () => fileInput.click());
-    document.getElementById('replacePlanBtn').addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', (e) => {
+    const importInput = document.getElementById('importProjectsInput');
+    document.getElementById('importProjectsBtn').addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-
-      const lot = getActiveLot();
-      if (!lot) return;
-
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          lot.planImage = event.target.result;
-          saveData();
-          render();
-        };
-        reader.readAsDataURL(file);
-      } else if (file.type === 'application/pdf') {
-         const fileReader = new FileReader();
-         fileReader.onload = async function() {
-            const typedarray = new Uint8Array(this.result);
-            const pdf = await pdfjsLib.getDocument(typedarray).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 2.0 });
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            lot.planImage = canvas.toDataURL('image/png');
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (Array.isArray(imported)) {
+            state.projects = imported;
+            if (state.projects.length > 0) {
+              state.activeProjectId = state.projects[0].id;
+            }
             saveData();
             render();
-         };
-         fileReader.readAsArrayBuffer(file);
-      } else {
-        alert("Format non supporté. Veuillez importer une image ou un PDF.");
-      }
+            alert('Projets importés avec succès !');
+          } else {
+            alert('Format JSON invalide.');
+          }
+        } catch(err) {
+          alert('Erreur lors de l\'importation : ' + err.message);
+        }
+      };
+      reader.readAsText(file);
       e.target.value = '';
     });
 
-    // ZOOM, PANNING & TOUCH GESTURES
-    const activeCanvas = document.getElementById('activeCanvas');
-    
-    // Molette (Wheel)
-    activeCanvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomSensitivity = 0.001;
-      const delta = -e.deltaY * zoomSensitivity;
-      let newZoom = state.zoom * Math.exp(delta);
-      newZoom = Math.min(Math.max(newZoom, 0.5), 5);
-      state.zoom = newZoom;
-      updateCanvasTransform();
-    }, { passive: false });
+    // MODULE REUNION
+    function renderReunionModule() {
+      const proj = getActiveProject();
+      if (!proj) return;
 
-    // Souris (Mouse Panning)
-    let isPanning = false;
-    let startPanX = 0;
-    let startPanY = 0;
-
-    activeCanvas.addEventListener('mousedown', (e) => {
-      if (state.activeTool === 'select') {
-        isPanning = true;
-        startPanX = e.clientX - state.pan.x;
-        startPanY = e.clientY - state.pan.y;
-        activeCanvas.style.cursor = 'grabbing';
-      }
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isPanning) return;
-      state.pan.x = e.clientX - startPanX;
-      state.pan.y = e.clientY - startPanY;
-      updateCanvasTransform();
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (isPanning) {
-        isPanning = false;
-        activeCanvas.style.cursor = 'grab';
-      }
-    });
-
-    // Tactile (Touch Panning & Pinch-to-zoom)
-    let initialPinchDistance = null;
-    let initialZoom = 1;
-
-    activeCanvas.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1 && state.activeTool === 'select') {
-        isPanning = true;
-        startPanX = e.touches[0].clientX - state.pan.x;
-        startPanY = e.touches[0].clientY - state.pan.y;
-      } else if (e.touches.length === 2) {
-        isPanning = false;
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-        initialZoom = state.zoom;
-      }
-    }, { passive: false });
-
-    activeCanvas.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1 && isPanning) {
-        e.preventDefault();
-        state.pan.x = e.touches[0].clientX - startPanX;
-        state.pan.y = e.touches[0].clientY - startPanY;
-        updateCanvasTransform();
-      } else if (e.touches.length === 2 && initialPinchDistance) {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy);
-        const ratio = currentDistance / initialPinchDistance;
-        let newZoom = initialZoom * ratio;
-        newZoom = Math.min(Math.max(newZoom, 0.5), 5);
-        state.zoom = newZoom;
-        updateCanvasTransform();
-      }
-    }, { passive: false });
-
-    activeCanvas.addEventListener('touchend', (e) => {
-      if (e.touches.length < 2) { initialPinchDistance = null; }
-      if (e.touches.length === 0) { isPanning = false; }
-    });
-
-    // UI Boutons Zoom
-    document.getElementById('zoomInBtn').addEventListener('click', () => { state.zoom = Math.min(state.zoom + 0.2, 5); updateCanvasTransform(); });
-    document.getElementById('zoomOutBtn').addEventListener('click', () => { state.zoom = Math.max(state.zoom - 0.2, 0.5); updateCanvasTransform(); });
-    document.getElementById('zoomResetBtn').addEventListener('click', () => { state.zoom = 1; state.pan = {x: 0, y: 0}; updateCanvasTransform(); });
-
-    // PLACEMENT D'UN REPERE
-    activeCanvas.addEventListener('click', (e) => {
-      if (state.activeTool === 'pin') {
-        const lot = getActiveLot();
-        if (!lot) return;
-        
-        const img = document.getElementById('planImageView');
-        const rect = img.getBoundingClientRect();
-        
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-        if (x < 0 || x > 100 || y < 0 || y > 100) return;
-
-        const newPin = {
-          id: 'pin_' + Date.now(),
-          x,
-          y,
-          title: 'Nouvelle réserve',
-          status: '0',
-          progress: 0,
-          companies: [],
-          photos: [],
-          description: ''
+      if (!proj.reunion) {
+        proj.reunion = {
+          number: 1,
+          date: new Date().toISOString().slice(0, 10),
+          nextDate: '',
+          subject: '',
+          notes: [],
+          attendees: [
+            { id: 'att_1', name: 'M. le Maître d\'Ouvrage', present: true },
+            { id: 'att_2', name: 'M. l\'Architecte / Maître d\'Œuvre', present: true },
+          ]
         };
+      }
 
-        if (!lot.pins) lot.pins = [];
-        lot.pins.push(newPin);
+      const r = proj.reunion;
+
+      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
+      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
+      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
+      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
+      document.getElementById('reunionProjectStatusBadge').textContent = proj.status || 'En cours';
+
+      document.getElementById('reunionInputNumber').value = r.number || 1;
+      document.getElementById('reunionInputDate').value = r.date || '';
+      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
+      document.getElementById('reunionInputSubject').value = r.subject || '';
+
+      renderReunionNotes(proj);
+      renderReunionAttendees(proj);
+    }
+
+    function renderReunionNotes(proj) {
+      const container = document.getElementById('reunionNotesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const notes = proj.reunion ? proj.reunion.notes || [] : [];
+      if (notes.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucune remarque ajoutée. Cliquez sur "Ajouter une remarque".</div>`;
+        return;
+      }
+
+      notes.forEach((note, idx) => {
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 space-y-2';
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" placeholder="Entreprise / Lot" value="${escapeHtml(note.company || '')}" class="note-company-input px-3 py-1.5 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold flex-1 outline-none" />
+            <input type="date" value="${note.dueDate || ''}" class="note-date-input px-2.5 py-1.5 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs outline-none" />
+            <button type="button" class="del-note-btn p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+          <textarea rows="2" placeholder="Saisissez la remarque ou consignes à effectuer..." class="note-text-input w-full px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs outline-none">${escapeHtml(note.text || '')}</textarea>
+        `;
+
+        card.querySelector('.note-company-input').addEventListener('input', (e) => {
+          note.company = e.target.value;
+          saveData();
+        });
+
+        card.querySelector('.note-date-input').addEventListener('change', (e) => {
+          note.dueDate = e.target.value;
+          saveData();
+        });
+
+        card.querySelector('.note-text-input').addEventListener('input', (e) => {
+          note.text = e.target.value;
+          saveData();
+        });
+
+        card.querySelector('.del-note-btn').addEventListener('click', () => {
+          proj.reunion.notes.splice(idx, 1);
+          saveData();
+          renderReunionNotes(proj);
+        });
+
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderReunionAttendees(proj) {
+      const container = document.getElementById('reunionAttendeesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const attendees = proj.reunion ? proj.reunion.attendees || [] : [];
+      if (attendees.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-2">Aucun participant enregistré.</div>`;
+        return;
+      }
+
+      attendees.forEach((att, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800';
+        item.innerHTML = `
+          <div class="flex items-center space-x-2 truncate pr-2">
+            <input type="checkbox" ${att.present ? 'checked' : ''} class="att-present-chk rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4" />
+            <span class="font-medium truncate ${att.present ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 line-through'}">${escapeHtml(att.name)}</span>
+          </div>
+          <button type="button" class="del-att-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+        `;
+
+        item.querySelector('.att-present-chk').addEventListener('change', (e) => {
+          att.present = e.target.checked;
+          saveData();
+          renderReunionAttendees(proj);
+        });
+
+        item.querySelector('.del-att-btn').addEventListener('click', () => {
+          proj.reunion.attendees.splice(idx, 1);
+          saveData();
+          renderReunionAttendees(proj);
+        });
+
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    document.getElementById('reunionInputNumber').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) { proj.reunion.number = parseInt(e.target.value) || 1; saveData(); }
+    });
+    document.getElementById('reunionInputDate').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) { proj.reunion.date = e.target.value; saveData(); }
+    });
+    document.getElementById('reunionInputNextDate').addEventListener('change', (e) => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) { proj.reunion.nextDate = e.target.value; saveData(); }
+    });
+    document.getElementById('reunionInputSubject').addEventListener('input', (e) => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) { proj.reunion.subject = e.target.value; saveData(); }
+    });
+    document.getElementById('addReunionNoteBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (proj && proj.reunion) {
+        if (!proj.reunion.notes) proj.reunion.notes = [];
+        proj.reunion.notes.push({ id: 'note_' + Date.now(), company: '', text: '', dueDate: '' });
         saveData();
-        renderPinsOverlay(lot);
-        renderPinsList(lot);
-        
-        state.activeTool = 'select';
-        renderActiveProject(); 
-        openEditPinModal(newPin);
+        renderReunionNotes(proj);
+      }
+    });
+    document.getElementById('addAttendeeBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      const input = document.getElementById('newAttendeeName');
+      const val = input.value.trim();
+      if (proj && proj.reunion && val) {
+        if (!proj.reunion.attendees) proj.reunion.attendees = [];
+        proj.reunion.attendees.push({ id: 'att_' + Date.now(), name: val, present: true });
+        input.value = '';
+        saveData();
+        renderReunionAttendees(proj);
       }
     });
 
-    document.getElementById('toolSelectBtn').addEventListener('click', () => {
-      state.activeTool = 'select';
-      renderActiveProject();
+    // RAPPORTS & EXPORTS
+    document.getElementById('uploadLogoBtn').addEventListener('click', () => {
+      document.getElementById('logoFileInput').click();
     });
 
-    document.getElementById('toolPinBtn').addEventListener('click', () => {
-      state.activeTool = 'pin';
-      renderActiveProject();
+    document.getElementById('logoFileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          state.reportConfig.logoUrl = ev.target.result;
+          document.getElementById('logoPreviewContainer').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-contain" />`;
+          document.getElementById('removeLogoBtn').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
-    // Initialisation
+    document.getElementById('removeLogoBtn').addEventListener('click', () => {
+      state.reportConfig.logoUrl = '';
+      document.getElementById('logoPreviewContainer').innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucun logo</span>`;
+      document.getElementById('removeLogoBtn').classList.add('hidden');
+    });
+
+    document.getElementById('reportColorInput').addEventListener('input', (e) => {
+      state.reportConfig.primaryColor = e.target.value;
+      document.getElementById('reportColorHex').textContent = e.target.value;
+    });
+
+    document.getElementById('reportLayoutSelect').addEventListener('change', (e) => {
+      state.reportConfig.layoutStyle = e.target.value;
+    });
+
+    document.getElementById('reportIncludePhotosCheckbox').addEventListener('change', (e) => {
+      state.reportConfig.includePhotos = e.target.checked;
+    });
+
+    function generateReportHTML(proj) {
+      const logoHtml = state.reportConfig.logoUrl ? `<img src="${state.reportConfig.logoUrl}" style="max-height: 60px;" />` : `<h2 style="color: ${state.reportConfig.primaryColor}; margin:0;">${escapeHtml(proj.name)}</h2>`;
+      let content = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid ${state.reportConfig.primaryColor}; padding-bottom: 15px; margin-bottom: 20px;">
+            <div>${logoHtml}</div>
+            <div style="text-align: right;">
+              <h1 style="margin: 0; font-size: 20px; color: ${state.reportConfig.primaryColor};">RAPPORT DE CHANTIER</h1>
+              <p style="margin: 5px 0 0; font-size: 12px; color: #666;">Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
+            </div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+            <tr>
+              <td style="padding: 8px; background: #f8f9fa; font-weight: bold; width: 20%;">Projet :</td>
+              <td style="padding: 8px; background: #f8f9fa;">${escapeHtml(proj.name)}</td>
+              <td style="padding: 8px; background: #f8f9fa; font-weight: bold; width: 20%;">Client :</td>
+              <td style="padding: 8px; background: #f8f9fa;">${escapeHtml(proj.client || 'N/A')}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; font-weight: bold;">Lieu :</td>
+              <td style="padding: 8px;">${escapeHtml(proj.location || 'N/A')}</td>
+              <td style="padding: 8px; font-weight: bold;">Surface :</td>
+              <td style="padding: 8px;">${proj.surfaceTotal || 0} m²</td>
+            </tr>
+          </table>
+      `;
+
+      if (state.currentView === 'reunion') {
+        const r = proj.reunion || {};
+        content += `
+          <h2 style="font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: ${state.reportConfig.primaryColor};">Réunion N° ${r.number || 1} - ${r.date || ''}</h2>
+          <p style="font-size: 13px;"><strong>Sujet :</strong> ${escapeHtml(r.subject || 'Compte rendu de chantier')}</p>
+          
+          <h3 style="font-size: 14px; margin-top: 15px;">Présences</h3>
+          <ul style="font-size: 12px;">
+            ${(r.attendees || []).map(a => `<li>${escapeHtml(a.name)} - <strong>${a.present ? 'Présent' : 'Absent'}</strong></li>`).join('')}
+          </ul>
+
+          <h3 style="font-size: 14px; margin-top: 15px;">Remarques & Actions par Entreprise</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px;">
+            <thead>
+              <tr style="background: ${state.reportConfig.primaryColor}; color: white;">
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Entreprise</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Remarque / Action</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 100px;">Échéance</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(r.notes || []).map(n => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">${escapeHtml(n.company || 'Général')}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(n.text || '')}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${n.dueDate || '-'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } else {
+        content += `<h2 style="font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: ${state.reportConfig.primaryColor};">Liste des Réserves par Zone</h2>`;
+        (proj.lots || []).forEach(lot => {
+          content += `<h3 style="font-size: 14px; margin-top: 15px; color: #444;">Zone : ${escapeHtml(lot.name)} (${lot.surface || '-'})</h3>`;
+          if (!lot.pins || lot.pins.length === 0) {
+            content += `<p style="font-size: 12px; color: #888; font-style: italic;">Aucune réserve enregistrée.</p>`;
+          } else {
+            content += `
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px;">
+                <thead>
+                  <tr style="background: ${state.reportConfig.primaryColor}; color: white;">
+                    <th style="padding: 6px; border: 1px solid #ddd; width: 30px;">#</th>
+                    <th style="padding: 6px; border: 1px solid #ddd; text-align: left;">Titre & Descriptif</th>
+                    <th style="padding: 6px; border: 1px solid #ddd; text-align: left;">Entreprise(s)</th>
+                    <th style="padding: 6px; border: 1px solid #ddd; text-align: center; width: 80px;">Avancement</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${lot.pins.map((pin, pIdx) => `
+                    <tr>
+                      <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${pIdx + 1}</td>
+                      <td style="padding: 6px; border: 1px solid #ddd;">
+                        <strong>${escapeHtml(pin.title || 'Sans titre')}</strong>
+                        ${pin.description ? `<br/><span style="color:#666; font-size:11px;">${escapeHtml(pin.description)}</span>` : ''}
+                        ${state.reportConfig.includePhotos && pin.photos && pin.photos.length > 0 ? `
+                          <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                            ${pin.photos.map(ph => `<img src="${ph}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />`).join('')}
+                          </div>
+                        ` : ''}
+                      </td>
+                      <td style="padding: 6px; border: 1px solid #ddd;">${(pin.companies || []).join(', ') || 'Toutes'}</td>
+                      <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${pin.progress || 0}%</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            `;
+          }
+        });
+      }
+
+      content += `</div>`;
+      return content;
+    }
+
+    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      const printWin = window.open('', '_blank');
+      printWin.document.write(`<html><head><title>Rapport - ${escapeHtml(proj.name)}</title></head><body>${generateReportHTML(proj)}<script>setTimeout(()=>{ window.print(); window.close(); }, 500);<\/script></body></html>`);
+      printWin.document.close();
+    });
+
+    document.getElementById('exportWordReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      const html = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>Rapport Word</title></head>
+        <body>${generateReportHTML(proj)}</body>
+        </html>
+      `;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rapport_${proj.name.replace(/\s+/g, '_')}.doc`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    document.getElementById('exportExcelReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      let csv = 'Zone;Index;Titre;Entreprises;Avancement;Description\n';
+      (proj.lots || []).forEach(lot => {
+        (lot.pins || []).forEach((pin, idx) => {
+          csv += `"${lot.name}";"${idx+1}";"${(pin.title || '').replace(/"/g, '""')}";"${(pin.companies || []).join(', ')}";"${pin.progress || 0}%";"${(pin.description || '').replace(/"/g, '""')}"\n`;
+        });
+      });
+      const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reserves_${proj.name.replace(/\s+/g, '_')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // EVENEMENTS UI & NAVIGATION
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+      render();
+    });
+
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    });
+    window.addEventListener('click', () => userDropdownMenu.classList.add('hidden'));
+
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => showModal('loginModal'));
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => showModal('loginModal'));
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => hideModal('loginModal'));
+
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => showModal('reportIssueModal'));
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => hideModal('reportIssueModal'));
+
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => showModal('privacyModal'));
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => hideModal('privacyModal'));
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => hideModal('privacyModal'));
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      document.getElementById('headerUserName').textContent = email.split('@')[0];
+      document.getElementById('dropdownUserStatus').textContent = email;
+      hideModal('loginModal');
+    });
+
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Merci pour votre signalement. Notre équipe technique prend en charge votre demande.');
+      hideModal('reportIssueModal');
+    });
+
+    document.getElementById('navLogoBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      state.currentView = 'home';
+      render();
+    });
+    document.getElementById('homeNavBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      state.currentView = 'home';
+      render();
+    });
+    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
+      if (state.currentView === 'project' || state.currentView === 'reunion') {
+        state.currentView = 'projectHub';
+      } else if (state.currentView === 'projectHub') {
+        state.currentView = 'home';
+      }
+      render();
+    });
+
+    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
+    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
+    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
+    document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
+
+    // INITIALISATION
     render();
   </script>
 </body>
