@@ -113,12 +113,8 @@
                 <span>Se connecter</span>
               </button>
 
-              <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
-                <span>Espace Administration</span>
-              </button>
-
-              <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <!-- Affiché uniquement quand connecté -->
+              <button id="dropdownReportIssueBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
                 <span>Signaler un problème</span>
               </button>
@@ -130,7 +126,7 @@
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 py-1">
-              <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
+              <button id="dropdownLogoutBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>Se déconnecter</span>
               </button>
@@ -319,7 +315,7 @@
           </div>
         </div>
 
-        <!-- NOUVEAU MODULE : PLANNING ESTIMATIF -->
+        <!-- MODULE : PLANNING ESTIMATIF -->
         <div id="selectModulePlanning" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -380,7 +376,7 @@
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300">Modèle BTP v4.2</span>
         </div>
 
-        <!-- ZONE D'IMPORTATION DE DOCUMENTS POUR LES AGENTS -->
+        <!-- ZONE D'IMPORTATION DE DOCUMENTS -->
         <div class="space-y-3">
           <label class="block text-slate-500 font-medium text-xs">Documents sources pour l'estimation (CCTP, Plans, CDC, Devis...)</label>
           <div id="m42DocDropzone" class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 transition-colors">
@@ -457,7 +453,7 @@
         </div>
       </div>
 
-      <!-- TABLEAU ESTIMATIF DPGF AVEC BOUTON "AJOUTER UNE LIGNE" EN BAS -->
+      <!-- TABLEAU ESTIMATIF DPGF -->
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
         <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
@@ -484,7 +480,6 @@
           </table>
         </div>
 
-        <!-- BOUTON AJOUTER UNE LIGNE (POSITIONNÉ EN BAS DANS L'ESPACE DÉTAIL) -->
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
           <button id="addEstimatifItemBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 flex items-center space-x-2 shadow-md shadow-emerald-500/20">
             <i data-lucide="plus" class="w-4 h-4"></i>
@@ -495,7 +490,7 @@
 
     </div>
 
-    <!-- NOUVEAU MODULE : PLANNING ESTIMATIF -->
+    <!-- MODULE : PLANNING ESTIMATIF -->
     <div id="planningView" class="hidden space-y-6">
       
       <!-- Banner Projet Planning -->
@@ -710,6 +705,8 @@
       currentView: 'home',
       activeProjectId: null,
       editingEstimatifItemIndex: null,
+      isLoggedIn: localStorage.getItem('orion_btp_logged_in') === 'true',
+      userEmail: localStorage.getItem('orion_btp_user_email') || '',
       projects: JSON.parse(localStorage.getItem('orion_btp_projects')) || initialProjects,
     };
 
@@ -745,13 +742,40 @@
       return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0);
     }
 
+    function updateAuthUI() {
+      const headerUserName = document.getElementById('headerUserName');
+      const dropdownUserStatus = document.getElementById('dropdownUserStatus');
+      const dropdownLoginBtn = document.getElementById('dropdownLoginBtn');
+      const dropdownRegisterBtn = document.getElementById('dropdownRegisterBtn');
+      const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
+      const dropdownReportIssueBtn = document.getElementById('dropdownReportIssueBtn');
+
+      if (state.isLoggedIn) {
+        if (headerUserName) headerUserName.textContent = state.userEmail || 'Connecté';
+        if (dropdownUserStatus) dropdownUserStatus.textContent = state.userEmail || 'Utilisateur connecté';
+        if (dropdownLoginBtn) dropdownLoginBtn.classList.add('hidden');
+        if (dropdownRegisterBtn) dropdownRegisterBtn.classList.add('hidden');
+        if (dropdownLogoutBtn) dropdownLogoutBtn.classList.remove('hidden');
+        if (dropdownReportIssueBtn) dropdownReportIssueBtn.classList.remove('hidden');
+      } else {
+        if (headerUserName) headerUserName.textContent = 'Connexion';
+        if (dropdownUserStatus) dropdownUserStatus.textContent = 'Non connecté (Invité)';
+        if (dropdownLoginBtn) dropdownLoginBtn.classList.remove('hidden');
+        if (dropdownRegisterBtn) dropdownRegisterBtn.classList.remove('hidden');
+        if (dropdownLogoutBtn) dropdownLogoutBtn.classList.add('hidden');
+        if (dropdownReportIssueBtn) dropdownReportIssueBtn.classList.add('hidden');
+      }
+    }
+
     function render() {
       if (state.darkMode) { 
         document.documentElement.classList.add('dark'); 
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.setAttribute('data-lucide', 'sun'); 
       } else { 
         document.documentElement.classList.remove('dark'); 
-        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.setAttribute('data-lucide', 'moon'); 
       }
 
       const homeView = document.getElementById('homeView');
@@ -765,46 +789,52 @@
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
 
       [homeView, projectHubView, m42View, planningView].forEach(el => {
-        el.classList.add('hidden');
-        el.classList.remove('flex');
+        if (el) {
+          el.classList.add('hidden');
+          el.classList.remove('flex');
+        }
       });
 
       const activeProject = getActiveProject();
 
       if (state.currentView === 'home' || !activeProject) {
-        homeView.classList.remove('hidden');
+        if (homeView) homeView.classList.remove('hidden');
         if (homeNavBtn) homeNavBtn.classList.remove('hidden');
-        backBtn.classList.add('hidden');
-        editProjBtn.classList.add('hidden');
-        openReportConfigBtn.classList.add('hidden');
+        if (backBtn) backBtn.classList.add('hidden');
+        if (editProjBtn) editProjBtn.classList.add('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectsGrid();
       } else if (state.currentView === 'projectHub') {
-        projectHubView.classList.remove('hidden');
+        if (projectHubView) projectHubView.classList.remove('hidden');
         if (homeNavBtn) homeNavBtn.classList.add('hidden');
-        backBtn.classList.remove('hidden');
-        document.getElementById('backToPreviousText').textContent = "Mes projets";
-        editProjBtn.classList.add('hidden');
-        openReportConfigBtn.classList.add('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+        const backText = document.getElementById('backToPreviousText');
+        if (backText) backText.textContent = "Mes projets";
+        if (editProjBtn) editProjBtn.classList.add('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectHub();
       } else if (state.currentView === 'm42') {
-        m42View.classList.remove('hidden');
+        if (m42View) m42View.classList.remove('hidden');
         if (homeNavBtn) homeNavBtn.classList.add('hidden');
-        backBtn.classList.remove('hidden');
-        document.getElementById('backToPreviousText').textContent = "Choix du module";
-        editProjBtn.classList.remove('hidden');
-        openReportConfigBtn.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+        const backText = document.getElementById('backToPreviousText');
+        if (backText) backText.textContent = "Choix du module";
+        if (editProjBtn) editProjBtn.classList.remove('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         renderM42Module();
       } else if (state.currentView === 'planning') {
-        planningView.classList.remove('hidden');
+        if (planningView) planningView.classList.remove('hidden');
         if (homeNavBtn) homeNavBtn.classList.add('hidden');
-        backBtn.classList.remove('hidden');
-        document.getElementById('backToPreviousText').textContent = "Choix du module";
-        editProjBtn.classList.remove('hidden');
-        openReportConfigBtn.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+        const backText = document.getElementById('backToPreviousText');
+        if (backText) backText.textContent = "Choix du module";
+        if (editProjBtn) editProjBtn.classList.remove('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         renderPlanningModule();
       }
 
-      setTimeout(() => lucide.createIcons(), 10);
+      updateAuthUI();
+      setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 10);
     }
 
     function renderProjectsGrid() {
@@ -883,8 +913,8 @@
         render();
       };
 
-      document.getElementById('hubEditProjectBtn').onclick = () => openEditProjectModal(proj);
-      document.getElementById('openEditProjectBtn').onclick = () => openEditProjectModal(proj);
+      const hubEditBtn = document.getElementById('hubEditProjectBtn');
+      if (hubEditBtn) hubEditBtn.onclick = () => openEditProjectModal(proj);
     }
 
     // --- LOGIQUE DU MODULE M42 (ESTIMATIF IA & DOCUMENTS) ---
@@ -904,7 +934,6 @@
       document.getElementById('m42WorkTypeSelect').value = proj.estimatif.workType || "Rénovation globale";
       document.getElementById('m42QualitySelect').value = proj.estimatif.qualityLevel || "Standard";
 
-      // Rendu de la liste des documents
       renderDocsList(proj);
 
       const tbody = document.getElementById('m42TableBody');
@@ -974,16 +1003,18 @@
     const dropzone = document.getElementById('m42DocDropzone');
     const docInput = document.getElementById('m42DocInput');
 
-    dropzone.onclick = () => docInput.click();
-    docInput.onchange = (e) => handleFilesImport(e.target.files);
+    if (dropzone && docInput) {
+      dropzone.onclick = () => docInput.click();
+      docInput.onchange = (e) => handleFilesImport(e.target.files);
 
-    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('drag-over-active'); };
-    dropzone.ondragleave = () => dropzone.classList.remove('drag-over-active');
-    dropzone.ondrop = (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('drag-over-active');
-      handleFilesImport(e.dataTransfer.files);
-    };
+      dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('drag-over-active'); };
+      dropzone.ondragleave = () => dropzone.classList.remove('drag-over-active');
+      dropzone.ondrop = (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over-active');
+        handleFilesImport(e.dataTransfer.files);
+      };
+    }
 
     function handleFilesImport(files) {
       const proj = getActiveProject();
@@ -1015,7 +1046,6 @@
       const proj = getActiveProject();
       if (!proj) return;
 
-      const prompt = document.getElementById('m42PromptInput').value || "Rénovation complète BTP";
       const workType = document.getElementById('m42WorkTypeSelect').value;
       const quality = document.getElementById('m42QualitySelect').value;
       const mult = quality === 'Premium' ? 1.4 : (quality === 'Économique' ? 0.8 : 1.0);
@@ -1030,9 +1060,7 @@
         { id: "ai_6", lot: "06 - Sols & Revêtements", designation: "Fourniture et pose de parquet / carrelage grand format", unit: "m²", qty: surface, unitPrice: Math.round(68 * mult) }
       ];
 
-      // Génération automatique correlée du planning
       generatePlanningFromEstimatifData(proj);
-
       saveData();
       renderM42Module();
     }
@@ -1083,7 +1111,7 @@
 
       document.getElementById('planningTotalDuration').textContent = `Durée totale : ${maxEndWeek > 0 ? maxEndWeek - 1 : 0} semaine(s)`;
 
-      proj.planning.forEach((phase, idx) => {
+      proj.planning.forEach((phase) => {
         const itemEl = document.createElement('div');
         itemEl.className = 'p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2';
 
@@ -1123,7 +1151,7 @@
         lotsMap[i.lot] += (i.qty * i.unitPrice);
       });
 
-      Object.keys(lotsMap).forEach((lot, idx) => {
+      Object.keys(lotsMap).forEach((lot) => {
         const cost = lotsMap[lot];
         const dur = Math.max(1, Math.round(cost / 3000));
         planning.push({
@@ -1144,6 +1172,61 @@
       saveData();
       renderPlanningModule();
     };
+
+    // Navigation Logo
+    const navLogoBtn = document.getElementById('navLogoBtn');
+    if (navLogoBtn) {
+      navLogoBtn.onclick = () => {
+        state.currentView = 'home';
+        render();
+      };
+    }
+
+    // Connexion Formulaire
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.onsubmit = (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('loginEmail');
+        state.isLoggedIn = true;
+        state.userEmail = emailInput ? emailInput.value : 'utilisateur@entreprise.fr';
+        localStorage.setItem('orion_btp_logged_in', 'true');
+        localStorage.setItem('orion_btp_user_email', state.userEmail);
+        hideModal('loginModal');
+        render();
+      };
+    }
+
+    // Déconnexion
+    const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
+    if (dropdownLogoutBtn) {
+      dropdownLogoutBtn.onclick = () => {
+        state.isLoggedIn = false;
+        state.userEmail = '';
+        localStorage.setItem('orion_btp_logged_in', 'false');
+        localStorage.setItem('orion_btp_user_email', '');
+        document.getElementById('userDropdownMenu').classList.add('hidden');
+        render();
+      };
+    }
+
+    // Inscription / Connexion boutons
+    const dropdownRegisterBtn = document.getElementById('dropdownRegisterBtn');
+    if (dropdownRegisterBtn) dropdownRegisterBtn.onclick = () => showModal('loginModal');
+
+    const dropdownLoginBtn = document.getElementById('dropdownLoginBtn');
+    if (dropdownLoginBtn) dropdownLoginBtn.onclick = () => showModal('loginModal');
+
+    // Signaler un problème Formulaire
+    const reportIssueForm = document.getElementById('reportIssueForm');
+    if (reportIssueForm) {
+      reportIssueForm.onsubmit = (e) => {
+        e.preventDefault();
+        alert('Votre signalement a bien été transmis au support Orion BTP.');
+        reportIssueForm.reset();
+        hideModal('reportIssueModal');
+      };
+    }
 
     // --- EVENT LISTENERS & MODALS ---
     document.getElementById('quickGenerateAiBtn').onclick = generateAiEstimatif;
@@ -1228,19 +1311,29 @@
       render();
     };
 
-    // Menu Utilisateur & Modals
+    // Menu Utilisateur & Dropdown auto-close
     document.getElementById('userMenuBtn').onclick = () => {
       document.getElementById('userDropdownMenu').classList.toggle('hidden');
     };
-    document.getElementById('dropdownLoginBtn').onclick = () => showModal('loginModal');
+
+    document.addEventListener('click', (e) => {
+      const menuBtn = document.getElementById('userMenuBtn');
+      const dropdown = document.getElementById('userDropdownMenu');
+      if (menuBtn && dropdown && !menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
     document.getElementById('closeLoginModalBtn').onclick = () => hideModal('loginModal');
     document.getElementById('dropdownReportIssueBtn').onclick = () => showModal('reportIssueModal');
     document.getElementById('closeReportIssueModalBtn').onclick = () => hideModal('reportIssueModal');
     document.getElementById('dropdownPrivacyBtn').onclick = () => showModal('privacyModal');
     document.getElementById('closePrivacyModalBtn').onclick = () => hideModal('privacyModal');
     document.getElementById('confirmPrivacyBtn').onclick = () => hideModal('privacyModal');
-    document.getElementById('openReportConfigBtn').onclick = () => showModal('reportConfigModal');
-    document.getElementById('closeReportConfigBtn').onclick = () => hideModal('reportConfigModal');
+
+    const reportConfigModal = document.getElementById('reportConfigModal');
+    const closeReportConfigBtn = document.getElementById('closeReportConfigBtn');
+    if (closeReportConfigBtn) closeReportConfigBtn.onclick = () => hideModal('reportConfigModal');
 
     // Nouveau projet / Edition
     document.getElementById('createNewProjectBtn').onclick = () => openEditProjectModal(null);
