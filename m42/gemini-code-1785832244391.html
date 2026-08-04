@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orion BTP - M42 | Estimatif & Planning IA</title>
+  
+  <!-- Script anti-flash (FOUC) -->
+  <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+  </script>
+
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            apple: {
+              emerald: '#10b981',
+              grayBg: '#f5f5f7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.7); }
+    .apple-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .drag-over-active { border-color: #10b981 !important; background-color: rgba(16, 185, 129, 0.05) !important; }
+  </style>
+</head>
+<body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+
+  <!-- TOP NAVIGATION BAR (UNIFIÉE POUR TOUTES LES PAGES) -->
+  <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo Orion BTP & Navigation -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <a id="navLogoBtn" href="#" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-cyan-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0">
+            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+            <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 dark:from-white dark:via-emerald-200 dark:to-teal-300">Orion BTP</span>
+            <span id="activeToolBadge" class="hidden w-max px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">M42 • Estimatif & Planning IA</span>
+          </div>
+        </a>
+
+        <!-- Navigation Accueil -->
+        <a id="homeNavBtn" href="#" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+          <span>Accueil</span>
+        </a>
+
+        <!-- Bouton Retour -->
+        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+          <i data-lucide="chevron-left" class="w-4 h-4 mr-0.5"></i>
+          <span id="backToPreviousText">Mes projets</span>
+        </button>
+      </div>
+
+      <!-- Actions à droite de l'En-tête -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="openReportConfigBtn" title="Rapports & Exports" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+          <span class="hidden sm:inline" id="reportBtnLabel">Rapports & Exports</span>
+        </button>
+
+        <!-- Bouton Paramètres identique -->
+        <button id="openEditProjectBtn" title="Paramètres du projet" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm items-center space-x-1.5">
+          <i data-lucide="settings" class="w-4 h-4 text-emerald-500"></i>
+          <span class="hidden sm:inline">Paramètres</span>
+        </button>
+
+        <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
+          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Menu Utilisateur / Bouton Connexion unifié -->
+        <div class="relative">
+          <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+
+          <!-- Menu Déroulant Connexion -->
+          <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden py-1 apple-glass">
+            <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Compte Utilisateur</p>
+              <p id="dropdownUserStatus" class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate">Non connecté (Invité)</p>
+            </div>
+
+            <div class="py-1">
+              <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="user-plus" class="w-4 h-4 text-emerald-500"></i>
+                <span>S'inscrire</span>
+              </button>
+
+              <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <span>Se connecter</span>
+              </button>
+
+              <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <span>Signaler un problème</span>
+              </button>
+
+              <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+                <span>Politique de confidentialité</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MODAL : CONNEXION -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Connexion / Inscription</h3>
+            <p class="text-xs text-slate-400">Accédez à votre espace Orion BTP</p>
+          </div>
+        </div>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="loginForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Se connecter</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : SIGNALER UN PROBLEME -->
+  <div id="reportIssueModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Signaler un problème</h3>
+            <p class="text-xs text-slate-400">Support & Assistance Technique</p>
+          </div>
+        </div>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="reportIssueForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Sujet de la demande</label>
+          <input type="text" required placeholder="ex: Calcul métré M42, planning..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Description de l'incident</label>
+          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
+          <span>Envoyer le signalement</span>
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : POLITIQUE DE CONFIDENTIALITE -->
+  <div id="privacyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Politique de confidentialité</h3>
+            <p class="text-xs text-slate-400">Protection des données & sécurité</p>
+          </div>
+        </div>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p><strong>1. Stockage Local :</strong> Les données de vos estimatifs BTP, plannings et documents importés sont conservées localement sur votre navigateur.</p>
+        <p><strong>2. Traitement IA M42 :</strong> La génération automatisée de métrés s'effectue en temps réel pour sécuriser vos tarifs et délais.</p>
+        <p><strong>3. Exports de Rapports :</strong> Tous les documents et estimatifs générés vous appartiennent.</p>
+      </div>
+
+      <button id="confirmPrivacyBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        Compris & Accepter
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- HOME VIEW -->
+    <div id="homeView" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets BTP</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Estimatifs IA M42 et plannings prévisionnels de chantier.</p>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="exportProjectsBtn" title="Exporter tous les projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
+            <i data-lucide="download" class="w-4 h-4 text-emerald-500"></i>
+            <span>Exporter</span>
+          </button>
+          
+          <button id="importProjectsBtn" title="Importer des projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
+            <i data-lucide="upload" class="w-4 h-4 text-emerald-500"></i>
+            <span>Importer</span>
+          </button>
+          <input type="file" id="importProjectsInput" accept=".json" class="hidden" />
+
+          <button id="createNewProjectBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2 shrink-0">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Nouveau projet</span>
+          </button>
+        </div>
+      </div>
+      
+      <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+
+    <!-- PROJECT HUB VIEW -->
+    <div id="projectHubView" class="hidden space-y-6">
+      <section class="rounded-3xl p-6 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span id="hubStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
+            <h1 id="hubProjectName" class="text-2xl sm:text-3xl font-extrabold tracking-tight"></h1>
+            <p id="hubProjectLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1 mt-1">
+              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <span id="hubLocationText"></span>
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button id="hubEditProjectBtn" class="px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all flex items-center space-x-2 shadow-sm">
+              <i data-lucide="settings" class="w-4 h-4 text-emerald-500"></i>
+              <span>Paramètres du projet</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="text-center sm:text-left py-2">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Modules de travail Orion BTP</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sélectionnez le module à exécuter pour ce chantier</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- MODULE M42 : ESTIMATIF IA -->
+        <div id="selectModuleM42" class="group relative p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/80 dark:border-emerald-500/60 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/40 shadow-md hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/25">
+                <i data-lucide="sparkles" class="w-7 h-7"></i>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white tracking-wider uppercase">Outil M42 IA</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Estimatif Projet BTP (IA)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Importez vos documents techniques (CCTP, plans, devis) et générez le devis & métré DPGF du projet grâce à l'IA M42.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Ouvrir l'estimatif IA</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- NOUVEAU MODULE : PLANNING ESTIMATIF -->
+        <div id="selectModulePlanning" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i data-lucide="calendar-range" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Planning Estimatif</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                Générez le calendrier prévisionnel des travaux, visualisez les phases du chantier et gérez l'ordonnancement par corps d'état.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            <span>Accéder au planning</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODULE M42 : ESTIMATIF PROJET BTP IA -->
+    <div id="m42View" class="hidden space-y-6">
+      
+      <!-- Banner Projet -->
+      <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center space-x-2">
+              <span id="m42ProjectStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white shadow-sm">
+                <i data-lucide="sparkles" class="w-3 h-3 mr-1"></i> Outil M42 IA
+              </span>
+            </div>
+            <h1 id="m42ProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <span id="m42ProjectLocationDisplay"></span>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="quickGenerateAiBtn" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/25 active:scale-95 flex items-center space-x-2">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Générer par IA M42</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANNEAU IMPORT DOCUMENTS & PROMPT IA -->
+      <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
+        <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+          <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+            <i data-lucide="bot" class="w-5 h-5 text-emerald-500"></i>
+            <span>Assistant IA M42 - Paramétrage & Documents</span>
+          </h3>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300">Modèle BTP v4.2</span>
+        </div>
+
+        <!-- ZONE D'IMPORTATION DE DOCUMENTS POUR LES AGENTS -->
+        <div class="space-y-3">
+          <label class="block text-slate-500 font-medium text-xs">Documents sources pour l'estimation (CCTP, Plans, CDC, Devis...)</label>
+          <div id="m42DocDropzone" class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 transition-colors">
+            <input type="file" id="m42DocInput" multiple accept=".pdf,.docx,.txt,.csv,.png,.jpg" class="hidden" />
+            <div class="flex flex-col items-center justify-center space-y-1">
+              <i data-lucide="file-up" class="w-6 h-6 text-emerald-500"></i>
+              <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">Glissez vos fichiers ici ou cliquez pour importer</p>
+              <p class="text-[10px] text-slate-400">PDF, TXT, Word, Images acceptés</p>
+            </div>
+          </div>
+          <!-- Liste des documents importés -->
+          <div id="m42DocsList" class="flex flex-wrap gap-2 pt-1"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Type de Travaux</label>
+            <select id="m42WorkTypeSelect" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="Rénovation globale">Rénovation globale</option>
+              <option value="Construction neuve">Construction neuve</option>
+              <option value="Extension / Surélévation">Extension / Surélévation</option>
+              <option value="Second œuvre & Peinture">Second œuvre & Peinture</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Gamme de finition</label>
+            <select id="m42QualitySelect" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="Standard">Standard / Bon rapport Q/P</option>
+              <option value="Économique">Économique / Budget maîtrisé</option>
+              <option value="Premium">Premium / Haut de gamme</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Taux de TVA appliqué</label>
+            <select id="m42TvaSelect" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-emerald-600 dark:text-emerald-400">
+              <option value="10">10 % (Rénovation logement > 2 ans)</option>
+              <option value="20">20 % (Neuf / Commercial / Général)</option>
+              <option value="5.5">5,5 % (Rénovation énergétique)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5 text-xs">Consignes particulières pour les agents IA M42</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="m42PromptInput" placeholder="ex: Analyse du CCTP joint, rénovation T3 75m², remplacement électricité et parquet..." class="flex-1 px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button id="runPromptAiBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1.5 shrink-0">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Lancer l'estimation</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARDS KPI DE L'ESTIMATIF -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm space-y-1">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Général HT</span>
+          <div id="kpiTotalHt" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0,00 €</div>
+        </div>
+        <div class="p-5 rounded-3xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-sm space-y-1">
+          <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Total TTC</span>
+          <div id="kpiTotalTtc" class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">0,00 €</div>
+        </div>
+        <div class="p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm space-y-1">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Ratio au m²</span>
+          <div id="kpiRatioSurface" class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">0 € / m²</div>
+        </div>
+        <div class="p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm space-y-1">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Délai Estimé</span>
+          <div id="kpiDuration" class="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">0 sem.</div>
+        </div>
+      </div>
+
+      <!-- TABLEAU ESTIMATIF DPGF AVEC BOUTON "AJOUTER UNE LIGNE" EN BAS -->
+      <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800">
+          <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-500"></i>
+            <span>Détail de l'Estimatif par Lots (DPGF)</span>
+          </h3>
+          <span id="itemsCountBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0 prestation(s)</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+                <th class="py-3 px-3">Lot / Réf</th>
+                <th class="py-3 px-3">Désignation des ouvrages</th>
+                <th class="py-3 px-3 text-center">Unité</th>
+                <th class="py-3 px-3 text-right">Qté</th>
+                <th class="py-3 px-3 text-right">Prix Unit. HT</th>
+                <th class="py-3 px-3 text-right">Total HT</th>
+                <th class="py-3 px-3 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="m42TableBody" class="divide-y dark:divide-slate-800/60"></tbody>
+          </table>
+        </div>
+
+        <!-- BOUTON AJOUTER UNE LIGNE (POSITIONNÉ EN BAS DANS L'ESPACE DÉTAIL) -->
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          <button id="addEstimatifItemBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 flex items-center space-x-2 shadow-md shadow-emerald-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Ajouter une ligne</span>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- NOUVEAU MODULE : PLANNING ESTIMATIF -->
+    <div id="planningView" class="hidden space-y-6">
+      
+      <!-- Banner Projet Planning -->
+      <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600">Module Planning</span>
+            </div>
+            <h1 id="planningProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <span id="planningProjectLocationDisplay"></span>
+            </p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <button id="syncPlanningFromEstimatifBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 flex items-center space-x-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>Générer depuis l'estimatif</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIMELINE & DÉROULÉ DES PHASES -->
+      <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-6">
+        <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800">
+          <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+            <i data-lucide="calendar-range" class="w-5 h-5 text-emerald-500"></i>
+            <span>Planning Prévisionnel par Phases</span>
+          </h3>
+          <span id="planningTotalDuration" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Durée : 0 semaines</span>
+        </div>
+
+        <div id="planningPhasesContainer" class="space-y-4"></div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL : EDITEUR LIGNE ESTIMATIF M42 -->
+  <div id="editEstimatifItemModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="edit-3" class="w-5 h-5"></i>
+          </div>
+          <h3 id="estimatifModalTitle" class="text-base sm:text-lg font-bold">Ajouter une ligne d'estimatif</h3>
+        </div>
+        <button id="closeEstimatifItemModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="estimatifItemForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Lot / Corps d'état</label>
+          <input type="text" id="itemInputLot" required placeholder="ex: 02 - Électricité & Éclairage" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Désignation des fournitures et prestations</label>
+          <textarea id="itemInputDesignation" required rows="3" placeholder="Description technique précise de l'ouvrage..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Unité</label>
+            <select id="itemInputUnit" class="w-full px-3 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none">
+              <option value="m²">m²</option>
+              <option value="m³">m³</option>
+              <option value="ml">ml</option>
+              <option value="u">u (unité)</option>
+              <option value="ens">ens (ensemble)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Quantité</label>
+            <input type="number" step="any" min="0" id="itemInputQty" required class="w-full px-3 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Prix Unit. HT (€)</label>
+            <input type="number" step="any" min="0" id="itemInputUnitPrice" required class="w-full px-3 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t dark:border-slate-800">
+          <button type="button" id="cancelEstimatifItemModalBtn" class="px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
+          <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center space-x-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i><span>Enregistrer</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS -->
+  <div id="reportConfigModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold leading-tight">Rapports et options d'export</h3>
+            <p class="text-[10px] sm:text-xs text-slate-400">Générez vos documents professionnels</p>
+          </div>
+        </div>
+        <button id="closeReportConfigBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="pt-2 border-t dark:border-slate-800 space-y-3">
+          <span class="block font-semibold text-slate-700 dark:text-slate-300 text-sm">Formats d'export disponibles :</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button type="button" id="exportPdfReportBtn" class="px-3 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>Export PDF</span>
+            </button>
+            <button type="button" id="exportWordReportBtn" class="px-3 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
+              <i data-lucide="file-code" class="w-4 h-4"></i>
+              <span>Export Word</span>
+            </button>
+            <button type="button" id="exportExcelReportBtn" class="px-3 py-3 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
+              <i data-lucide="sheet" class="w-4 h-4"></i>
+              <span>Export Excel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL : PROJET (CREATION & MODIFICATION) -->
+  <div id="editProjectModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="settings" class="w-4 h-4"></i></div>
+          <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Nouveau projet</h3>
+        </div>
+        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="projectForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Nom du projet</label>
+          <input type="text" id="projectInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="block text-slate-500 font-medium mb-1.5">Client</label><input type="text" id="projectInputClient" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" /></div>
+          <div><label class="block text-slate-500 font-medium mb-1.5">Surface globale (m²)</label><input type="number" id="projectInputSurface" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" /></div>
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse</label>
+          <input type="text" id="projectInputLocation" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Statut</label>
+          <select id="projectInputStatus" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none">
+            <option value="En conception">En conception</option>
+            <option value="En cours d'aménagement">En cours d'aménagement</option>
+            <option value="Livré / Achevé">Livré / Achevé</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t dark:border-slate-800">
+          <button type="button" id="cancelProjectModalBtn" class="px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
+          <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 text-white font-medium flex items-center space-x-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i><span>Enregistrer</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    const initialProjects = [
+      {
+        id: "proj_demo_m42",
+        name: "Rénovation Résidence Les Pins",
+        client: "M. & Mme Dupont",
+        surfaceTotal: 85,
+        location: "14 Rue de la Paix, 75002 Paris",
+        status: "En conception",
+        estimatif: {
+          tvaRate: "10",
+          workType: "Rénovation globale",
+          qualityLevel: "Standard",
+          documents: [],
+          items: [
+            { id: "it_1", lot: "01 - Démolition & Préparation", designation: "Démolition de cloisons existantes non porteuses et évacuation des gravois en décharge agréée", unit: "m²", qty: 45, unitPrice: 35 },
+            { id: "it_2", lot: "02 - Électricité & Éclairage", designation: "Réfection complète installation électrique encastrée aux normes NF C 15-100 avec tableau 4 rangées", unit: "m²", qty: 85, unitPrice: 80 },
+            { id: "it_3", lot: "03 - Plomberie & Sanitaire", designation: "Création des arrivées EF/EC, évacuations PVC et pose meuble vasque + douche à l'italienne", unit: "ens", qty: 1, unitPrice: 3400 },
+            { id: "it_4", lot: "04 - Plâtrerie & Isolation", designation: "Doublage thermo-acoustique sur ossature métallique Placo BA13 et cloisons de distribution", unit: "m²", qty: 110, unitPrice: 58 },
+            { id: "it_5", lot: "05 - Revêtements & Peinture", designation: "Application peinture acrylique 2 couches mat/velours sur murs et plafonds après impression", unit: "m²", qty: 240, unitPrice: 26 },
+            { id: "it_6", lot: "05 - Revêtements & Peinture", designation: "Fourniture et pose de parquet contrecollé chêne avec sous-couche phonique", unit: "m²", qty: 65, unitPrice: 65 }
+          ]
+        },
+        planning: [
+          { phase: "01. Préparation & Démolition", durationWeeks: 2, startWeek: 1 },
+          { phase: "02. Réseaux & Fluides (Élec / Plomberie)", durationWeeks: 3, startWeek: 3 },
+          { phase: "03. Plâtrerie & Isolation", durationWeeks: 2, startWeek: 5 },
+          { phase: "04. Peinture & Revêtements de sol", durationWeeks: 2, startWeek: 7 },
+          { phase: "05. Livraisons & Nettoyage de fin de chantier", durationWeeks: 1, startWeek: 9 }
+        ]
+      }
+    ];
+
+    const state = {
+      darkMode: localStorage.getItem('theme') === 'dark',
+      currentView: 'home',
+      activeProjectId: null,
+      editingEstimatifItemIndex: null,
+      projects: JSON.parse(localStorage.getItem('orion_btp_projects')) || initialProjects,
+    };
+
+    if (state.projects.length > 0 && !state.activeProjectId) {
+      state.activeProjectId = state.projects[0].id;
+    }
+
+    function saveData() {
+      localStorage.setItem('orion_btp_projects', JSON.stringify(state.projects));
+    }
+
+    function showModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
+    }
+
+    function hideModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+    }
+
+    function getActiveProject() {
+      if (!state.projects || state.projects.length === 0) return null;
+      return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num || 0);
+    }
+
+    function render() {
+      if (state.darkMode) { 
+        document.documentElement.classList.add('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
+      } else { 
+        document.documentElement.classList.remove('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
+      }
+
+      const homeView = document.getElementById('homeView');
+      const projectHubView = document.getElementById('projectHubView');
+      const m42View = document.getElementById('m42View');
+      const planningView = document.getElementById('planningView');
+      
+      const homeNavBtn = document.getElementById('homeNavBtn');
+      const backBtn = document.getElementById('backToPreviousBtn');
+      const editProjBtn = document.getElementById('openEditProjectBtn');
+      const openReportConfigBtn = document.getElementById('openReportConfigBtn');
+
+      [homeView, projectHubView, m42View, planningView].forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      });
+
+      const activeProject = getActiveProject();
+
+      if (state.currentView === 'home' || !activeProject) {
+        homeView.classList.remove('hidden');
+        if (homeNavBtn) homeNavBtn.classList.remove('hidden');
+        backBtn.classList.add('hidden');
+        editProjBtn.classList.add('hidden');
+        openReportConfigBtn.classList.add('hidden');
+        renderProjectsGrid();
+      } else if (state.currentView === 'projectHub') {
+        projectHubView.classList.remove('hidden');
+        if (homeNavBtn) homeNavBtn.classList.add('hidden');
+        backBtn.classList.remove('hidden');
+        document.getElementById('backToPreviousText').textContent = "Mes projets";
+        editProjBtn.classList.add('hidden');
+        openReportConfigBtn.classList.add('hidden');
+        renderProjectHub();
+      } else if (state.currentView === 'm42') {
+        m42View.classList.remove('hidden');
+        if (homeNavBtn) homeNavBtn.classList.add('hidden');
+        backBtn.classList.remove('hidden');
+        document.getElementById('backToPreviousText').textContent = "Choix du module";
+        editProjBtn.classList.remove('hidden');
+        openReportConfigBtn.classList.remove('hidden');
+        renderM42Module();
+      } else if (state.currentView === 'planning') {
+        planningView.classList.remove('hidden');
+        if (homeNavBtn) homeNavBtn.classList.add('hidden');
+        backBtn.classList.remove('hidden');
+        document.getElementById('backToPreviousText').textContent = "Choix du module";
+        editProjBtn.classList.remove('hidden');
+        openReportConfigBtn.classList.remove('hidden');
+        renderPlanningModule();
+      }
+
+      setTimeout(() => lucide.createIcons(), 10);
+    }
+
+    function renderProjectsGrid() {
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = '';
+      if(!state.projects || state.projects.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-500">
+          <i data-lucide="folder-plus" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
+          <p class="font-semibold text-slate-700 dark:text-slate-300">Aucun projet actif</p>
+          <p class="text-xs text-slate-400 mt-1">Créez votre premier projet BTP pour débuter.</p>
+        </div>`;
+        return;
+      }
+
+      state.projects.forEach(proj => {
+        let totalHt = 0;
+        if (proj.estimatif && proj.estimatif.items) {
+          totalHt = proj.estimatif.items.reduce((acc, item) => acc + (item.qty * item.unitPrice), 0);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'group relative flex flex-col rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer overflow-hidden';
+        
+        card.innerHTML = `
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div class="flex items-start justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                <i data-lucide="building" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600">${escapeHtml(proj.status || 'En cours')}</span>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">${escapeHtml(proj.name)}</h3>
+              <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1 shrink-0"></i><span class="truncate">${escapeHtml(proj.location || 'Aucune adresse')}</span></p>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex justify-between items-center text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 block uppercase font-medium">Estimatif HT</span>
+                <span class="font-black text-slate-800 dark:text-slate-100">${formatNumber(totalHt)} €</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400 block uppercase font-medium">Surface</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-300">${proj.surfaceTotal || 0} m²</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          state.activeProjectId = proj.id;
+          state.currentView = 'projectHub';
+          render();
+        });
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderProjectHub() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      document.getElementById('hubProjectName').textContent = proj.name;
+      document.getElementById('hubLocationText').textContent = proj.location || 'Adresse non renseignée';
+      document.getElementById('hubStatusBadge').textContent = proj.status || 'En cours';
+
+      document.getElementById('selectModuleM42').onclick = () => {
+        state.currentView = 'm42';
+        render();
+      };
+
+      document.getElementById('selectModulePlanning').onclick = () => {
+        state.currentView = 'planning';
+        render();
+      };
+
+      document.getElementById('hubEditProjectBtn').onclick = () => openEditProjectModal(proj);
+      document.getElementById('openEditProjectBtn').onclick = () => openEditProjectModal(proj);
+    }
+
+    // --- LOGIQUE DU MODULE M42 (ESTIMATIF IA & DOCUMENTS) ---
+    function renderM42Module() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      if (!proj.estimatif) {
+        proj.estimatif = { tvaRate: "10", workType: "Rénovation globale", qualityLevel: "Standard", documents: [], items: [] };
+      }
+      if (!proj.estimatif.documents) proj.estimatif.documents = [];
+
+      document.getElementById('m42ProjectNameDisplay').textContent = proj.name;
+      document.getElementById('m42ProjectLocationDisplay').textContent = proj.location || 'Non renseigné';
+      document.getElementById('m42ProjectStatusBadge').textContent = proj.status || 'En cours';
+      document.getElementById('m42TvaSelect').value = proj.estimatif.tvaRate || "10";
+      document.getElementById('m42WorkTypeSelect').value = proj.estimatif.workType || "Rénovation globale";
+      document.getElementById('m42QualitySelect').value = proj.estimatif.qualityLevel || "Standard";
+
+      // Rendu de la liste des documents
+      renderDocsList(proj);
+
+      const tbody = document.getElementById('m42TableBody');
+      tbody.innerHTML = '';
+
+      let totalHt = 0;
+      const items = proj.estimatif.items || [];
+      document.getElementById('itemsCountBadge').textContent = `${items.length} prestation(s)`;
+
+      items.forEach((item, index) => {
+        const lineTotal = item.qty * item.unitPrice;
+        totalHt += lineTotal;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">${escapeHtml(item.lot)}</td>
+          <td class="py-3 px-3 text-slate-800 dark:text-slate-200">${escapeHtml(item.designation)}</td>
+          <td class="py-3 px-3 text-center font-mono text-slate-500">${escapeHtml(item.unit)}</td>
+          <td class="py-3 px-3 text-right font-medium">${item.qty}</td>
+          <td class="py-3 px-3 text-right font-mono">${formatNumber(item.unitPrice)} €</td>
+          <td class="py-3 px-3 text-right font-bold text-slate-900 dark:text-slate-100 font-mono">${formatNumber(lineTotal)} €</td>
+          <td class="py-3 px-3 text-center space-x-1">
+            <button type="button" onclick="editEstimatifItem(${index})" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" onclick="deleteEstimatifItem(${index})" class="p-1 rounded hover:bg-rose-100 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const tvaRate = parseFloat(proj.estimatif.tvaRate || 10) / 100;
+      const totalTtc = totalHt * (1 + tvaRate);
+      const surface = proj.surfaceTotal || 1;
+      const ratio = surface > 0 ? (totalHt / surface) : 0;
+      const weeks = Math.max(2, Math.round(totalHt / 4500));
+
+      document.getElementById('kpiTotalHt').textContent = `${formatNumber(totalHt)} €`;
+      document.getElementById('kpiTotalTtc').textContent = `${formatNumber(totalTtc)} €`;
+      document.getElementById('kpiRatioSurface').textContent = `${formatNumber(ratio)} € / m²`;
+      document.getElementById('kpiDuration').textContent = `~ ${weeks} sem.`;
+
+      lucide.createIcons();
+    }
+
+    function renderDocsList(proj) {
+      const docsListEl = document.getElementById('m42DocsList');
+      docsListEl.innerHTML = '';
+      if (!proj.estimatif.documents || proj.estimatif.documents.length === 0) {
+        docsListEl.innerHTML = `<span class="text-[11px] text-slate-400 italic">Aucun document joint pour le moment.</span>`;
+        return;
+      }
+
+      proj.estimatif.documents.forEach((doc, idx) => {
+        const tag = document.createElement('div');
+        tag.className = 'inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-medium';
+        tag.innerHTML = `
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+          <span class="truncate max-w-[150px]">${escapeHtml(doc.name)}</span>
+          <button type="button" onclick="removeDocument(${idx})" class="hover:text-rose-500 ml-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+        `;
+        docsListEl.appendChild(tag);
+      });
+      lucide.createIcons();
+    }
+
+    // Gestion du dépôt/import de documents
+    const dropzone = document.getElementById('m42DocDropzone');
+    const docInput = document.getElementById('m42DocInput');
+
+    dropzone.onclick = () => docInput.click();
+    docInput.onchange = (e) => handleFilesImport(e.target.files);
+
+    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('drag-over-active'); };
+    dropzone.ondragleave = () => dropzone.classList.remove('drag-over-active');
+    dropzone.ondrop = (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over-active');
+      handleFilesImport(e.dataTransfer.files);
+    };
+
+    function handleFilesImport(files) {
+      const proj = getActiveProject();
+      if (!proj) return;
+      if (!proj.estimatif.documents) proj.estimatif.documents = [];
+
+      Array.from(files).forEach(file => {
+        proj.estimatif.documents.push({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          date: new Date().toISOString()
+        });
+      });
+
+      saveData();
+      renderDocsList(proj);
+    }
+
+    function removeDocument(idx) {
+      const proj = getActiveProject();
+      if (!proj || !proj.estimatif.documents) return;
+      proj.estimatif.documents.splice(idx, 1);
+      saveData();
+      renderDocsList(proj);
+    }
+
+    function generateAiEstimatif() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      const prompt = document.getElementById('m42PromptInput').value || "Rénovation complète BTP";
+      const workType = document.getElementById('m42WorkTypeSelect').value;
+      const quality = document.getElementById('m42QualitySelect').value;
+      const mult = quality === 'Premium' ? 1.4 : (quality === 'Économique' ? 0.8 : 1.0);
+      const surface = proj.surfaceTotal || 70;
+
+      proj.estimatif.items = [
+        { id: "ai_1", lot: "01 - Démolition & Nettoyage", designation: `Démolition des cloisons et décapage complet pour projet ${workType}`, unit: "m²", qty: Math.round(surface * 0.6), unitPrice: Math.round(30 * mult) },
+        { id: "ai_2", lot: "02 - Électricité & Réseau", designation: "Création réseau électrique NF C 15-100, appareillages et tableau de protection", unit: "m²", qty: surface, unitPrice: Math.round(85 * mult) },
+        { id: "ai_3", lot: "03 - Plomberie & Chauffage", designation: "Alimentation EF/EC, évacuations et installation sanitaire moderne", unit: "ens", qty: 1, unitPrice: Math.round(3500 * mult) },
+        { id: "ai_4", lot: "04 - Plâtrerie & Doublage", designation: "Mise en place cloisons Placo BA13 et isolation thermique/acoustique", unit: "m²", qty: Math.round(surface * 1.5), unitPrice: Math.round(55 * mult) },
+        { id: "ai_5", lot: "05 - Peintures & Finitions", designation: "Préparation des fonds, ratissage et peinture 2 couches velours mat", unit: "m²", qty: Math.round(surface * 2.8), unitPrice: Math.round(24 * mult) },
+        { id: "ai_6", lot: "06 - Sols & Revêtements", designation: "Fourniture et pose de parquet / carrelage grand format", unit: "m²", qty: surface, unitPrice: Math.round(68 * mult) }
+      ];
+
+      // Génération automatique correlée du planning
+      generatePlanningFromEstimatifData(proj);
+
+      saveData();
+      renderM42Module();
+    }
+
+    function editEstimatifItem(index) {
+      const proj = getActiveProject();
+      if (!proj || !proj.estimatif.items[index]) return;
+      state.editingEstimatifItemIndex = index;
+      const item = proj.estimatif.items[index];
+      
+      document.getElementById('itemInputLot').value = item.lot;
+      document.getElementById('itemInputDesignation').value = item.designation;
+      document.getElementById('itemInputUnit').value = item.unit;
+      document.getElementById('itemInputQty').value = item.qty;
+      document.getElementById('itemInputUnitPrice').value = item.unitPrice;
+      
+      showModal('editEstimatifItemModal');
+    }
+
+    function deleteEstimatifItem(index) {
+      const proj = getActiveProject();
+      if (!proj) return;
+      proj.estimatif.items.splice(index, 1);
+      saveData();
+      renderM42Module();
+    }
+
+    // --- LOGIQUE DU MODULE PLANNING ESTIMATIF ---
+    function renderPlanningModule() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      if (!proj.planning) {
+        generatePlanningFromEstimatifData(proj);
+      }
+
+      document.getElementById('planningProjectNameDisplay').textContent = proj.name;
+      document.getElementById('planningProjectLocationDisplay').textContent = proj.location || 'Adresse non renseignée';
+
+      const container = document.getElementById('planningPhasesContainer');
+      container.innerHTML = '';
+
+      let maxEndWeek = 0;
+      proj.planning.forEach(p => {
+        const end = p.startWeek + p.durationWeeks;
+        if (end > maxEndWeek) maxEndWeek = end;
+      });
+
+      document.getElementById('planningTotalDuration').textContent = `Durée totale : ${maxEndWeek > 0 ? maxEndWeek - 1 : 0} semaine(s)`;
+
+      proj.planning.forEach((phase, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 space-y-2';
+
+        const offsetPercent = ((phase.startWeek - 1) / Math.max(maxEndWeek, 10)) * 100;
+        const widthPercent = (phase.durationWeeks / Math.max(maxEndWeek, 10)) * 100;
+
+        itemEl.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-800 dark:text-slate-100">${escapeHtml(phase.phase)}</span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Semaine ${phase.startWeek} à ${phase.startWeek + phase.durationWeeks - 1} (${phase.durationWeeks} sem.)</span>
+          </div>
+          <div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden relative">
+            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="margin-left: ${offsetPercent}%; width: ${widthPercent}%;"></div>
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+
+      lucide.createIcons();
+    }
+
+    function generatePlanningFromEstimatifData(proj) {
+      if (!proj.estimatif || !proj.estimatif.items || proj.estimatif.items.length === 0) {
+        proj.planning = [
+          { phase: "01. Préparation & Études", durationWeeks: 1, startWeek: 1 },
+          { phase: "02. Execution des travaux", durationWeeks: 4, startWeek: 2 }
+        ];
+        return;
+      }
+
+      let currentWeek = 1;
+      const planning = [];
+      const lotsMap = {};
+
+      proj.estimatif.items.forEach(i => {
+        if (!lotsMap[i.lot]) lotsMap[i.lot] = 0;
+        lotsMap[i.lot] += (i.qty * i.unitPrice);
+      });
+
+      Object.keys(lotsMap).forEach((lot, idx) => {
+        const cost = lotsMap[lot];
+        const dur = Math.max(1, Math.round(cost / 3000));
+        planning.push({
+          phase: lot,
+          durationWeeks: dur,
+          startWeek: currentWeek
+        });
+        currentWeek += dur;
+      });
+
+      proj.planning = planning;
+    }
+
+    document.getElementById('syncPlanningFromEstimatifBtn').onclick = () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      generatePlanningFromEstimatifData(proj);
+      saveData();
+      renderPlanningModule();
+    };
+
+    // --- EVENT LISTENERS & MODALS ---
+    document.getElementById('quickGenerateAiBtn').onclick = generateAiEstimatif;
+    document.getElementById('runPromptAiBtn').onclick = generateAiEstimatif;
+
+    document.getElementById('m42TvaSelect').onchange = (e) => {
+      const proj = getActiveProject();
+      if (proj) {
+        proj.estimatif.tvaRate = e.target.value;
+        saveData();
+        renderM42Module();
+      }
+    };
+
+    document.getElementById('addEstimatifItemBtn').onclick = () => {
+      state.editingEstimatifItemIndex = null;
+      document.getElementById('estimatifItemForm').reset();
+      showModal('editEstimatifItemModal');
+    };
+
+    document.getElementById('closeEstimatifItemModalBtn').onclick = () => hideModal('editEstimatifItemModal');
+    document.getElementById('cancelEstimatifItemModalBtn').onclick = () => hideModal('editEstimatifItemModal');
+
+    document.getElementById('estimatifItemForm').onsubmit = (e) => {
+      e.preventDefault();
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      const newItem = {
+        id: "item_" + Date.now(),
+        lot: document.getElementById('itemInputLot').value,
+        designation: document.getElementById('itemInputDesignation').value,
+        unit: document.getElementById('itemInputUnit').value,
+        qty: parseFloat(document.getElementById('itemInputQty').value) || 0,
+        unitPrice: parseFloat(document.getElementById('itemInputUnitPrice').value) || 0
+      };
+
+      if (state.editingEstimatifItemIndex !== null) {
+        proj.estimatif.items[state.editingEstimatifItemIndex] = newItem;
+      } else {
+        proj.estimatif.items.push(newItem);
+      }
+
+      saveData();
+      hideModal('editEstimatifItemModal');
+      renderM42Module();
+    };
+
+    // Exports CSV / PDF / Word
+    document.getElementById('exportExcelReportBtn').onclick = () => {
+      const proj = getActiveProject();
+      if (!proj || !proj.estimatif) return;
+
+      let csvContent = "data:text/csv;charset=utf-8,Lot;Designation;Unite;Quantite;Prix Unit HT;Total HT\n";
+      proj.estimatif.items.forEach(i => {
+        csvContent += `"${i.lot}";"${i.designation}";"${i.unit}";${i.qty};${i.unitPrice};${i.qty * i.unitPrice}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Estimatif_M42_${proj.name.replace(/\s+/g, '_')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    document.getElementById('exportPdfReportBtn').onclick = () => alert("Génération du rapport PDF de l'estimatif M42 en cours...");
+    document.getElementById('exportWordReportBtn').onclick = () => alert("Export Word de l'estimatif M42 généré.");
+
+    // Navigation de base
+    document.getElementById('homeNavBtn').onclick = (e) => { e.preventDefault(); state.currentView = 'home'; render(); };
+    document.getElementById('navLogoBtn').onclick = (e) => { e.preventDefault(); state.currentView = 'home'; render(); };
+    document.getElementById('backToPreviousBtn').onclick = () => {
+      if (state.currentView === 'projectHub') state.currentView = 'home';
+      else state.currentView = 'projectHub';
+      render();
+    };
+
+    // Thème Dark/Light
+    document.getElementById('themeToggleBtn').onclick = () => {
+      state.darkMode = !state.darkMode;
+      localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+      render();
+    };
+
+    // Menu Utilisateur & Modals
+    document.getElementById('userMenuBtn').onclick = () => {
+      document.getElementById('userDropdownMenu').classList.toggle('hidden');
+    };
+    document.getElementById('dropdownLoginBtn').onclick = () => showModal('loginModal');
+    document.getElementById('closeLoginModalBtn').onclick = () => hideModal('loginModal');
+    document.getElementById('dropdownReportIssueBtn').onclick = () => showModal('reportIssueModal');
+    document.getElementById('closeReportIssueModalBtn').onclick = () => hideModal('reportIssueModal');
+    document.getElementById('dropdownPrivacyBtn').onclick = () => showModal('privacyModal');
+    document.getElementById('closePrivacyModalBtn').onclick = () => hideModal('privacyModal');
+    document.getElementById('confirmPrivacyBtn').onclick = () => hideModal('privacyModal');
+    document.getElementById('openReportConfigBtn').onclick = () => showModal('reportConfigModal');
+    document.getElementById('closeReportConfigBtn').onclick = () => hideModal('reportConfigModal');
+
+    // Nouveau projet / Edition
+    document.getElementById('createNewProjectBtn').onclick = () => openEditProjectModal(null);
+    function openEditProjectModal(proj) {
+      document.getElementById('projectForm').reset();
+      if (proj) {
+        document.getElementById('projectModalTitle').textContent = "Modifier le projet";
+        document.getElementById('projectInputName').value = proj.name;
+        document.getElementById('projectInputClient').value = proj.client || '';
+        document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
+        document.getElementById('projectInputLocation').value = proj.location || '';
+        document.getElementById('projectInputStatus').value = proj.status || 'En conception';
+      } else {
+        document.getElementById('projectModalTitle').textContent = "Nouveau projet BTP";
+      }
+      showModal('editProjectModal');
+    }
+    document.getElementById('closeProjectModalBtn').onclick = () => hideModal('editProjectModal');
+    document.getElementById('cancelProjectModalBtn').onclick = () => hideModal('editProjectModal');
+
+    document.getElementById('projectForm').onsubmit = (e) => {
+      e.preventDefault();
+      const activeProj = getActiveProject();
+      const projData = {
+        id: activeProj && state.currentView !== 'home' ? activeProj.id : "proj_" + Date.now(),
+        name: document.getElementById('projectInputName').value,
+        client: document.getElementById('projectInputClient').value,
+        surfaceTotal: parseFloat(document.getElementById('projectInputSurface').value) || 0,
+        location: document.getElementById('projectInputLocation').value,
+        status: document.getElementById('projectInputStatus').value,
+        estimatif: activeProj ? activeProj.estimatif : { tvaRate: "10", workType: "Rénovation globale", qualityLevel: "Standard", documents: [], items: [] },
+        planning: activeProj ? activeProj.planning : []
+      };
+
+      const existingIndex = state.projects.findIndex(p => p.id === projData.id);
+      if (existingIndex >= 0) {
+        state.projects[existingIndex] = projData;
+      } else {
+        state.projects.push(projData);
+        state.activeProjectId = projData.id;
+      }
+
+      saveData();
+      hideModal('editProjectModal');
+      render();
+    };
+
+    // Export / Import global des projets
+    document.getElementById('exportProjectsBtn').onclick = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `orion_btp_projets_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    };
+
+    document.getElementById('importProjectsBtn').onclick = () => document.getElementById('importProjectsInput').click();
+    document.getElementById('importProjectsInput').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (Array.isArray(imported)) {
+            state.projects = imported;
+            if (imported.length > 0) state.activeProjectId = imported[0].id;
+            saveData();
+            render();
+          }
+        } catch (err) { alert("Fichier JSON invalide."); }
+      };
+      reader.readAsText(file);
+    };
+
+    // Initialisation
+    render();
+  </script>
+</body>
+</html>
