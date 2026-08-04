@@ -1220,8 +1220,6 @@
     document.getElementById('exportWordReportBtn').onclick = () => alert("Export Word de l'estimatif M42 généré.");
 
     // Navigation de base
-    document.getElementById('homeNavBtn').onclick = (e) => { e.preventDefault(); state.currentView = 'home'; render(); };
-    document.getElementById('navLogoBtn').onclick = (e) => { e.preventDefault(); state.currentView = 'home'; render(); };
     document.getElementById('backToPreviousBtn').onclick = () => {
       if (state.currentView === 'projectHub') state.currentView = 'home';
       else state.currentView = 'projectHub';
