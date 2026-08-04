@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orion BTP | Plateforme d'Outils & Inspiration BTP</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            apple: {
+              blue: '#0071e3',
+              grayBg: '#f5f5f7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.7); }
+    .apple-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .drag-over-active { border-color: #0071e3 !important; background-color: rgba(0, 113, 227, 0.05) !important; }
+    .pin-marker { transform-origin: center center; }
+
+    /* Animation constellation */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.15); }
+    }
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .star-glow { animation: pulseGlow 4s infinite ease-in-out; }
+    .star-twinkle { animation: starTwinkle 2.5s infinite ease-in-out; }
+  </style>
+
+  <!-- SCRIPT ANTI-FLASH : Applique le dark mode avant même le rendu de la page -->
+  <script>
+    if (localStorage.getItem("themeOrionBTP") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+</head>
+<body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300 flex flex-col">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Navigation -->
+      <div class="flex items-center space-x-4 sm:space-x-6">
+        <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+            <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
+            <span id="activeToolBadge" class="hidden w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"></span>
+          </div>
+        </button>
+
+        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          <span id="backToPreviousText">Retour</span>
+        </button>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
+          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Menu Utilisateur Dropdown -->
+        <div class="relative">
+          <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
+            <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden py-1 apple-glass">
+            <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Compte Utilisateur</p>
+              <p id="dropdownUserStatus" class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate">Non connecté (Invité)</p>
+            </div>
+
+            <div class="py-1">
+              <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="user-plus" class="w-4 h-4 text-blue-500"></i>
+                <span>S'inscrire</span>
+              </button>
+
+              <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <span>Se connecter</span>
+              </button>
+
+              <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
+                <span>Espace Administration</span>
+              </button>
+
+              <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <span>Signaler un problème</span>
+              </button>
+
+              <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="shield-check" class="w-4 h-4 text-blue-500"></i>
+                <span>Politique de confidentialité</span>
+              </button>
+            </div>
+
+            <div class="border-t border-slate-100 dark:border-slate-800 py-1">
+              <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Se déconnecter</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+
+    <!-- LANDING VIEW (PAGE D'ACCUEIL ORION BTP) -->
+    <div id="landingView" class="space-y-12 py-4">
+      
+      <!-- HERO SECTION : Sans cadre autour de la constellation -->
+      <section class="relative rounded-3xl p-6 sm:p-10 lg:p-12 overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white border border-slate-800 shadow-2xl">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Bloc Texte (Partie Gauche) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>Plateforme unifiée d'outils BTP</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+              Relier la préparation technique à la réalité du chantier.
+            </h1>
+            
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+              À l'image de la véritable constellation d'Orion qui réunit de brillantes étoiles repères (Bételgeuse, Rigel, le Baudrier), <strong class="text-white">Orion BTP</strong> connecte les outils essentiels de la <span class="text-emerald-400 font-semibold">préparation (M42)</span>, des <span class="text-purple-400 font-semibold">modules futurs (M43)</span> et du <span class="text-blue-400 font-semibold">suivi terrain & réserves (M78)</span>.
+            </p>
+
+            <div class="pt-2 flex flex-wrap gap-3 text-xs font-medium text-slate-300">
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+                <span>Préparation & Métrés (M42)</span>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="orbit" class="w-4 h-4 text-purple-400"></i>
+                <span>Module à venir (M43)</span>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
+                <span>Suivi & Réserves (M78)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloc Graphique Constellation (Partie Droite) : Sans contour ni encadrement -->
+          <div class="lg:col-span-5 flex items-center justify-center w-full">
+            <div class="w-full max-w-md lg:max-w-none opacity-95 flex justify-center">
+              <svg class="w-full h-auto max-h-[360px] -translate-x-10"" xmlns="http://www.w3.org/2000/svg" viewBox="150 15 420 380" preserveAspectRatio="xMidYMid meet">
+                <!-- LIGNES DE LA CONSTELLATION D'ORION -->
+                <line x1="400" y1="45" x2="270" y2="105" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
+                <line x1="400" y1="45" x2="530" y2="115" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
+                <line x1="270" y1="105" x2="530" y2="115" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" />
+                <line x1="270" y1="105" x2="350" y2="220" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="530" y1="115" x2="450" y2="210" stroke="#818cf8" stroke-width="1.5" />
+
+                <!-- LA CEINTURE D'ORION -->
+                <line x1="350" y1="220" x2="400" y2="215" stroke="#38bdf8" stroke-width="2.5" />
+                <line x1="400" y1="215" x2="450" y2="210" stroke="#38bdf8" stroke-width="2.5" />
+
+                <!-- L'ÉPÉE D'ORION -->
+                <line x1="400" y1="215" x2="390" y2="275" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="2 2" />
+
+                <!-- Ceinture -> Pieds -->
+                <line x1="350" y1="220" x2="310" y2="360" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="450" y1="210" x2="490" y2="350" stroke="#818cf8" stroke-width="1.5" />
+                <line x1="310" y1="360" x2="490" y2="350" stroke="#6366f1" stroke-width="1" opacity="0.5" />
+
+                <!-- ETOILES PRINCIPALES -->
+                <circle cx="270" cy="105" r="14" fill="#ef4444" opacity="0.25" class="star-twinkle" />
+                <circle cx="270" cy="105" r="7" fill="#f87171" class="star-twinkle" />
+                <text x="175" y="108" fill="#fca5a5" font-size="11" font-weight="bold">Bételgeuse</text>
+
+                <circle cx="530" cy="115" r="6" fill="#93c5fd" class="star-twinkle" />
+                <text x="545" y="118" fill="#bfdbfe" font-size="11" font-weight="bold">Bellatrix</text>
+
+                <circle cx="400" cy="45" r="4" fill="#fef08a" />
+                <text x="382" y="32" fill="#fde047" font-size="10">Meissa</text>
+
+                <circle cx="350" cy="220" r="5" fill="#ffffff" class="star-twinkle" />
+                <circle cx="400" cy="215" r="5.5" fill="#ffffff" class="star-twinkle" />
+                <circle cx="450" cy="210" r="5" fill="#ffffff" class="star-twinkle" />
+                <text x="350" y="200" fill="#7dd3fc" font-size="10" font-weight="bold">Baudrier / Ceinture</text>
+
+                <circle cx="310" cy="360" r="5" fill="#cbd5e1" />
+                <text x="250" y="365" fill="#94a3b8" font-size="11">Saiph</text>
+
+                <circle cx="490" cy="350" r="16" fill="#0284c7" opacity="0.3" class="star-twinkle" />
+                <circle cx="490" cy="350" r="8" fill="#38bdf8" class="star-twinkle" />
+                <text x="510" y="355" fill="#7dd3fc" font-size="12" font-weight="bold">Rigel</text>
+
+                <!-- NEBULEUSES -->
+                <circle cx="390" cy="275" r="16" fill="#10b981" opacity="0.35" class="star-glow" />
+                <circle cx="390" cy="275" r="6" fill="#34d399" />
+                <text x="400" y="290" fill="#6ee7b7" font-size="11" font-weight="bold">M42</text>
+
+                <circle cx="405" cy="265" r="10" fill="#8b5cf6" opacity="0.4" class="star-glow" />
+                <circle cx="405" cy="265" r="4" fill="#c084fc" />
+                <text x="420" y="260" fill="#e9d5ff" font-size="10" font-weight="bold">M43</text>
+
+                <circle cx="325" cy="180" r="14" fill="#0071e3" opacity="0.4" class="star-glow" />
+                <circle cx="325" cy="180" r="5.5" fill="#60a5fa" />
+                <text x="295" y="195" fill="#93c5fd" font-size="11" font-weight="bold">M78</text>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SELECTION DES OUTILS (CARDS) -->
+      <section class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Espace Outils Orion</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Sélectionnez le module adapté à la phase de votre projet.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- MODULE M42 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border-2 border-emerald-500/30 dark:border-emerald-500/30 hover:border-emerald-500 shadow-lg hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
+                  <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 uppercase tracking-wider">Outil Actif</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Nébuleuse M42</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M42 | Préparation & Métrés</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Outil d'étude technique préalable, métrés automatisés boosté par IA.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <a id="launchM42Btn" href="#" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Accéder à l'outil M42</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- MODULE M43 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/30">
+                  <i data-lucide="orbit" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 uppercase tracking-wider">En Conception</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Nébuleuse M43</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M43 | Module à définir</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Module en cours de définition pour répondre aux besoins futurs de développement de la plateforme Orion BTP.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <button data-future-tool="M43" class="open-future-tool-btn w-full py-3 rounded-2xl bg-purple-50 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 font-semibold text-xs sm:text-sm border border-purple-200 dark:border-purple-800/50 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Découvrir le projet M43</span>
+                <i data-lucide="orbit" class="w-4 h-4 text-purple-500"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- MODULE M78 -->
+          <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border-2 border-blue-500/30 dark:border-blue-500/30 hover:border-blue-500 shadow-lg hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
+                  <i data-lucide="check-square" class="w-6 h-6"></i>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 uppercase tracking-wider">Outil Actif</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Nébuleuse M78</div>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">M78 | Suivi & Réserves</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                  Gestionnaire de chantier complet pour l'étape finale. Importez vos plans PDF/images, pointez les réserves, annotez vos photos et gérez vos rapports.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <a id="launchM78Btn"href="m78/index.html", class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                <span>Accéder à l'outil M78</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PRESENTATION PHILOSOPHIE -->
+      <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+        <div class="max-w-2xl">
+          <h3 class="text-lg sm:text-xl font-bold tracking-tight">Trois piliers pour la vie de vos chantiers</h3>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Comment Orion BTP accompagne les bâtisseurs à chaque étape.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 flex items-center justify-center font-bold text-xs">1</div>
+            <h4 class="font-bold text-sm text-emerald-600 dark:text-emerald-400">1. Préparation & Calculs (M42)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Anticiper les besoins, les quantitatifs et l'organisation logistique du chantier.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 flex items-center justify-center font-bold text-xs">2</div>
+            <h4 class="font-bold text-sm text-purple-600 dark:text-purple-400">2. Module à venir (M43)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Fonctionnalités complémentaires en cours de développement.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 flex items-center justify-center font-bold text-xs">3</div>
+            <h4 class="font-bold text-sm text-blue-600 dark:text-blue-400">3. Gestion & Suivi Terrain (M78)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Superviser la réalisation finale, lever les réserves sur plan et garantir la conformité de livraison.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- DEDICATED ADMIN VIEW (NOUVEL ESPACE D'ADMINISTRATION ERGONOMIQUE) -->
+    <div id="adminView" class="hidden space-y-8 py-2">
+      <!-- Header Admin -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 uppercase tracking-wider">Espace Sécurisé</span>
+            <span class="text-xs font-semibold text-slate-400">Plateforme Orion BTP</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Console d'Administration</h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Gestion des comptes utilisateurs et attribution des clés d'accès aux modules M42, M43 et M78.</p>
+        </div>
+        <button id="closeAdminViewBtn" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all flex items-center space-x-2 w-max shadow-sm active:scale-95">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Quitter l'administration</span>
+        </button>
+      </div>
+
+      <!-- Statistiques Globales -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Utilisateurs Inscrits</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>
+          </div>
+          <div id="adminStatUsersCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Clés Actives</span>
+            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"><i data-lucide="key" class="w-4 h-4"></i></div>
+          </div>
+          <div id="adminStatKeysCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
+            <span>Modules Orion</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"><i data-lucide="layers" class="w-4 h-4"></i></div>
+          </div>
+          <div class="text-2xl font-extrabold text-slate-900 dark:text-white">3 / 3</div>
+        </div>
+      </div>
+
+      <!-- Section Utilisateurs -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold">Comptes Utilisateurs</h3>
+            <p class="text-xs text-slate-400">Consulter tous les utilisateurs enregistrés et leurs droits.</p>
+          </div>
+          <button id="adminAddNewUserBtn" class="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Inscrire un utilisateur</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-4">Utilisateur</th>
+                <th class="py-3 px-4">Adresse E-mail</th>
+                <th class="py-3 px-4">Rôle</th>
+                <th class="py-3 px-4">Inscrit le</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section Gestion des Clés d'Accès -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold">Gestion des Clés d'Accès aux Outils</h3>
+            <p class="text-xs text-slate-400">Générez, attribuez et révoquez les clés d'accès aux modules M42, M43 et M78.</p>
+          </div>
+          <button id="adminGenerateKeyBtn" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
+            <i data-lucide="key" class="w-4 h-4"></i>
+            <span>Créer / Attribuer une clé</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-4">Clé d'accès</th>
+                <th class="py-3 px-4">Module Associé</th>
+                <th class="py-3 px-4">Attribuer à (E-mail)</th>
+                <th class="py-3 px-4">Statut</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminKeysTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODALES UTILISATEUR, CREATION DE CLE ET PARAMETRAGE -->
+  
+  <!-- MODAL : CREATION / ATTRIBUTION DE CLE ADMIN -->
+  <div id="createKeyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
+            <i data-lucide="key" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Générer une clé d'accès</h3>
+            <p class="text-xs text-slate-400">Attribuer des droits d'accès à un outil</p>
+          </div>
+        </div>
+        <button id="closeCreateKeyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="createKeyForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Module / Outil Orion</label>
+          <select id="keyInputTool" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
+            <option value="M42">Module M42 - Préparation & Métrés</option>
+            <option value="M43">Module M43 - Module Futur</option>
+            <option value="M78">Module M78 - Suivi & Réserves</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Attribuer à un e-mail utilisateur</label>
+          <input type="email" id="keyInputUserEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Code de la clé (Généré automatiquement si vide)</label>
+          <input type="text" id="keyInputCustomCode" placeholder="ORION-M42-XXXX" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500 font-mono" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Générer et attribuer la clé</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : CONNEXION -->
+  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Connexion / Inscription</h3>
+            <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
+          </div>
+        </div>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="loginForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Se connecter</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : SIGNALER UN PROBLEME -->
+  <div id="reportIssueModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Signaler un problème</h3>
+            <p class="text-xs text-slate-400">Support & Assistance Technique</p>
+          </div>
+        </div>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="reportIssueForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Sujet de la demande</label>
+          <input type="text" required placeholder="ex: Bug d'affichage des plans PDF..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Description de l'incident</label>
+          <textarea rows="4" required placeholder="Expliquez en détail le dysfonctionnement ou votre question..." class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
+          <span>Envoyer le signalement</span>
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : POLITIQUE DE CONFIDENTIALITE -->
+  <div id="privacyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Politique de confidentialité</h3>
+            <p class="text-xs text-slate-400">Protection des données & sécurité</p>
+          </div>
+        </div>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p><strong>1. Stockage Local :</strong> Les données de vos projets et plans importés sur Orion BTP sont conservées localement au niveau de votre navigateur afin d'assurer la confidentialité intégrale de vos chantiers.</p>
+        <p><strong>2. Données Personnelles :</strong> Aucune donnée confidentielle ou image d'inspection de réserve n'est partagée sans votre consentement préalable.</p>
+        <p><strong>3. Exports de Rapports :</strong> Tous les documents générés (.PDF, .DOC) restent sous votre pleine propriété.</p>
+      </div>
+
+      <button id="confirmPrivacyBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        Compris & Accepter
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL : OUTILS FUTURS (M42 & M43) -->
+  <div id="futureToolModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6 text-center">
+      <div id="futureToolHeaderIcon" class="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl">
+        <i id="futureToolIcon" data-lucide="sparkles" class="w-8 h-8"></i>
+      </div>
+
+      <div class="space-y-2">
+        <div id="futureToolBadge" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"></div>
+        <h3 id="futureToolTitle" class="text-2xl font-extrabold"></h3>
+        <p id="futureToolDescription" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed"></p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-left text-xs space-y-2">
+        <span class="font-bold text-slate-700 dark:text-slate-300 block">Fonctionnalités prévues :</span>
+        <ul id="futureToolFeatures" class="space-y-1 text-slate-500 dark:text-slate-400 list-disc list-inside"></ul>
+      </div>
+
+      <button id="closeFutureToolModalBtn" class="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95">
+        J'ai compris
+      </button>
+    </div>
+  </div>
+
+  <!-- APPLICATION CODE SCRIPT -->
+  <script>
+    // Configuration Administrateur & Liste des utilisateurs/clés d'accès
+    const ADMIN_CONFIG = {
+      authorizedEmail: 'admin@orion.btp',
+      authorizedPassword: '123'
+    };
+
+    // État central de l'application (MODIFIÉ POUR LIRE LE LOCALSTORAGE)
+    const state = {
+      darkMode: localStorage.getItem('themeOrionBTP') === 'dark',
+      currentView: 'landing', // 'landing', 'admin'
+      currentUser: null,
+
+      // Données Utilisateurs & Clés d'Accès pour l'administration
+      registeredUsers: [
+        { id: 'usr-1', email: 'admin@orion.btp', name: 'Administrateur Orion', role: 'Administrateur', createdAt: '15/01/2026' },
+        { id: 'usr-2', email: 'jean.dupont@chantier-btp.fr', name: 'Jean Dupont', role: 'Ingénieur Travaux', createdAt: '02/02/2026' },
+        { id: 'usr-3', email: 'marie.curie@architecte-btp.fr', name: 'Marie Curie', role: 'Chef de Projet', createdAt: '10/02/2026' }
+      ],
+      accessKeys: [
+        { id: 'key-1', code: 'ORION-M42-8921', tool: 'M42', assignedTo: 'jean.dupont@chantier-btp.fr', status: 'Active' },
+        { id: 'key-2', code: 'ORION-M78-4412', tool: 'M78', assignedTo: 'marie.curie@architecte-btp.fr', status: 'Active' },
+        { id: 'key-3', code: 'ORION-M43-1092', tool: 'M43', assignedTo: 'admin@orion.btp', status: 'Active' }
+      ]
+    };
+
+    function updateAuthUI() {
+      const registerBtn = document.getElementById('dropdownRegisterBtn');
+      const loginBtn = document.getElementById('dropdownLoginBtn');
+      const logoutBtn = document.getElementById('dropdownLogoutBtn');
+      const adminBtn = document.getElementById('dropdownAdminBtn');
+      const reportIssueBtn = document.getElementById('dropdownReportIssueBtn');
+      const privacyBtn = document.getElementById('dropdownPrivacyBtn');
+
+      if (!state.currentUser) {
+        if (registerBtn) registerBtn.classList.remove('hidden');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        if (adminBtn) adminBtn.classList.add('hidden');
+        if (reportIssueBtn) reportIssueBtn.classList.add('hidden');
+        if (privacyBtn) privacyBtn.classList.remove('hidden');
+      } else {
+        if (registerBtn) registerBtn.classList.add('hidden');
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        if (reportIssueBtn) reportIssueBtn.classList.remove('hidden');
+        if (privacyBtn) privacyBtn.classList.remove('hidden');
+
+        if (state.currentUser.isAdmin) {
+          if (adminBtn) adminBtn.classList.remove('hidden');
+        } else {
+          if (adminBtn) adminBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    // Rendu Principal de l'Application
+    function render() {
+      if (state.darkMode) { 
+        document.documentElement.classList.add('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun'); 
+      } else { 
+        document.documentElement.classList.remove('dark'); 
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
+      }
+
+      const headerUserName = document.getElementById('headerUserName');
+      const dropdownUserStatus = document.getElementById('dropdownUserStatus');
+      if (state.currentUser) {
+        headerUserName.textContent = state.currentUser.name;
+        dropdownUserStatus.textContent = `${state.currentUser.name} (${state.currentUser.email})`;
+      } else {
+        headerUserName.textContent = "Connexion";
+        dropdownUserStatus.textContent = "Non connecté (Invité)";
+      }
+
+      updateAuthUI();
+
+      const landingView = document.getElementById('landingView');
+      const adminView = document.getElementById('adminView');
+
+      const backBtn = document.getElementById('backToPreviousBtn');
+      const backText = document.getElementById('backToPreviousText');
+      const activeToolBadge = document.getElementById('activeToolBadge');
+
+      landingView.classList.add('hidden');
+      adminView.classList.add('hidden');
+
+      if (state.currentView === 'landing') {
+        landingView.classList.remove('hidden');
+        backBtn.classList.add('hidden');
+        backBtn.classList.remove('inline-flex');
+        activeToolBadge.classList.add('hidden');
+      }
+      else if (state.currentView === 'admin') {
+        adminView.classList.remove('hidden');
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('inline-flex');
+        backText.textContent = "Accueil Orion";
+
+        activeToolBadge.classList.remove('hidden');
+        activeToolBadge.textContent = "Admin";
+        activeToolBadge.className = "w-max px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 uppercase tracking-wider";
+
+        renderAdminDashboardView();
+      }
+
+      lucide.createIcons();
+    }
+
+    // Gestion de l'affichage du Dashboard Administrateur
+    function renderAdminDashboardView() {
+      // Metriques de statistiques
+      document.getElementById('adminStatUsersCount').textContent = state.registeredUsers.length;
+      document.getElementById('adminStatKeysCount').textContent = state.accessKeys.filter(k => k.status === 'Active').length;
+
+      // Table des utilisateurs
+      const usersBody = document.getElementById('adminUsersTableBody');
+      usersBody.innerHTML = '';
+      state.registeredUsers.forEach(usr => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-100">${usr.name}</td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${usr.email}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${usr.role === 'Administrateur' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">${usr.role}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-400 text-[11px]">${usr.createdAt}</td>
+          <td class="py-3 px-4 text-right">
+            <button class="delete-user-btn text-rose-500 hover:underline text-[11px] font-medium" data-email="${usr.email}">Supprimer</button>
+          </td>
+        `;
+        usersBody.appendChild(tr);
+      });
+
+      // Actions de suppression d'un utilisateur
+      usersBody.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const email = e.currentTarget.getAttribute('data-email');
+          if (email === ADMIN_CONFIG.authorizedEmail) {
+            alert("Impossible de supprimer le compte Administrateur principal.");
+            return;
+          }
+          if (confirm(`Voulez-vous vraiment supprimer l'utilisateur ${email} ?`)) {
+            state.registeredUsers = state.registeredUsers.filter(u => u.email !== email);
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      // Table des Clés d'Accès
+      const keysBody = document.getElementById('adminKeysTableBody');
+      keysBody.innerHTML = '';
+      state.accessKeys.forEach(k => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono font-bold text-purple-600 dark:text-purple-400">${k.code}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${k.tool === 'M42' ? 'bg-emerald-100 text-emerald-700' : k.tool === 'M43' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${k.tool}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${k.assignedTo}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${k.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${k.status}</span>
+          </td>
+          <td class="py-3 px-4 text-right space-x-2">
+            <button class="toggle-key-status-btn text-amber-600 hover:underline text-[11px] font-medium" data-id="${k.id}">
+              ${k.status === 'Active' ? 'Révoquer' : 'Réactiver'}
+            </button>
+            <button class="regen-key-btn text-blue-600 hover:underline text-[11px] font-medium" data-id="${k.id}">Régénérer</button>
+            <button class="delete-key-btn text-rose-500 hover:underline text-[11px] font-medium" data-id="${k.id}">Supprimer</button>
+          </td>
+        `;
+        keysBody.appendChild(tr);
+      });
+
+      // Actions sur les clés (Statut, Régénération, Suppression)
+      keysBody.querySelectorAll('.toggle-key-status-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          const key = state.accessKeys.find(k => k.id === keyId);
+          if (key) {
+            key.status = key.status === 'Active' ? 'Révoquée' : 'Active';
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      keysBody.querySelectorAll('.regen-key-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          const key = state.accessKeys.find(k => k.id === keyId);
+          if (key) {
+            key.code = `ORION-${key.tool}-${Math.floor(1000 + Math.random() * 9000)}`;
+            renderAdminDashboardView();
+          }
+        });
+      });
+
+      keysBody.querySelectorAll('.delete-key-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const keyId = e.currentTarget.getAttribute('data-id');
+          if (confirm("Supprimer définitivement cette clé d'accès ?")) {
+            state.accessKeys = state.accessKeys.filter(k => k.id !== keyId);
+            renderAdminDashboardView();
+          }
+        });
+      });
+    }
+
+    // Gestion du thème (MODIFIÉ POUR SAUVEGARDER LE LOCALSTORAGE)
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      
+      // Sauvegarde dans le navigateur
+      if (state.darkMode) {
+        localStorage.setItem('themeOrionBTP', 'dark');
+      } else {
+        localStorage.setItem('themeOrionBTP', 'light');
+      }
+      
+      render();
+    });
+
+    // Menu Déroulant Utilisateur
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdownMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userDropdownMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
+        userDropdownMenu.classList.add('hidden');
+      }
+    });
+
+    // Modales Connexion & Administration
+    const loginModal = document.getElementById('loginModal');
+    const reportIssueModal = document.getElementById('reportIssueModal');
+    const privacyModal = document.getElementById('privacyModal');
+
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+      loginModal.classList.add('flex');
+    });
+
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+      loginModal.classList.add('flex');
+    });
+
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => {
+      loginModal.classList.add('hidden');
+      loginModal.classList.remove('flex');
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      const isAdmin = (email.toLowerCase() === ADMIN_CONFIG.authorizedEmail.toLowerCase() && password === ADMIN_CONFIG.authorizedPassword);
+
+      state.currentUser = {
+        name: isAdmin ? 'Administrateur' : (email.split('@')[0] || 'Utilisateur'),
+        email: email,
+        isAdmin: isAdmin
+      };
+
+      // Si l'utilisateur n'est pas encore dans la liste enregistrée
+      if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: state.currentUser.name,
+          role: isAdmin ? 'Administrateur' : 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+      }
+
+      loginModal.classList.add('hidden');
+      loginModal.classList.remove('flex');
+      render();
+    });
+
+    document.getElementById('dropdownLogoutBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      state.currentUser = null;
+      if (state.currentView === 'admin') state.currentView = 'landing';
+      render();
+    });
+
+    // Ouverture de la NOUVELLE PAGE d'administration (Remplacement du Popup)
+    document.getElementById('dropdownAdminBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      state.currentView = 'admin';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('closeAdminViewBtn').addEventListener('click', () => {
+      state.currentView = 'landing';
+      render();
+    });
+
+    // Création & Attribution des Clés dans l'Espace Admin
+    const createKeyModal = document.getElementById('createKeyModal');
+    document.getElementById('adminGenerateKeyBtn').addEventListener('click', () => {
+      createKeyModal.classList.remove('hidden');
+      createKeyModal.classList.add('flex');
+    });
+
+    document.getElementById('closeCreateKeyModalBtn').addEventListener('click', () => {
+      createKeyModal.classList.add('hidden');
+      createKeyModal.classList.remove('flex');
+    });
+
+    document.getElementById('createKeyForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const tool = document.getElementById('keyInputTool').value;
+      const email = document.getElementById('keyInputUserEmail').value.trim();
+      const customCode = document.getElementById('keyInputCustomCode').value.trim();
+
+      const newKey = {
+        id: 'key-' + Date.now(),
+        code: customCode || `ORION-${tool}-${Math.floor(1000 + Math.random() * 9000)}`,
+        tool: tool,
+        assignedTo: email,
+        status: 'Active'
+      };
+
+      state.accessKeys.push(newKey);
+      
+      // Auto-enregistrement de l'utilisateur si absent
+      if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: email.split('@')[0],
+          role: 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+      }
+
+      createKeyModal.classList.add('hidden');
+      createKeyModal.classList.remove('flex');
+      renderAdminDashboardView();
+    });
+
+    document.getElementById('adminAddNewUserBtn').addEventListener('click', () => {
+      const email = prompt("Saisissez l'adresse e-mail du nouvel utilisateur à inscrire :");
+      if (email && email.includes('@')) {
+        state.registeredUsers.push({
+          id: 'usr-' + Date.now(),
+          email: email,
+          name: email.split('@')[0],
+          role: 'Utilisateur',
+          createdAt: new Date().toLocaleDateString('fr-FR')
+        });
+        renderAdminDashboardView();
+      }
+    });
+
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      reportIssueModal.classList.remove('hidden');
+      reportIssueModal.classList.add('flex');
+    });
+
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => {
+      reportIssueModal.classList.add('hidden');
+      reportIssueModal.classList.remove('flex');
+    });
+
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert("Votre signalement a bien été transmitted au support technique d'Orion BTP.");
+      reportIssueModal.classList.add('hidden');
+      reportIssueModal.classList.remove('flex');
+    });
+
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      privacyModal.classList.remove('hidden');
+      privacyModal.classList.add('flex');
+    });
+
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden');
+      privacyModal.classList.remove('flex');
+    });
+
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => {
+      privacyModal.classList.add('hidden');
+      privacyModal.classList.remove('flex');
+    });
+
+    // Navigation
+    document.getElementById('backToPreviousBtn').addEventListener('click', () => {
+      if (state.currentView === 'admin') {
+        state.currentView = 'landing';
+      }
+      render();
+    });
+
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'landing';
+      render();
+    });
+
+    // Modale Outils Futurs (M42 & M43)
+    const futureToolModal = document.getElementById('futureToolModal');
+    const futureToolData = {
+      'M42': {
+        title: 'M42 | Préparation & Métrés',
+        badge: 'Prochainement',
+        badgeClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
+        bgIconClass: 'bg-emerald-600',
+        icon: 'compass',
+        description: "M42 sera l'outil de référence pour la préparation technique des chantiers et le chiffrage de précision.",
+        features: [
+          'Calcul et métrés automatiques depuis les plans',
+          'Gestion des approvisionnements et phasage',
+          'Étude de faisabilité et intégration des lots techniques',
+          'Export synoptique des besoins d\'installation'
+        ]
+      },
+      'M43': {
+        title: 'M43 | Module à définir',
+        badge: 'En Conception',
+        badgeClass: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
+        bgIconClass: 'bg-purple-600',
+        icon: 'orbit',
+        description: "Ce module n'a pas encore d'intitulé défini. Il sera développé selon vos besoins futurs.",
+        features: [
+          'Fonctionnalité en cours de définition',
+          'Intégration fluide dans le workflow Orion BTP'
+        ]
+      }
+    };
+
+    document.querySelectorAll('.open-future-tool-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const toolKey = e.currentTarget.getAttribute('data-future-tool');
+        const data = futureToolData[toolKey];
+        if(!data) return;
+
+        document.getElementById('futureToolTitle').textContent = data.title;
+        document.getElementById('futureToolDescription').textContent = data.description;
+        
+        const badge = document.getElementById('futureToolBadge');
+        badge.textContent = data.badge;
+        badge.className = `inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${data.badgeClass}`;
+
+        const headerIcon = document.getElementById('futureToolHeaderIcon');
+        headerIcon.className = `w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl ${data.bgIconClass}`;
+        document.getElementById('futureToolIcon').setAttribute('data-lucide', data.icon);
+
+        const list = document.getElementById('futureToolFeatures');
+        list.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
+
+        futureToolModal.classList.remove('hidden');
+        futureToolModal.classList.add('flex');
+        lucide.createIcons();
+      });
+    });
+
+    document.getElementById('closeFutureToolModalBtn').addEventListener('click', () => {
+      futureToolModal.classList.add('hidden');
+      futureToolModal.classList.remove('flex');
+    });
+
+    // Initialisation
+    render();
+  </script>
+</body>
+</html>
