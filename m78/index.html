@@ -64,8 +64,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo & Navigation -->
-      <div class="flex items-center space-x-4 sm:space-x-6">
-        <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+      <div class="flex items-center space-x-3 sm:space-x-4">
+          <a id="navLogoBtn" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
             <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
@@ -73,9 +73,9 @@
             <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
             <span id="activeToolBadge" class="hidden w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"></span>
           </div>
-        </button>
+        </a>
 
-        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+        <button id="backToPreviousBtn" class="hidden flex items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
           <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
           <span id="backToPreviousText">Retour</span>
         </button>
@@ -83,6 +83,16 @@
 
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="openEditProjectBtn" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-1.5 text-xs font-semibold">
+          <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
+          <span class="hidden sm:inline">Éditer le projet</span>
+        </button>
+
+        <button id="openReportConfigBtn" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-1.5 text-xs font-semibold">
+          <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+          <span id="reportBtnLabel" class="hidden sm:inline">Rapports</span>
+        </button>
+
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
@@ -115,12 +125,7 @@
                 <span>Se connecter</span>
               </button>
 
-              <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
-                <span>Espace Administration</span>
-              </button>
-
-              <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <button id="dropdownReportIssueBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
                 <span>Signaler un problème</span>
               </button>
@@ -132,7 +137,7 @@
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 py-1">
-              <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
+              <button id="dropdownLogoutBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>Se déconnecter</span>
               </button>
@@ -901,8 +906,56 @@
       { id: 'trees', label: 'Extérieur' },
     ];
 
-    const DEFAULT_COMPANIES = [];
-    const initialProjects = [];
+    const DEFAULT_COMPANIES = ['Plâtrerie SARL', 'Électricité Express', 'Peinture & Co', 'Plomberie Pro'];
+    
+    const initialProjects = [
+      {
+        id: 'proj_demo_1',
+        name: 'Résidence Horizon - Bat A',
+        location: '12 Rue des Artisans, Paris',
+        client: 'Sci Immobilier Horizon',
+        surfaceTotal: '1200',
+        status: 'En cours d\'aménagement',
+        photo: '',
+        lots: [
+          {
+            id: 'lot_demo_1',
+            name: 'Étage 1 - Logements',
+            surface: '350 m²',
+            icon: 'layers',
+            planImage: null,
+            pins: [
+              {
+                id: 'pin_demo_1',
+                title: 'Fissure placo séjour',
+                status: '0',
+                progress: 25,
+                description: 'Reprise d\'enduit nécessaire au-dessus de la baie vitrée.',
+                companies: ['Plâtrerie SARL'],
+                photos: [],
+                x: 35,
+                y: 45
+              }
+            ]
+          }
+        ],
+        activeLotId: 'lot_demo_1',
+        reunion: {
+          number: 1,
+          date: new Date().toISOString().split('T')[0],
+          nextDate: '',
+          subject: 'Réunion de démarrage du chantier',
+          notes: [
+            { id: 'note_1', company: 'Plâtrerie SARL', status: 'En cours', text: 'Finir le doublage R+1 avant vendredi.' }
+          ],
+          attendees: [
+            { name: 'Architecte - M. Dupont', present: true },
+            { name: 'Plâtrerie SARL', present: true },
+            { name: 'Électricité Express', present: false }
+          ]
+        }
+      }
+    ];
 
     const state = {
       darkMode: localStorage.getItem('theme') === 'dark',
@@ -914,6 +967,7 @@
       pan: { x: 0, y: 0 },
       activeTool: 'select',
       projectModalMode: 'edit',
+      user: JSON.parse(localStorage.getItem('orion_btp_user')) || null,
       reportConfig: {
         logoUrl: '',
         primaryColor: '#0071e3',
@@ -977,6 +1031,40 @@
         .replace(/'/g, '&#039;');
     }
 
+    function updateUserUI() {
+      const userStatus = document.getElementById('dropdownUserStatus');
+      const headerUserName = document.getElementById('headerUserName');
+      const loginBtn = document.getElementById('dropdownLoginBtn');
+      const registerBtn = document.getElementById('dropdownRegisterBtn');
+      const reportBtn = document.getElementById('dropdownReportIssueBtn');
+      const logoutBtn = document.getElementById('dropdownLogoutBtn');
+
+      if (state.user && state.user.email) {
+        if (userStatus) userStatus.textContent = state.user.email;
+        if (headerUserName) headerUserName.textContent = state.user.email.split('@')[0];
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (registerBtn) registerBtn.classList.add('hidden');
+        if (reportBtn) {
+          reportBtn.classList.remove('hidden');
+          reportBtn.classList.add('flex');
+        }
+        if (logoutBtn) {
+          logoutBtn.classList.remove('hidden');
+          logoutBtn.classList.add('flex');
+        }
+      } else {
+        if (userStatus) userStatus.textContent = 'Non connecté (Invité)';
+        if (headerUserName) headerUserName.textContent = 'Connexion';
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (registerBtn) registerBtn.classList.remove('hidden');
+        if (reportBtn) {
+          reportBtn.classList.add('hidden');
+          reportBtn.classList.remove('flex');
+        }
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+      }
+    }
+
     function render() {
       if (state.darkMode) { 
         document.documentElement.classList.add('dark'); 
@@ -986,12 +1074,13 @@
         document.getElementById('themeIcon').setAttribute('data-lucide', 'moon'); 
       }
 
+      updateUserUI();
+
       const homeView = document.getElementById('homeView');
       const projectHubView = document.getElementById('projectHubView');
       const projectView = document.getElementById('projectView');
       const reunionView = document.getElementById('reunionView');
       
-      const homeNavBtn = document.getElementById('homeNavBtn');
       const backBtn = document.getElementById('backToPreviousBtn');
       const editProjBtn = document.getElementById('openEditProjectBtn');
       const openReportConfigBtn = document.getElementById('openReportConfigBtn');
@@ -1007,46 +1096,32 @@
 
       if (state.currentView === 'home' || !activeProject) {
         homeView.classList.remove('hidden');
-        if (homeNavBtn) { homeNavBtn.classList.remove('hidden'); homeNavBtn.classList.add('inline-flex'); }
-        backBtn.classList.add('hidden');
-        backBtn.classList.remove('inline-flex');
-        editProjBtn.classList.add('hidden');
-        editProjBtn.classList.remove('inline-flex');
-        openReportConfigBtn.classList.add('hidden');
-        openReportConfigBtn.classList.remove('inline-flex');
+        if (backBtn) backBtn.classList.add('hidden');
+        if (editProjBtn) editProjBtn.classList.add('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectsGrid();
       } else if (state.currentView === 'projectHub') {
         projectHubView.classList.remove('hidden');
-        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
-        backBtn.classList.remove('hidden');
-        backBtn.classList.add('inline-flex');
+        if (backBtn) backBtn.classList.remove('hidden');
         document.getElementById('backToPreviousText').textContent = "Mes projets";
-        editProjBtn.classList.add('hidden');
-        openReportConfigBtn.classList.add('hidden');
+        if (editProjBtn) editProjBtn.classList.add('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectHub();
       } else if (state.currentView === 'project') {
         projectView.classList.remove('hidden');
         projectView.classList.add('flex');
-        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
-        backBtn.classList.remove('hidden');
-        backBtn.classList.add('inline-flex');
+        if (backBtn) backBtn.classList.remove('hidden');
         document.getElementById('backToPreviousText').textContent = "Choix du module";
-        editProjBtn.classList.remove('hidden');
-        editProjBtn.classList.add('inline-flex');
-        openReportConfigBtn.classList.remove('hidden');
-        openReportConfigBtn.classList.add('inline-flex');
+        if (editProjBtn) editProjBtn.classList.remove('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         if (reportBtnLabel) reportBtnLabel.textContent = "Rapports";
         renderActiveProject();
       } else if (state.currentView === 'reunion') {
         reunionView.classList.remove('hidden');
-        if (homeNavBtn) { homeNavBtn.classList.add('hidden'); homeNavBtn.classList.remove('inline-flex'); }
-        backBtn.classList.remove('hidden');
-        backBtn.classList.add('inline-flex');
+        if (backBtn) backBtn.classList.remove('hidden');
         document.getElementById('backToPreviousText').textContent = "Choix du module";
-        editProjBtn.classList.remove('hidden');
-        editProjBtn.classList.add('inline-flex');
-        openReportConfigBtn.classList.remove('hidden');
-        openReportConfigBtn.classList.add('inline-flex');
+        if (editProjBtn) editProjBtn.classList.remove('hidden');
+        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         if (reportBtnLabel) reportBtnLabel.textContent = "Rapports";
         renderReunionModule();
       }
@@ -1096,12 +1171,12 @@
             </div>
           </div>
           <div class="p-5 flex-1 flex flex-col">
-            <div class="flex items-start justify-between mb-2">
-              <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 flex items-center justify-center shrink-0">
-                <i data-lucide="folder" class="w-5 h-5"></i>
-              </div>
-              <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate ml-3 flex-1 text-right mt-2">${escapeHtml(proj.name)}</h3>
-            </div>
+            <div class="flex items-center mb-2">
+             <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 flex items-center justify-center shrink-0">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+             </div>
+            <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 truncate ml-3 flex-1 text-left">${escapeHtml(proj.name)}</h3>
+           </div>
             <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1 shrink-0"></i><span class="truncate">${escapeHtml(proj.location || 'Aucune adresse')}</span></p>
             <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
               <span>${proj.lots ? proj.lots.length : 0} Zone(s)</span>
@@ -1250,6 +1325,135 @@
         document.getElementById('sidebarPinsCount').textContent = "0";
         document.getElementById('pinsListContainer').innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Créez une zone pour commencer.</div>`;
       }
+      lucide.createIcons();
+    }
+
+    function renderReunionModule() {
+      const proj = getActiveProject();
+      if (!proj) return;
+
+      if (!proj.reunion) {
+        proj.reunion = {
+          number: 1,
+          date: new Date().toISOString().split('T')[0],
+          nextDate: '',
+          subject: '',
+          notes: [],
+          attendees: []
+        };
+      }
+
+      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
+      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse';
+      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
+      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
+      document.getElementById('reunionProjectStatusBadge').textContent = proj.status || 'En cours';
+
+      const r = proj.reunion;
+      document.getElementById('reunionInputNumber').value = r.number || 1;
+      document.getElementById('reunionInputDate').value = r.date || '';
+      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
+      document.getElementById('reunionInputSubject').value = r.subject || '';
+
+      renderReunionNotes(proj);
+      renderReunionAttendees(proj);
+    }
+
+    function renderReunionNotes(proj) {
+      const container = document.getElementById('reunionNotesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const notes = proj.reunion.notes || [];
+      if (notes.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucune remarque. Cliquez sur "Ajouter une remarque".</div>`;
+        return;
+      }
+
+      notes.forEach((note, idx) => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+        div.innerHTML = `
+          <div class="flex-1 space-y-1">
+            <div class="flex items-center space-x-2">
+              <input type="text" value="${escapeHtml(note.company || '')}" placeholder="Entreprise..." class="note-company-input px-2 py-1 text-xs rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-900 font-semibold text-blue-600 dark:text-blue-400 outline-none w-36" />
+              <select class="note-status-select px-2 py-1 text-xs rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-900 font-medium outline-none">
+                <option value="À faire" ${note.status === 'À faire' ? 'selected' : ''}>À faire</option>
+                <option value="En cours" ${note.status === 'En cours' ? 'selected' : ''}>En cours</option>
+                <option value="Fait" ${note.status === 'Fait' ? 'selected' : ''}>Fait</option>
+              </select>
+            </div>
+            <input type="text" value="${escapeHtml(note.text || '')}" placeholder="Remarque / Consigne..." class="note-text-input w-full px-2 py-1 text-xs rounded-lg border dark:border-slate-700 bg-white dark:bg-slate-900 outline-none" />
+          </div>
+          <button type="button" class="del-note-btn p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors self-end sm:self-center" title="Supprimer">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        `;
+
+        div.querySelector('.note-company-input').addEventListener('input', (e) => {
+          note.company = e.target.value;
+          saveData();
+        });
+
+        div.querySelector('.note-status-select').addEventListener('change', (e) => {
+          note.status = e.target.value;
+          saveData();
+        });
+
+        div.querySelector('.note-text-input').addEventListener('input', (e) => {
+          note.text = e.target.value;
+          saveData();
+        });
+
+        div.querySelector('.del-note-btn').addEventListener('click', () => {
+          proj.reunion.notes.splice(idx, 1);
+          saveData();
+          renderReunionNotes(proj);
+        });
+
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function renderReunionAttendees(proj) {
+      const container = document.getElementById('reunionAttendeesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const attendees = proj.reunion.attendees || [];
+      if (attendees.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-2">Aucun participant ajouté.</div>`;
+        return;
+      }
+
+      attendees.forEach((att, idx) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800';
+        div.innerHTML = `
+          <label class="flex items-center space-x-2 cursor-pointer select-none truncate">
+            <input type="checkbox" ${att.present ? 'checked' : ''} class="att-checkbox rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0" />
+            <span class="text-xs font-medium ${att.present ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 line-through'} truncate">${escapeHtml(att.name)}</span>
+          </label>
+          <button type="button" class="del-att-btn p-1 text-slate-400 hover:text-rose-500 transition-colors" title="Supprimer">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        `;
+
+        div.querySelector('.att-checkbox').addEventListener('change', (e) => {
+          att.present = e.target.checked;
+          saveData();
+          renderReunionAttendees(proj);
+        });
+
+        div.querySelector('.del-att-btn').addEventListener('click', () => {
+          proj.reunion.attendees.splice(idx, 1);
+          saveData();
+          renderReunionAttendees(proj);
+        });
+
+        container.appendChild(div);
+      });
       lucide.createIcons();
     }
 
@@ -1457,7 +1661,7 @@
       }
     });
 
-    // ZOOM A LA MOLETTE (PC)
+    // ZOOM A LA MOLETTE
     activeCanvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
@@ -1473,7 +1677,7 @@
       updateCanvasTransform();
     }, { passive: false });
 
-    // TOUCH PAN & PINCH ZOOM (TACTILE / PORTABLE)
+    // TOUCH PAN & PINCH ZOOM
     let touchStartDist = 0;
     let touchStartZoom = 1;
     let touchStartPan = { x: 0, y: 0 };
@@ -1514,10 +1718,9 @@
         const t2 = e.touches[1];
         const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
         
-        const rect = activeCanvas.getBoundingClientRect();
         const currentCenter = {
-          x: ((t1.clientX + t2.clientX) / 2) - (rect.left + rect.width / 2),
-          y: ((t1.clientY + t2.clientY) / 2) - (rect.top + rect.height / 2)
+          x: ((t1.clientX + t2.clientX) / 2) - (activeCanvas.getBoundingClientRect().left + activeCanvas.getBoundingClientRect().width / 2),
+          y: ((t1.clientY + t2.clientY) / 2) - (activeCanvas.getBoundingClientRect().top + activeCanvas.getBoundingClientRect().height / 2)
         };
 
         const factor = dist / touchStartDist;
@@ -1536,12 +1739,8 @@
     }, { passive: false });
 
     activeCanvas.addEventListener('touchend', (e) => {
-      if (e.touches.length < 2) {
-        touchStartDist = 0;
-      }
-      if (e.touches.length === 0) {
-        isTouchPanning = false;
-      }
+      if (e.touches.length < 2) touchStartDist = 0;
+      if (e.touches.length === 0) isTouchPanning = false;
     });
 
     // PLACER UN REPERE SUR LE CANVAS
@@ -1700,18 +1899,19 @@
           <img src="${photoUrl}" class="w-full h-full object-cover" />
           <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1">
             <button type="button" class="draw-photo-btn p-1 bg-white/80 rounded-lg text-slate-800 hover:bg-white" title="Annoter / Dessiner"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-            <button type="button" class="del-photo-btn p-1 bg-rose-500/80 rounded-lg text-white hover:bg-rose-500" title="Supprimer la photo"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            <button type="button" class="del-photo-btn p-1 bg-white/80 rounded-lg text-rose-600 hover:bg-white" title="Supprimer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         `;
 
         div.querySelector('.draw-photo-btn').addEventListener('click', (e) => {
           e.stopPropagation();
-          openDrawPhotoModal(pin, pIdx);
+          openDrawPhotoModal(photoUrl, pIdx);
         });
 
         div.querySelector('.del-photo-btn').addEventListener('click', (e) => {
           e.stopPropagation();
           pin.photos.splice(pIdx, 1);
+          saveData();
           renderPinPhotos(pin);
         });
 
@@ -1720,35 +1920,40 @@
       lucide.createIcons();
     }
 
-    const handlePhotoUpload = (e) => {
-      const files = e.target.files;
-      if (!files || files.length === 0 || !currentEditingPin) return;
-
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          if (!currentEditingPin.photos) currentEditingPin.photos = [];
-          currentEditingPin.photos.push(ev.target.result);
-          renderPinPhotos(currentEditingPin);
-          saveData();
-        };
-        reader.readAsDataURL(file);
-      });
-      e.target.value = '';
-    };
-
-    document.getElementById('pinGalleryInput').addEventListener('change', handlePhotoUpload);
-    document.getElementById('pinCameraInput').addEventListener('change', handlePhotoUpload);
-
+    // GESTION AJOUT ENTREPRISE & PHOTOS DANS LE MODAL RESERVE
     document.getElementById('addCompanyBtn').addEventListener('click', () => {
       const input = document.getElementById('newCompanyInput');
       const val = input.value.trim();
-      if (val && !state.availableCompanies.includes(val)) {
-        state.availableCompanies.push(val);
+      if (val) {
+        if (!state.availableCompanies.includes(val)) {
+          state.availableCompanies.push(val);
+        }
+        if (currentEditingPin) {
+          if (!currentEditingPin.companies) currentEditingPin.companies = [];
+          if (!currentEditingPin.companies.includes(val)) currentEditingPin.companies.push(val);
+          renderPinCompanies(currentEditingPin);
+        }
         input.value = '';
-        renderPinCompanies(currentEditingPin);
       }
     });
+
+    function handlePhotoFilesUpload(files) {
+      if (!files || files.length === 0 || !currentEditingPin) return;
+      if (!currentEditingPin.photos) currentEditingPin.photos = [];
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentEditingPin.photos.push(e.target.result);
+          saveData();
+          renderPinPhotos(currentEditingPin);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('pinGalleryInput').addEventListener('change', (e) => handlePhotoFilesUpload(e.target.files));
+    document.getElementById('pinCameraInput').addEventListener('change', (e) => handlePhotoFilesUpload(e.target.files));
 
     document.getElementById('pinInputStatusSelect').addEventListener('change', (e) => {
       document.getElementById('pinInputProgress').value = e.target.value;
@@ -1757,186 +1962,194 @@
     document.getElementById('pinForm').addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentEditingPin) return;
-      currentEditingPin.title = document.getElementById('pinInputTitle').value;
+
+      currentEditingPin.title = document.getElementById('pinInputTitle').value.trim();
       currentEditingPin.status = document.getElementById('pinInputStatusSelect').value;
       currentEditingPin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
-      currentEditingPin.description = document.getElementById('pinInputDescription').value;
+      currentEditingPin.description = document.getElementById('pinInputDescription').value.trim();
+
       saveData();
-      renderPinsOverlay(getActiveLot());
-      renderPinsList(getActiveLot());
+      const activeLot = getActiveLot();
+      if (activeLot) {
+        renderPinsOverlay(activeLot);
+        renderPinsList(activeLot);
+      }
       hideModal('editPinModal');
     });
 
-    document.getElementById('cancelPinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
-    document.getElementById('closePinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
-
     document.getElementById('deletePinFromModalBtn').addEventListener('click', () => {
-      if (confirm('Voulez-vous vraiment supprimer ce repère ?')) {
-        const lot = getActiveLot();
-        if (lot) {
-          lot.pins = lot.pins.filter(p => p.id !== currentEditingPin.id);
+      const activeLot = getActiveLot();
+      if (activeLot && currentEditingPin) {
+        if (confirm("Voulez-vous vraiment supprimer ce repère / réserve ?")) {
+          activeLot.pins = activeLot.pins.filter(p => p.id !== currentEditingPin.id);
           saveData();
-          renderPinsOverlay(lot);
-          renderPinsList(lot);
+          renderPinsOverlay(activeLot);
+          renderPinsList(activeLot);
+          hideModal('editPinModal');
         }
-        hideModal('editPinModal');
       }
     });
 
-    // ANNOTATION & DESSIN SUR PHOTO (CRAYON, FLECHES ET CERCLES)
-    let currentDrawingPin = null;
-    let currentDrawingPhotoIndex = -1;
-    let drawingColor = '#ef4444';
-    let currentDrawTool = 'pen';
-    let isDrawing = false;
-    let canvasCtx = null;
-    let startPos = { x: 0, y: 0 };
-    let baseImageData = null;
-    let snapshotImageData = null;
+    document.getElementById('closePinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
+    document.getElementById('cancelPinModalBtn').addEventListener('click', () => hideModal('editPinModal'));
 
-    function openDrawPhotoModal(pin, photoIndex) {
-      currentDrawingPin = pin;
-      currentDrawingPhotoIndex = photoIndex;
+    // DRAWING / ANNOTATION ON PHOTOS
+    let currentPhotoIdx = null;
+    let drawState = {
+      isDrawing: false,
+      tool: 'pen',
+      color: '#ef4444',
+      startX: 0,
+      startY: 0,
+      history: []
+    };
+
+    function openDrawPhotoModal(photoUrl, photoIdx) {
+      currentPhotoIdx = photoIdx;
       const canvas = document.getElementById('photoDrawCanvas');
-      canvasCtx = canvas.getContext('2d');
-
+      const ctx = canvas.getContext('2d');
+      
       const img = new Image();
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        canvasCtx.drawImage(img, 0, 0);
-        baseImageData = canvasCtx.getImageData(0, 0, canvas.width, canvas.height);
+      img.onload = function() {
+        canvas.width = img.naturalWidth || 800;
+        canvas.height = img.naturalHeight || 600;
+        ctx.drawImage(img, 0, 0);
+        drawState.history = [canvas.toDataURL()];
         showModal('drawPhotoModal');
       };
-      img.src = pin.photos[photoIndex];
-    }
-
-    const drawCanvas = document.getElementById('photoDrawCanvas');
-
-    function getCanvasPos(e) {
-      const rect = drawCanvas.getBoundingClientRect();
-      const scaleX = drawCanvas.width / rect.width;
-      const scaleY = drawCanvas.height / rect.height;
-      const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
+      img.src = photoUrl;
     }
 
     document.querySelectorAll('.draw-tool-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.draw-tool-btn').forEach(b => {
-          b.classList.remove('active', 'bg-blue-600', 'text-white');
-          b.classList.add('text-slate-700', 'dark:text-slate-300');
-        });
-        btn.classList.add('active', 'bg-blue-600', 'text-white');
-        btn.classList.remove('text-slate-700', 'dark:text-slate-300');
-        if (btn.id === 'toolPen') currentDrawTool = 'pen';
-        if (btn.id === 'toolArrow') currentDrawTool = 'arrow';
-        if (btn.id === 'toolCircle') currentDrawTool = 'circle';
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.draw-tool-btn').forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+        const target = e.currentTarget;
+        target.classList.add('active', 'bg-blue-600', 'text-white');
+        if (target.id === 'toolPen') drawState.tool = 'pen';
+        else if (target.id === 'toolArrow') drawState.tool = 'arrow';
+        else if (target.id === 'toolCircle') drawState.tool = 'circle';
       });
     });
 
     document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        drawingColor = btn.getAttribute('data-color');
+      btn.addEventListener('click', (e) => {
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
-        btn.classList.add('ring-2', 'ring-blue-500');
+        e.currentTarget.classList.add('ring-2', 'ring-blue-500');
+        drawState.color = e.currentTarget.getAttribute('data-color');
       });
     });
 
     document.getElementById('toolUndo').addEventListener('click', () => {
-      if (baseImageData && canvasCtx) {
-        canvasCtx.putImageData(baseImageData, 0, 0);
+      if (drawState.history.length > 0) {
+        const canvas = document.getElementById('photoDrawCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = drawState.history[0];
       }
     });
 
-    function startDraw(e) {
-      if (!canvasCtx) return;
-      e.preventDefault();
-      isDrawing = true;
-      startPos = getCanvasPos(e);
-      snapshotImageData = canvasCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
-      if (currentDrawTool === 'pen') {
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(startPos.x, startPos.y);
-        canvasCtx.strokeStyle = drawingColor;
-        canvasCtx.lineWidth = Math.max(3, drawCanvas.width / 150);
-        canvasCtx.lineCap = 'round';
-        canvasCtx.lineJoin = 'round';
-      }
-    }
+    const drawCanvas = document.getElementById('photoDrawCanvas');
+    if (drawCanvas) {
+      const getCanvasPos = (e) => {
+        const rect = drawCanvas.getBoundingClientRect();
+        const scaleX = drawCanvas.width / rect.width;
+        const scaleY = drawCanvas.height / rect.height;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      };
 
-    function moveDraw(e) {
-      if (!isDrawing || !canvasCtx) return;
-      e.preventDefault();
-      const currentPos = getCanvasPos(e);
+      let savedImageData = null;
 
-      if (currentDrawTool === 'pen') {
-        canvasCtx.lineTo(currentPos.x, currentPos.y);
-        canvasCtx.stroke();
-      } else {
-        canvasCtx.putImageData(snapshotImageData, 0, 0);
-        canvasCtx.beginPath();
-        canvasCtx.strokeStyle = drawingColor;
-        canvasCtx.lineWidth = Math.max(3, drawCanvas.width / 150);
-
-        if (currentDrawTool === 'arrow') {
-          drawArrow(canvasCtx, startPos.x, startPos.y, currentPos.x, currentPos.y);
-        } else if (currentDrawTool === 'circle') {
-          const rx = Math.abs(currentPos.x - startPos.x) / 2;
-          const ry = Math.abs(currentPos.y - startPos.y) / 2;
-          const cx = Math.min(startPos.x, currentPos.x) + rx;
-          const cy = Math.min(startPos.y, currentPos.y) + ry;
-          canvasCtx.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI);
-          canvasCtx.stroke();
+      const startDraw = (e) => {
+        drawState.isDrawing = true;
+        const pos = getCanvasPos(e);
+        drawState.startX = pos.x;
+        drawState.startY = pos.y;
+        const ctx = drawCanvas.getContext('2d');
+        ctx.strokeStyle = drawState.color;
+        ctx.fillStyle = drawState.color;
+        ctx.lineWidth = Math.max(3, drawCanvas.width / 150);
+        ctx.lineCap = 'round';
+        if (drawState.tool === 'pen') {
+          ctx.beginPath();
+          ctx.moveTo(pos.x, pos.y);
+        } else {
+          savedImageData = ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
         }
-      }
-    }
+      };
 
-    function stopDraw() {
-      if (isDrawing) {
-        isDrawing = false;
-      }
+      const moveDraw = (e) => {
+        if (!drawState.isDrawing) return;
+        const pos = getCanvasPos(e);
+        const ctx = drawCanvas.getContext('2d');
+
+        if (drawState.tool === 'pen') {
+          ctx.lineTo(pos.x, pos.y);
+          ctx.stroke();
+        } else if (drawState.tool === 'arrow') {
+          ctx.putImageData(savedImageData, 0, 0);
+          drawArrow(ctx, drawState.startX, drawState.startY, pos.x, pos.y);
+        } else if (drawState.tool === 'circle') {
+          ctx.putImageData(savedImageData, 0, 0);
+          const radius = Math.hypot(pos.x - drawState.startX, pos.y - drawState.startY);
+          ctx.beginPath();
+          ctx.arc(drawState.startX, drawState.startY, radius, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+      };
+
+      const endDraw = () => {
+        if (drawState.isDrawing) drawState.isDrawing = false;
+      };
+
+      drawCanvas.addEventListener('mousedown', startDraw);
+      drawCanvas.addEventListener('mousemove', moveDraw);
+      drawCanvas.addEventListener('mouseup', endDraw);
+      drawCanvas.addEventListener('mouseleave', endDraw);
+
+      drawCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e); }, { passive: false });
+      drawCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); moveDraw(e); }, { passive: false });
+      drawCanvas.addEventListener('touchend', endDraw);
     }
 
     function drawArrow(ctx, fromx, fromy, tox, toy) {
-      const headlen = Math.max(12, drawCanvas.width / 50);
+      const headlen = Math.max(10, drawCanvas.width / 50);
       const dx = tox - fromx;
       const dy = toy - fromy;
       const angle = Math.atan2(dy, dx);
+      ctx.beginPath();
       ctx.moveTo(fromx, fromy);
       ctx.lineTo(tox, toy);
-      ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-      ctx.moveTo(tox, toy);
-      ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
       ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(tox, toy);
+      ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+      ctx.lineTo(tox, toy);
+      ctx.fill();
     }
 
-    drawCanvas.addEventListener('mousedown', startDraw);
-    drawCanvas.addEventListener('mousemove', moveDraw);
-    window.addEventListener('mouseup', stopDraw);
-
-    drawCanvas.addEventListener('touchstart', startDraw, { passive: false });
-    drawCanvas.addEventListener('touchmove', moveDraw, { passive: false });
-    drawCanvas.addEventListener('touchend', stopDraw);
-
     document.getElementById('closeDrawModalBtn').addEventListener('click', () => {
-      if (currentDrawingPin && currentDrawingPhotoIndex >= 0) {
-        currentDrawingPin.photos[currentDrawingPhotoIndex] = drawCanvas.toDataURL('image/jpeg', 0.85);
-        renderPinPhotos(currentDrawingPin);
+      if (currentEditingPin && currentPhotoIdx !== null) {
+        const canvas = document.getElementById('photoDrawCanvas');
+        currentEditingPin.photos[currentPhotoIdx] = canvas.toDataURL('image/png');
         saveData();
+        renderPinPhotos(currentEditingPin);
       }
       hideModal('drawPhotoModal');
     });
 
-    document.getElementById('cancelDrawModalBtn').addEventListener('click', () => {
-      hideModal('drawPhotoModal');
-    });
+    document.getElementById('cancelDrawModalBtn').addEventListener('click', () => hideModal('drawPhotoModal'));
 
-    // PROJET CREATION & MODIFICATION
+    // GESTION DU PROJET (EDITION & CREATION)
     function openEditProjectModal(proj = null) {
       if (proj) {
         state.projectModalMode = 'edit';
@@ -1945,7 +2158,7 @@
         document.getElementById('projectInputClient').value = proj.client || '';
         document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
         document.getElementById('projectInputLocation').value = proj.location || '';
-        document.getElementById('projectInputStatus').value = proj.status || "En cours d'aménagement";
+        document.getElementById('projectInputStatus').value = proj.status || 'En cours d\'aménagement';
         currentProjectPhoto = proj.photo || null;
       } else {
         state.projectModalMode = 'create';
@@ -1953,6 +2166,7 @@
         document.getElementById('projectForm').reset();
         currentProjectPhoto = null;
       }
+
       updateProjectPhotoPreview();
       showModal('editProjectModal');
     }
@@ -1961,7 +2175,7 @@
       const container = document.getElementById('projectPhotoPreview');
       const removeBtn = document.getElementById('removeProjectPhotoBtn');
       if (currentProjectPhoto) {
-        container.innerHTML = `<img src="${currentProjectPhoto}" class="w-full h-full object-cover" />`;
+        container.innerHTML = `<img src="${currentProjectPhoto}" class="w-full h-full object-cover rounded-2xl" />`;
         removeBtn.classList.remove('hidden');
       } else {
         container.innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucune photo</span>`;
@@ -1969,10 +2183,10 @@
       }
     }
 
-    document.getElementById('uploadProjectPhotoBtn').addEventListener('click', () => {
-      document.getElementById('projectPhotoInput').click();
-    });
-
+    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
+    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
+    
+    document.getElementById('uploadProjectPhotoBtn').addEventListener('click', () => document.getElementById('projectPhotoInput').click());
     document.getElementById('projectPhotoInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1990,14 +2204,11 @@
       updateProjectPhotoPreview();
     });
 
-    document.getElementById('closeProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
-    document.getElementById('cancelProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
-
     document.getElementById('projectForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const nameVal = document.getElementById('projectInputName').value.trim();
       const clientVal = document.getElementById('projectInputClient').value.trim();
-      const surfaceVal = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const surfaceVal = document.getElementById('projectInputSurface').value.trim();
       const locationVal = document.getElementById('projectInputLocation').value.trim();
       const statusVal = document.getElementById('projectInputStatus').value;
 
@@ -2020,19 +2231,9 @@
           location: locationVal,
           status: statusVal,
           photo: currentProjectPhoto,
-          lots: [
-            {
-              id: 'lot_default_' + Date.now(),
-              name: 'Zone Principale',
-              surface: `${surfaceVal} m²`,
-              icon: 'building-2',
-              planImage: null,
-              pins: []
-            }
-          ],
+          lots: [],
           activeLotId: null
         };
-        newProj.activeLotId = newProj.lots[0].id;
         state.projects.push(newProj);
         state.activeProjectId = newProj.id;
       }
@@ -2042,219 +2243,58 @@
       hideModal('editProjectModal');
     });
 
-    // EXPORT & IMPORT JSON PROJETS
+    document.getElementById('closeProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
+    document.getElementById('cancelProjectModalBtn').addEventListener('click', () => hideModal('editProjectModal'));
+
+    // EXPORT & IMPORT PROJETS (JSON)
     document.getElementById('exportProjectsBtn').addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.projects, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `orion_btp_projets_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `orion_btp_projets_${new Date().toISOString().split('T')[0]}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
     });
 
-    const importInput = document.getElementById('importProjectsInput');
-    document.getElementById('importProjectsBtn').addEventListener('click', () => importInput.click());
-    importInput.addEventListener('change', (e) => {
+    const importProjectsInput = document.getElementById('importProjectsInput');
+    document.getElementById('importProjectsBtn').addEventListener('click', () => importProjectsInput.click());
+
+    importProjectsInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (ev) => {
+      reader.onload = (event) => {
         try {
-          const imported = JSON.parse(ev.target.result);
+          const imported = JSON.parse(event.target.result);
           if (Array.isArray(imported)) {
             state.projects = imported;
-            if (state.projects.length > 0) {
-              state.activeProjectId = state.projects[0].id;
-            }
+            if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
             saveData();
             render();
             alert('Projets importés avec succès !');
           } else {
-            alert('Format JSON invalide.');
+            alert('Format de fichier JSON invalide.');
           }
-        } catch(err) {
-          alert('Erreur lors de l\'importation : ' + err.message);
+        } catch (err) {
+          alert('Erreur lors de la lecture du fichier JSON : ' + err.message);
         }
       };
       reader.readAsText(file);
-      e.target.value = '';
     });
 
-    // MODULE REUNION
-    function renderReunionModule() {
-      const proj = getActiveProject();
-      if (!proj) return;
+    // RAPPORTS ET CONFIGURATION EXPORT
+    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
+    document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
 
-      if (!proj.reunion) {
-        proj.reunion = {
-          number: 1,
-          date: new Date().toISOString().slice(0, 10),
-          nextDate: '',
-          subject: '',
-          notes: [],
-          attendees: [
-            { id: 'att_1', name: 'M. le Maître d\'Ouvrage', present: true },
-            { id: 'att_2', name: 'M. l\'Architecte / Maître d\'Œuvre', present: true },
-          ]
-        };
-      }
-
-      const r = proj.reunion;
-
-      document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
-      document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse enregistrée';
-      document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
-      document.getElementById('reunionProjectSurfaceDisplay').textContent = (proj.surfaceTotal || 0) + ' m²';
-      document.getElementById('reunionProjectStatusBadge').textContent = proj.status || 'En cours';
-
-      document.getElementById('reunionInputNumber').value = r.number || 1;
-      document.getElementById('reunionInputDate').value = r.date || '';
-      document.getElementById('reunionInputNextDate').value = r.nextDate || '';
-      document.getElementById('reunionInputSubject').value = r.subject || '';
-
-      renderReunionNotes(proj);
-      renderReunionAttendees(proj);
-    }
-
-    function renderReunionNotes(proj) {
-      const container = document.getElementById('reunionNotesContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      const notes = proj.reunion ? proj.reunion.notes || [] : [];
-      if (notes.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">Aucune remarque ajoutée. Cliquez sur "Ajouter une remarque".</div>`;
-        return;
-      }
-
-      notes.forEach((note, idx) => {
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 space-y-2';
-        card.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <input type="text" placeholder="Entreprise / Lot" value="${escapeHtml(note.company || '')}" class="note-company-input px-3 py-1.5 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold flex-1 outline-none" />
-            <input type="date" value="${note.dueDate || ''}" class="note-date-input px-2.5 py-1.5 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs outline-none" />
-            <button type="button" class="del-note-btn p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-          </div>
-          <textarea rows="2" placeholder="Saisissez la remarque ou consignes à effectuer..." class="note-text-input w-full px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 text-xs outline-none">${escapeHtml(note.text || '')}</textarea>
-        `;
-
-        card.querySelector('.note-company-input').addEventListener('input', (e) => {
-          note.company = e.target.value;
-          saveData();
-        });
-
-        card.querySelector('.note-date-input').addEventListener('change', (e) => {
-          note.dueDate = e.target.value;
-          saveData();
-        });
-
-        card.querySelector('.note-text-input').addEventListener('input', (e) => {
-          note.text = e.target.value;
-          saveData();
-        });
-
-        card.querySelector('.del-note-btn').addEventListener('click', () => {
-          proj.reunion.notes.splice(idx, 1);
-          saveData();
-          renderReunionNotes(proj);
-        });
-
-        container.appendChild(card);
-      });
-      lucide.createIcons();
-    }
-
-    function renderReunionAttendees(proj) {
-      const container = document.getElementById('reunionAttendeesContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      const attendees = proj.reunion ? proj.reunion.attendees || [] : [];
-      if (attendees.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 italic text-center py-2">Aucun participant enregistré.</div>`;
-        return;
-      }
-
-      attendees.forEach((att, idx) => {
-        const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800';
-        item.innerHTML = `
-          <div class="flex items-center space-x-2 truncate pr-2">
-            <input type="checkbox" ${att.present ? 'checked' : ''} class="att-present-chk rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4" />
-            <span class="font-medium truncate ${att.present ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 line-through'}">${escapeHtml(att.name)}</span>
-          </div>
-          <button type="button" class="del-att-btn text-slate-400 hover:text-rose-500 p-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
-        `;
-
-        item.querySelector('.att-present-chk').addEventListener('change', (e) => {
-          att.present = e.target.checked;
-          saveData();
-          renderReunionAttendees(proj);
-        });
-
-        item.querySelector('.del-att-btn').addEventListener('click', () => {
-          proj.reunion.attendees.splice(idx, 1);
-          saveData();
-          renderReunionAttendees(proj);
-        });
-
-        container.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    document.getElementById('reunionInputNumber').addEventListener('change', (e) => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) { proj.reunion.number = parseInt(e.target.value) || 1; saveData(); }
-    });
-    document.getElementById('reunionInputDate').addEventListener('change', (e) => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) { proj.reunion.date = e.target.value; saveData(); }
-    });
-    document.getElementById('reunionInputNextDate').addEventListener('change', (e) => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) { proj.reunion.nextDate = e.target.value; saveData(); }
-    });
-    document.getElementById('reunionInputSubject').addEventListener('input', (e) => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) { proj.reunion.subject = e.target.value; saveData(); }
-    });
-    document.getElementById('addReunionNoteBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if (proj && proj.reunion) {
-        if (!proj.reunion.notes) proj.reunion.notes = [];
-        proj.reunion.notes.push({ id: 'note_' + Date.now(), company: '', text: '', dueDate: '' });
-        saveData();
-        renderReunionNotes(proj);
-      }
-    });
-    document.getElementById('addAttendeeBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      const input = document.getElementById('newAttendeeName');
-      const val = input.value.trim();
-      if (proj && proj.reunion && val) {
-        if (!proj.reunion.attendees) proj.reunion.attendees = [];
-        proj.reunion.attendees.push({ id: 'att_' + Date.now(), name: val, present: true });
-        input.value = '';
-        saveData();
-        renderReunionAttendees(proj);
-      }
-    });
-
-    // RAPPORTS & EXPORTS
-    document.getElementById('uploadLogoBtn').addEventListener('click', () => {
-      document.getElementById('logoFileInput').click();
-    });
-
+    document.getElementById('uploadLogoBtn').addEventListener('click', () => document.getElementById('logoFileInput').click());
     document.getElementById('logoFileInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (ev) => {
           state.reportConfig.logoUrl = ev.target.result;
-          document.getElementById('logoPreviewContainer').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-contain" />`;
+          document.getElementById('logoPreviewContainer').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-contain p-1" />`;
           document.getElementById('removeLogoBtn').classList.remove('hidden');
         };
         reader.readAsDataURL(file);
@@ -2272,202 +2312,101 @@
       document.getElementById('reportColorHex').textContent = e.target.value;
     });
 
-    document.getElementById('reportLayoutSelect').addEventListener('change', (e) => {
-      state.reportConfig.layoutStyle = e.target.value;
-    });
+    // EXPORT PDF RAPPORT
+    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
 
-    document.getElementById('reportIncludePhotosCheckbox').addEventListener('change', (e) => {
-      state.reportConfig.includePhotos = e.target.checked;
-    });
+      const printWin = window.open('', '_blank');
+      let html = `<html><head><title>Rapport - ${escapeHtml(proj.name)}</title>`;
+      html += `<style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+        h1 { color: ${state.reportConfig.primaryColor}; margin-bottom: 5px; }
+        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+        th { background-color: ${state.reportConfig.primaryColor}; color: white; }
+        .photo { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 5px; }
+      </style></head><body>`;
 
-    function generateReportHTML(proj) {
-      const logoHtml = state.reportConfig.logoUrl ? `<img src="${state.reportConfig.logoUrl}" style="max-height: 60px;" />` : `<h2 style="color: ${state.reportConfig.primaryColor}; margin:0;">${escapeHtml(proj.name)}</h2>`;
-      let content = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid ${state.reportConfig.primaryColor}; padding-bottom: 15px; margin-bottom: 20px;">
-            <div>${logoHtml}</div>
-            <div style="text-align: right;">
-              <h1 style="margin: 0; font-size: 20px; color: ${state.reportConfig.primaryColor};">RAPPORT DE CHANTIER</h1>
-              <p style="margin: 5px 0 0; font-size: 12px; color: #666;">Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
-            </div>
-          </div>
+      if (state.reportConfig.logoUrl) {
+        html += `<img src="${state.reportConfig.logoUrl}" style="height: 50px; float: right;" />`;
+      }
+      html += `<h1>${escapeHtml(proj.name)}</h1>`;
+      html += `<div class="meta">Client: ${escapeHtml(proj.client || 'N/A')} | Adresse: ${escapeHtml(proj.location || 'N/A')} | Statut: ${escapeHtml(proj.status || 'En cours')}</div>`;
 
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
-            <tr>
-              <td style="padding: 8px; background: #f8f9fa; font-weight: bold; width: 20%;">Projet :</td>
-              <td style="padding: 8px; background: #f8f9fa;">${escapeHtml(proj.name)}</td>
-              <td style="padding: 8px; background: #f8f9fa; font-weight: bold; width: 20%;">Client :</td>
-              <td style="padding: 8px; background: #f8f9fa;">${escapeHtml(proj.client || 'N/A')}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px; font-weight: bold;">Lieu :</td>
-              <td style="padding: 8px;">${escapeHtml(proj.location || 'N/A')}</td>
-              <td style="padding: 8px; font-weight: bold;">Surface :</td>
-              <td style="padding: 8px;">${proj.surfaceTotal || 0} m²</td>
-            </tr>
-          </table>
-      `;
-
-      if (state.currentView === 'reunion') {
-        const r = proj.reunion || {};
-        content += `
-          <h2 style="font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: ${state.reportConfig.primaryColor};">Réunion N° ${r.number || 1} - ${r.date || ''}</h2>
-          <p style="font-size: 13px;"><strong>Sujet :</strong> ${escapeHtml(r.subject || 'Compte rendu de chantier')}</p>
-          
-          <h3 style="font-size: 14px; margin-top: 15px;">Présences</h3>
-          <ul style="font-size: 12px;">
-            ${(r.attendees || []).map(a => `<li>${escapeHtml(a.name)} - <strong>${a.present ? 'Présent' : 'Absent'}</strong></li>`).join('')}
-          </ul>
-
-          <h3 style="font-size: 14px; margin-top: 15px;">Remarques & Actions par Entreprise</h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px;">
-            <thead>
-              <tr style="background: ${state.reportConfig.primaryColor}; color: white;">
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Entreprise</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Remarque / Action</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 100px;">Échéance</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${(r.notes || []).map(n => `
-                <tr>
-                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">${escapeHtml(n.company || 'Général')}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(n.text || '')}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${n.dueDate || '-'}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
+      if (state.currentView === 'reunion' && proj.reunion) {
+        html += `<h2>Compte-Rendu de Réunion N°${proj.reunion.number || 1}</h2>`;
+        html += `<p><strong>Date:</strong> ${proj.reunion.date || '-'} | <strong>Prochaine réunion:</strong> ${proj.reunion.nextDate || '-'}</p>`;
+        html += `<p><strong>Sujets:</strong> ${escapeHtml(proj.reunion.subject || '-')}</p>`;
+        
+        html += `<h3>Remarques & Actions</h3><table><thead><tr><th>Entreprise</th><th>Statut</th><th>Remarque</th></tr></thead><tbody>`;
+        (proj.reunion.notes || []).forEach(n => {
+          html += `<tr><td>${escapeHtml(n.company)}</td><td>${escapeHtml(n.status)}</td><td>${escapeHtml(n.text)}</td></tr>`;
+        });
+        html += `</tbody></table>`;
       } else {
-        content += `<h2 style="font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: ${state.reportConfig.primaryColor};">Liste des Réserves par Zone</h2>`;
+        html += `<h2>Synthèse des Réserves</h2>`;
         (proj.lots || []).forEach(lot => {
-          content += `<h3 style="font-size: 14px; margin-top: 15px; color: #444;">Zone : ${escapeHtml(lot.name)} (${lot.surface || '-'})</h3>`;
+          html += `<h3>Zone : ${escapeHtml(lot.name)}</h3>`;
           if (!lot.pins || lot.pins.length === 0) {
-            content += `<p style="font-size: 12px; color: #888; font-style: italic;">Aucune réserve enregistrée.</p>`;
+            html += `<p style="font-size:12px; color:#999;">Aucune réserve enregistrée.</p>`;
           } else {
-            content += `
-              <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px;">
-                <thead>
-                  <tr style="background: ${state.reportConfig.primaryColor}; color: white;">
-                    <th style="padding: 6px; border: 1px solid #ddd; width: 30px;">#</th>
-                    <th style="padding: 6px; border: 1px solid #ddd; text-align: left;">Titre & Descriptif</th>
-                    <th style="padding: 6px; border: 1px solid #ddd; text-align: left;">Entreprise(s)</th>
-                    <th style="padding: 6px; border: 1px solid #ddd; text-align: center; width: 80px;">Avancement</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${lot.pins.map((pin, pIdx) => `
-                    <tr>
-                      <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold;">${pIdx + 1}</td>
-                      <td style="padding: 6px; border: 1px solid #ddd;">
-                        <strong>${escapeHtml(pin.title || 'Sans titre')}</strong>
-                        ${pin.description ? `<br/><span style="color:#666; font-size:11px;">${escapeHtml(pin.description)}</span>` : ''}
-                        ${state.reportConfig.includePhotos && pin.photos && pin.photos.length > 0 ? `
-                          <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
-                            ${pin.photos.map(ph => `<img src="${ph}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />`).join('')}
-                          </div>
-                        ` : ''}
-                      </td>
-                      <td style="padding: 6px; border: 1px solid #ddd;">${(pin.companies || []).join(', ') || 'Toutes'}</td>
-                      <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${pin.progress || 0}%</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            `;
+            html += `<table><thead><tr><th>N°</th><th>Intitulé</th><th>Avancement</th><th>Entreprises</th><th>Description</th></tr></thead><tbody>`;
+            lot.pins.forEach((p, idx) => {
+              html += `<tr>
+                <td>${idx + 1}</td>
+                <td>${escapeHtml(p.title)}</td>
+                <td>${p.progress || 0}%</td>
+                <td>${(p.companies || []).join(', ')}</td>
+                <td>${escapeHtml(p.description)}</td>
+              </tr>`;
+            });
+            html += `</tbody></table>`;
           }
         });
       }
 
-      content += `</div>`;
-      return content;
-    }
-
-    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if (!proj) return;
-      const printWin = window.open('', '_blank');
-      printWin.document.write(`<html><head><title>Rapport - ${escapeHtml(proj.name)}</title></head><body>${generateReportHTML(proj)}<script>setTimeout(()=>{ window.print(); window.close(); }, 500);<\/script></body></html>`);
+      html += `</body></html>`;
+      printWin.document.write(html);
       printWin.document.close();
+      setTimeout(() => { printWin.print(); }, 500);
     });
 
+    // EXPORT WORD & EXCEL
     document.getElementById('exportWordReportBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if (!proj) return;
-      const html = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><meta charset='utf-8'><title>Rapport Word</title></head>
-        <body>${generateReportHTML(proj)}</body>
-        </html>
-      `;
-      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const content = `<html><body><h1>Rapport Chantier - ${escapeHtml(proj.name)}</h1><p>Client: ${escapeHtml(proj.client || 'N/A')}</p></body></html>`;
+      const blob = new Blob(['\ufeff' + content], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `rapport_${proj.name.replace(/\s+/g, '_')}.doc`;
-      document.body.appendChild(a);
+      a.download = `Rapport_${proj.name}.doc`;
       a.click();
-      document.body.removeChild(a);
     });
 
     document.getElementById('exportExcelReportBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if (!proj) return;
-      let csv = 'Zone;Index;Titre;Entreprises;Avancement;Description\n';
+      let csv = "Zone;ID;Intitule;Avancement;Entreprises;Description\n";
       (proj.lots || []).forEach(lot => {
-        (lot.pins || []).forEach((pin, idx) => {
-          csv += `"${lot.name}";"${idx+1}";"${(pin.title || '').replace(/"/g, '""')}";"${(pin.companies || []).join(', ')}";"${pin.progress || 0}%";"${(pin.description || '').replace(/"/g, '""')}"\n`;
+        (lot.pins || []).forEach((p, idx) => {
+          csv += `"${lot.name}";"${idx + 1}";"${p.title}";"${p.progress || 0}%";"${(p.companies || []).join(', ')}";"${p.description}"\n`;
         });
       });
-      const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `reserves_${proj.name.replace(/\s+/g, '_')}.csv`;
-      document.body.appendChild(a);
+      a.download = `Reserves_${proj.name}.csv`;
       a.click();
-      document.body.removeChild(a);
     });
 
-    // EVENEMENTS UI & NAVIGATION
-    document.getElementById('themeToggleBtn').addEventListener('click', () => {
-      state.darkMode = !state.darkMode;
-      localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+    // EVENEMENTS NAVIGATION & MODALS
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+      state.currentView = 'home';
       render();
-    });
-
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
-    userMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      userDropdownMenu.classList.toggle('hidden');
-    });
-    window.addEventListener('click', () => userDropdownMenu.classList.add('hidden'));
-
-    document.getElementById('dropdownLoginBtn').addEventListener('click', () => showModal('loginModal'));
-    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => showModal('loginModal'));
-    document.getElementById('closeLoginModalBtn').addEventListener('click', () => hideModal('loginModal'));
-
-    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => showModal('reportIssueModal'));
-    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => hideModal('reportIssueModal'));
-
-    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => showModal('privacyModal'));
-    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => hideModal('privacyModal'));
-    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => hideModal('privacyModal'));
-
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      document.getElementById('headerUserName').textContent = email.split('@')[0];
-      document.getElementById('dropdownUserStatus').textContent = email;
-      hideModal('loginModal');
-    });
-
-    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Merci pour votre signalement. Notre équipe technique prend en charge votre demande.');
-      hideModal('reportIssueModal');
     });
 
     document.getElementById('backToPreviousBtn').addEventListener('click', () => {
@@ -2479,12 +2418,122 @@
       render();
     });
 
-    document.getElementById('createNewProjectBtn').addEventListener('click', () => openEditProjectModal(null));
-    document.getElementById('openEditProjectBtn').addEventListener('click', () => openEditProjectModal(getActiveProject()));
-    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
-    document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+      render();
+    });
 
-    // INITIALISATION
+    // MENU UTILISATEUR DROPDOWN
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+    if (userMenuBtn && userDropdownMenu) {
+      userMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdownMenu.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!userMenuBtn.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+          userDropdownMenu.classList.add('hidden');
+        }
+      });
+    }
+
+    document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('loginModal');
+    });
+
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('loginModal');
+    });
+
+    document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('reportIssueModal');
+    });
+
+    document.getElementById('dropdownPrivacyBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      showModal('privacyModal');
+    });
+
+    document.getElementById('dropdownLogoutBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      state.user = null;
+      localStorage.removeItem('orion_btp_user');
+      updateUserUI();
+    });
+
+    document.getElementById('closeLoginModalBtn').addEventListener('click', () => hideModal('loginModal'));
+    document.getElementById('closeReportIssueModalBtn').addEventListener('click', () => hideModal('reportIssueModal'));
+    document.getElementById('closePrivacyModalBtn').addEventListener('click', () => hideModal('privacyModal'));
+    document.getElementById('confirmPrivacyBtn').addEventListener('click', () => hideModal('privacyModal'));
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      if (email) {
+        state.user = { email: email };
+        localStorage.setItem('orion_btp_user', JSON.stringify(state.user));
+        updateUserUI();
+        hideModal('loginModal');
+      }
+    });
+
+    document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Votre signalement a bien été envoyé au support technique.');
+      e.target.reset();
+      hideModal('reportIssueModal');
+    });
+
+    // EVENEMENTS MODULE REUNION
+    document.getElementById('addAttendeeBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      const input = document.getElementById('newAttendeeName');
+      const name = input.value.trim();
+      if (name) {
+        if (!proj.reunion) proj.reunion = { attendees: [] };
+        if (!proj.reunion.attendees) proj.reunion.attendees = [];
+        proj.reunion.attendees.push({ name: name, present: true });
+        input.value = '';
+        saveData();
+        renderReunionAttendees(proj);
+      }
+    });
+
+    document.getElementById('addReunionNoteBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      if (!proj.reunion) proj.reunion = { notes: [] };
+      if (!proj.reunion.notes) proj.reunion.notes = [];
+      proj.reunion.notes.push({ id: 'note_' + Date.now(), company: '', status: 'À faire', text: '' });
+      saveData();
+      renderReunionNotes(proj);
+    });
+
+    ['reunionInputNumber', 'reunionInputDate', 'reunionInputNextDate', 'reunionInputSubject'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          const proj = getActiveProject();
+          if (!proj) return;
+          if (!proj.reunion) proj.reunion = {};
+          proj.reunion.number = document.getElementById('reunionInputNumber').value;
+          proj.reunion.date = document.getElementById('reunionInputDate').value;
+          proj.reunion.nextDate = document.getElementById('reunionInputNextDate').value;
+          proj.reunion.subject = document.getElementById('reunionInputSubject').value;
+          saveData();
+        });
+      }
+    });
+
+    // INITIALISATION INITIALE
     render();
   </script>
 </body>
