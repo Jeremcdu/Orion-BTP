@@ -19,7 +19,11 @@
   <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      }
+    });
   </script>
 
   <!-- Google Fonts Inter -->
@@ -62,8 +66,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo & Navigation -->
-      <div class="flex items-center space-x-4 sm:space-x-6">
-        <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+      <div class="flex items-center space-x-3 sm:space-x-4">
+          <a id="navLogoBtn" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
             <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
@@ -71,9 +75,9 @@
             <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
             <span id="activeToolBadge" class="hidden w-max px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"></span>
           </div>
-        </button>
+        </a>
 
-        <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
+        <button id="backToPreviousBtn" class="hidden inline-flex items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
           <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
           <span id="backToPreviousText">Retour</span>
         </button>
@@ -238,8 +242,8 @@
     <!-- HOME VIEW -->
     <div id="homeView" class="space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets BTP</h1>
+        <div class="text-left">
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mes Projets </h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Estimatifs IA M42 et plannings prévisionnels de chantier.</p>
         </div>
         
@@ -269,7 +273,7 @@
     <div id="projectHubView" class="hidden space-y-6">
       <section class="rounded-3xl p-6 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="space-y-1">
+          <div class="space-y-1 text-left">
             <span id="hubStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
             <h1 id="hubProjectName" class="text-2xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p id="hubProjectLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1 mt-1">
@@ -286,7 +290,7 @@
         </div>
       </section>
 
-      <div class="text-center sm:text-left py-2">
+      <div class="text-left py-2">
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Modules de travail Orion BTP</h2>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sélectionnez le module à exécuter pour ce chantier</p>
       </div>
@@ -294,13 +298,10 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         <!-- MODULE M42 : ESTIMATIF IA -->
-        <div id="selectModuleM42" class="group relative p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/80 dark:border-emerald-500/60 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/40 shadow-md hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between space-y-6">
+        <div id="selectModuleM42" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/25">
-                <i data-lucide="sparkles" class="w-7 h-7"></i>
-              </div>
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white tracking-wider uppercase">Outil M42 IA</span>
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i data-lucide="sparkles" class="w-7 h-7"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Estimatif Projet BTP (IA)</h3>
@@ -309,7 +310,7 @@
               </p>
             </div>
           </div>
-          <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <span>Ouvrir l'estimatif IA</span>
             <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
           </div>
@@ -343,12 +344,9 @@
       <!-- Banner Projet -->
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="space-y-2">
+          <div class="space-y-2 text-left">
             <div class="flex items-center space-x-2">
               <span id="m42ProjectStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white shadow-sm">
-                <i data-lucide="sparkles" class="w-3 h-3 mr-1"></i> Outil M42 IA
-              </span>
             </div>
             <h1 id="m42ProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
@@ -358,6 +356,10 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-3">
+            <button id="openReportConfigBtn" class="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold transition-all shadow-sm active:scale-95 flex items-center space-x-2">
+              <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+              <span>Rapports & Exports</span>
+            </button>
             <button id="quickGenerateAiBtn" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/25 active:scale-95 flex items-center space-x-2">
               <i data-lucide="sparkles" class="w-4 h-4"></i>
               <span>Générer par IA M42</span>
@@ -378,7 +380,7 @@
 
         <!-- ZONE D'IMPORTATION DE DOCUMENTS -->
         <div class="space-y-3">
-          <label class="block text-slate-500 font-medium text-xs">Documents sources pour l'estimation (CCTP, Plans, CDC, Devis...)</label>
+          <label class="block text-slate-500 font-medium text-xs text-left">Documents sources pour l'estimation (CCTP, Plans, CDC, Devis...)</label>
           <div id="m42DocDropzone" class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 transition-colors">
             <input type="file" id="m42DocInput" multiple accept=".pdf,.docx,.txt,.csv,.png,.jpg" class="hidden" />
             <div class="flex flex-col items-center justify-center space-y-1">
@@ -391,7 +393,7 @@
           <div id="m42DocsList" class="flex flex-wrap gap-2 pt-1"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-left">
           <div>
             <label class="block text-slate-500 font-medium mb-1.5">Type de Travaux</label>
             <select id="m42WorkTypeSelect" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
@@ -421,7 +423,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="text-left">
           <label class="block text-slate-500 font-medium mb-1.5 text-xs">Consignes particulières pour les agents IA M42</label>
           <div class="flex flex-col sm:flex-row gap-2">
             <input type="text" id="m42PromptInput" placeholder="ex: Analyse du CCTP joint, rénovation T3 75m², remplacement électricité et parquet..." class="flex-1 px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -434,7 +436,7 @@
       </section>
 
       <!-- CARDS KPI DE L'ESTIMATIF -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
         <div class="p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm space-y-1">
           <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Général HT</span>
           <div id="kpiTotalHt" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0,00 €</div>
@@ -496,7 +498,7 @@
       <!-- Banner Projet Planning -->
       <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="space-y-2">
+          <div class="space-y-2 text-left">
             <div class="flex items-center space-x-2">
               <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600">Module Planning</span>
             </div>
@@ -526,7 +528,7 @@
           <span id="planningTotalDuration" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Durée : 0 semaines</span>
         </div>
 
-        <div id="planningPhasesContainer" class="space-y-4"></div>
+        <div id="planningPhasesContainer" class="space-y-4 text-left"></div>
       </section>
 
     </div>
@@ -535,7 +537,7 @@
 
   <!-- MODAL : EDITEUR LIGNE ESTIMATIF M42 -->
   <div id="editEstimatifItemModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
-    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 text-left">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
@@ -589,7 +591,7 @@
 
   <!-- MODAL : CONFIGURATION & EXPORT DES RAPPORTS -->
   <div id="reportConfigModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
-    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto text-left">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
@@ -625,7 +627,7 @@
 
   <!-- MODAL : PROJET (CREATION & MODIFICATION) -->
   <div id="editProjectModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
-    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto text-left">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="settings" class="w-4 h-4"></i></div>
@@ -635,6 +637,22 @@
       </div>
 
       <form id="projectForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Photo de couverture</label>
+          <div class="flex items-center space-x-3">
+            <div id="projectPhotoPreview" class="w-16 h-16 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+              <span class="text-[10px] text-slate-400 text-center px-1">Aucune photo</span>
+            </div>
+            <div class="flex-1 space-y-2">
+              <input type="file" id="projectPhotoInput" accept="image/*" class="hidden" />
+              <button type="button" id="uploadProjectPhotoBtn" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-1.5 text-xs">
+                <i data-lucide="upload" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>Importer une photo</span>
+              </button>
+              <button type="button" id="removeProjectPhotoBtn" class="hidden text-rose-500 text-[11px] hover:underline">Supprimer la photo</button>
+            </div>
+          </div>
+        </div>
         <div>
           <label class="block text-slate-500 font-medium mb-1.5">Nom du projet</label>
           <input type="text" id="projectInputName" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -668,37 +686,7 @@
 
   <!-- SCRIPT LOGIC -->
   <script>
-    const initialProjects = [
-      {
-        id: "proj_demo_m42",
-        name: "Rénovation Résidence Les Pins",
-        client: "M. & Mme Dupont",
-        surfaceTotal: 85,
-        location: "14 Rue de la Paix, 75002 Paris",
-        status: "En conception",
-        estimatif: {
-          tvaRate: "10",
-          workType: "Rénovation globale",
-          qualityLevel: "Standard",
-          documents: [],
-          items: [
-            { id: "it_1", lot: "01 - Démolition & Préparation", designation: "Démolition de cloisons existantes non porteuses et évacuation des gravois en décharge agréée", unit: "m²", qty: 45, unitPrice: 35 },
-            { id: "it_2", lot: "02 - Électricité & Éclairage", designation: "Réfection complète installation électrique encastrée aux normes NF C 15-100 avec tableau 4 rangées", unit: "m²", qty: 85, unitPrice: 80 },
-            { id: "it_3", lot: "03 - Plomberie & Sanitaire", designation: "Création des arrivées EF/EC, évacuations PVC et pose meuble vasque + douche à l'italienne", unit: "ens", qty: 1, unitPrice: 3400 },
-            { id: "it_4", lot: "04 - Plâtrerie & Isolation", designation: "Doublage thermo-acoustique sur ossature métallique Placo BA13 et cloisons de distribution", unit: "m²", qty: 110, unitPrice: 58 },
-            { id: "it_5", lot: "05 - Revêtements & Peinture", designation: "Application peinture acrylique 2 couches mat/velours sur murs et plafonds après impression", unit: "m²", qty: 240, unitPrice: 26 },
-            { id: "it_6", lot: "05 - Revêtements & Peinture", designation: "Fourniture et pose de parquet contrecollé chêne avec sous-couche phonique", unit: "m²", qty: 65, unitPrice: 65 }
-          ]
-        },
-        planning: [
-          { phase: "01. Préparation & Démolition", durationWeeks: 2, startWeek: 1 },
-          { phase: "02. Réseaux & Fluides (Élec / Plomberie)", durationWeeks: 3, startWeek: 3 },
-          { phase: "03. Plâtrerie & Isolation", durationWeeks: 2, startWeek: 5 },
-          { phase: "04. Peinture & Revêtements de sol", durationWeeks: 2, startWeek: 7 },
-          { phase: "05. Livraisons & Nettoyage de fin de chantier", durationWeeks: 1, startWeek: 9 }
-        ]
-      }
-    ];
+    const initialProjects = [];
 
     const state = {
       darkMode: localStorage.getItem('theme') === 'dark',
@@ -708,7 +696,10 @@
       isLoggedIn: localStorage.getItem('orion_btp_logged_in') === 'true',
       userEmail: localStorage.getItem('orion_btp_user_email') || '',
       projects: JSON.parse(localStorage.getItem('orion_btp_projects')) || initialProjects,
+      projectModalMode: 'edit',
     };
+
+    let currentProjectPhoto = null;
 
     if (state.projects.length > 0 && !state.activeProjectId) {
       state.activeProjectId = state.projects[0].id;
@@ -768,25 +759,23 @@
     }
 
     function render() {
+      // Gestion Thème
+      const themeBtn = document.getElementById('themeToggleBtn');
       if (state.darkMode) { 
         document.documentElement.classList.add('dark'); 
-        const icon = document.getElementById('themeIcon');
-        if (icon) icon.setAttribute('data-lucide', 'sun'); 
+        if (themeBtn) themeBtn.innerHTML = '<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>';
       } else { 
         document.documentElement.classList.remove('dark'); 
-        const icon = document.getElementById('themeIcon');
-        if (icon) icon.setAttribute('data-lucide', 'moon'); 
+        if (themeBtn) themeBtn.innerHTML = '<i data-lucide="moon" class="w-4 h-4"></i>';
       }
 
+      // Gestion des vues
       const homeView = document.getElementById('homeView');
       const projectHubView = document.getElementById('projectHubView');
       const m42View = document.getElementById('m42View');
       const planningView = document.getElementById('planningView');
       
-      const homeNavBtn = document.getElementById('homeNavBtn');
       const backBtn = document.getElementById('backToPreviousBtn');
-      const editProjBtn = document.getElementById('openEditProjectBtn');
-      const openReportConfigBtn = document.getElementById('openReportConfigBtn');
 
       [homeView, projectHubView, m42View, planningView].forEach(el => {
         if (el) {
@@ -799,42 +788,30 @@
 
       if (state.currentView === 'home' || !activeProject) {
         if (homeView) homeView.classList.remove('hidden');
-        if (homeNavBtn) homeNavBtn.classList.remove('hidden');
         if (backBtn) backBtn.classList.add('hidden');
-        if (editProjBtn) editProjBtn.classList.add('hidden');
-        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectsGrid();
       } else if (state.currentView === 'projectHub') {
         if (projectHubView) projectHubView.classList.remove('hidden');
-        if (homeNavBtn) homeNavBtn.classList.add('hidden');
         if (backBtn) backBtn.classList.remove('hidden');
         const backText = document.getElementById('backToPreviousText');
         if (backText) backText.textContent = "Mes projets";
-        if (editProjBtn) editProjBtn.classList.add('hidden');
-        if (openReportConfigBtn) openReportConfigBtn.classList.add('hidden');
         renderProjectHub();
       } else if (state.currentView === 'm42') {
         if (m42View) m42View.classList.remove('hidden');
-        if (homeNavBtn) homeNavBtn.classList.add('hidden');
         if (backBtn) backBtn.classList.remove('hidden');
         const backText = document.getElementById('backToPreviousText');
         if (backText) backText.textContent = "Choix du module";
-        if (editProjBtn) editProjBtn.classList.remove('hidden');
-        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         renderM42Module();
       } else if (state.currentView === 'planning') {
         if (planningView) planningView.classList.remove('hidden');
-        if (homeNavBtn) homeNavBtn.classList.add('hidden');
         if (backBtn) backBtn.classList.remove('hidden');
         const backText = document.getElementById('backToPreviousText');
         if (backText) backText.textContent = "Choix du module";
-        if (editProjBtn) editProjBtn.classList.remove('hidden');
-        if (openReportConfigBtn) openReportConfigBtn.classList.remove('hidden');
         renderPlanningModule();
       }
 
       updateAuthUI();
-      setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 10);
+      setTimeout(() => { if (window.lucide && window.lucide.createIcons) window.lucide.createIcons(); }, 10);
     }
 
     function renderProjectsGrid() {
@@ -857,19 +834,34 @@
 
         const card = document.createElement('div');
         card.className = 'group relative flex flex-col rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm hover:shadow-xl transition-all cursor-pointer overflow-hidden';
-        
+
+        const photoHtml = proj.photo
+          ? `<img src="${proj.photo}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />`
+          : `<div class="w-full h-full flex items-center justify-center bg-slate-50 dark:bg-slate-800"><i data-lucide="image" class="w-8 h-8 text-slate-400"></i></div>`;
+
         card.innerHTML = `
-          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
-            <div class="flex items-start justify-between">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                <i data-lucide="building" class="w-6 h-6"></i>
-              </div>
-              <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600">${escapeHtml(proj.status || 'En cours')}</span>
+          <div class="h-32 w-full shrink-0 relative bg-slate-100 dark:bg-slate-800 border-b dark:border-slate-800 overflow-hidden">
+            ${photoHtml}
+            <div class="absolute top-3 right-3 flex items-center space-x-2">
+              <span class="text-[10px] font-semibold px-2 py-1 rounded-full ${proj.status && proj.status.includes('Livré') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'} shadow">${proj.status || 'En cours'}</span>
+              <button type="button" class="delete-project-btn p-1.5 rounded-xl bg-white/90 dark:bg-slate-900/90 hover:bg-rose-500 text-slate-700 dark:text-slate-200 hover:text-white transition-colors backdrop-blur-sm shadow" title="Supprimer le projet">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-6 flex-1 flex flex-col justify-between text-left">
+            <div>
+              <h3 class="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors flex items-center">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md mr-3">
+                  <i data-lucide="folder" class="w-4.5 h-4.5"></i>
+                </div>
+                <span class="truncate">${escapeHtml(proj.name)}</span>
+              </h3>
             </div>
 
-            <div>
-              <h3 class="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">${escapeHtml(proj.name)}</h3>
-              <p class="text-xs text-slate-500 mt-1 flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1 shrink-0"></i><span class="truncate">${escapeHtml(proj.location || 'Aucune adresse')}</span></p>
+            <div class="my-4 flex items-center">
+             <p class="text-xs text-slate-500 flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-1 shrink-0"></i><span class="truncate">${escapeHtml(proj.location || 'Aucune adresse')}</span></p>
             </div>
 
             <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex justify-between items-center text-xs">
@@ -885,6 +877,21 @@
           </div>
         `;
 
+        card.querySelector('.delete-project-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm(`Êtes-vous sûr de vouloir supprimer le projet "${proj.name}" ?`)) {
+            state.projects = state.projects.filter(p => p.id !== proj.id);
+            if (state.activeProjectId === proj.id) {
+              state.activeProjectId = state.projects.length > 0 ? state.projects[0].id : null;
+              if (!state.activeProjectId) {
+                state.currentView = 'home';
+              }
+            }
+            saveData();
+            render();
+          }
+        });
+
         card.addEventListener('click', () => {
           state.activeProjectId = proj.id;
           state.currentView = 'projectHub';
@@ -892,7 +899,7 @@
         });
         grid.appendChild(card);
       });
-      lucide.createIcons();
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
     }
 
     function renderProjectHub() {
@@ -957,8 +964,8 @@
           <td class="py-3 px-3 text-right font-mono">${formatNumber(item.unitPrice)} €</td>
           <td class="py-3 px-3 text-right font-bold text-slate-900 dark:text-slate-100 font-mono">${formatNumber(lineTotal)} €</td>
           <td class="py-3 px-3 text-center space-x-1">
-            <button type="button" onclick="editEstimatifItem(${index})" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-            <button type="button" onclick="deleteEstimatifItem(${index})" class="p-1 rounded hover:bg-rose-100 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            <button type="button" onclick="window.editEstimatifItem(${index})" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+            <button type="button" onclick="window.deleteEstimatifItem(${index})" class="p-1 rounded hover:bg-rose-100 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -966,16 +973,16 @@
 
       const tvaRate = parseFloat(proj.estimatif.tvaRate || 10) / 100;
       const totalTtc = totalHt * (1 + tvaRate);
-      const surface = proj.surfaceTotal || 1;
+      const surface = proj.surfaceTotal || 0;
       const ratio = surface > 0 ? (totalHt / surface) : 0;
-      const weeks = Math.max(2, Math.round(totalHt / 4500));
+      const weeks = totalHt > 0 ? Math.max(1, Math.round(totalHt / 4500)) : 0;
 
       document.getElementById('kpiTotalHt').textContent = `${formatNumber(totalHt)} €`;
       document.getElementById('kpiTotalTtc').textContent = `${formatNumber(totalTtc)} €`;
       document.getElementById('kpiRatioSurface').textContent = `${formatNumber(ratio)} € / m²`;
-      document.getElementById('kpiDuration').textContent = `~ ${weeks} sem.`;
+      document.getElementById('kpiDuration').textContent = `${weeks} sem.`;
 
-      lucide.createIcons();
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
     }
 
     function renderDocsList(proj) {
@@ -992,11 +999,11 @@
         tag.innerHTML = `
           <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
           <span class="truncate max-w-[150px]">${escapeHtml(doc.name)}</span>
-          <button type="button" onclick="removeDocument(${idx})" class="hover:text-rose-500 ml-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+          <button type="button" onclick="window.removeDocument(${idx})" class="hover:text-rose-500 ml-1"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
         `;
         docsListEl.appendChild(tag);
       });
-      lucide.createIcons();
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
     }
 
     // Gestion du dépôt/import de documents
@@ -1041,6 +1048,7 @@
       saveData();
       renderDocsList(proj);
     }
+    window.removeDocument = removeDocument;
 
     function generateAiEstimatif() {
       const proj = getActiveProject();
@@ -1079,6 +1087,7 @@
       
       showModal('editEstimatifItemModal');
     }
+    window.editEstimatifItem = editEstimatifItem;
 
     function deleteEstimatifItem(index) {
       const proj = getActiveProject();
@@ -1087,6 +1096,7 @@
       saveData();
       renderM42Module();
     }
+    window.deleteEstimatifItem = deleteEstimatifItem;
 
     // --- LOGIQUE DU MODULE PLANNING ESTIMATIF ---
     function renderPlanningModule() {
@@ -1130,15 +1140,12 @@
         container.appendChild(itemEl);
       });
 
-      lucide.createIcons();
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
     }
 
     function generatePlanningFromEstimatifData(proj) {
       if (!proj.estimatif || !proj.estimatif.items || proj.estimatif.items.length === 0) {
-        proj.planning = [
-          { phase: "01. Préparation & Études", durationWeeks: 1, startWeek: 1 },
-          { phase: "02. Execution des travaux", durationWeeks: 4, startWeek: 2 }
-        ];
+        proj.planning = [];
         return;
       }
 
@@ -1276,6 +1283,11 @@
     };
 
     // Exports CSV / PDF / Word
+    const openReportBtn = document.getElementById('openReportConfigBtn');
+    if (openReportBtn) {
+      openReportBtn.onclick = () => showModal('reportConfigModal');
+    }
+
     document.getElementById('exportExcelReportBtn').onclick = () => {
       const proj = getActiveProject();
       if (!proj || !proj.estimatif) return;
@@ -1338,42 +1350,90 @@
     // Nouveau projet / Edition
     document.getElementById('createNewProjectBtn').onclick = () => openEditProjectModal(null);
     function openEditProjectModal(proj) {
-      document.getElementById('projectForm').reset();
       if (proj) {
+        state.projectModalMode = 'edit';
         document.getElementById('projectModalTitle').textContent = "Modifier le projet";
-        document.getElementById('projectInputName').value = proj.name;
+        document.getElementById('projectInputName').value = proj.name || '';
         document.getElementById('projectInputClient').value = proj.client || '';
         document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
         document.getElementById('projectInputLocation').value = proj.location || '';
         document.getElementById('projectInputStatus').value = proj.status || 'En conception';
+        currentProjectPhoto = proj.photo || null;
       } else {
+        state.projectModalMode = 'create';
         document.getElementById('projectModalTitle').textContent = "Nouveau projet BTP";
+        document.getElementById('projectForm').reset();
+        currentProjectPhoto = null;
       }
+      updateProjectPhotoPreview();
       showModal('editProjectModal');
     }
+
+    function updateProjectPhotoPreview() {
+      const container = document.getElementById('projectPhotoPreview');
+      const removeBtn = document.getElementById('removeProjectPhotoBtn');
+      if (currentProjectPhoto) {
+        container.innerHTML = `<img src="${currentProjectPhoto}" class="w-full h-full object-cover rounded-2xl" />`;
+        removeBtn.classList.remove('hidden');
+      } else {
+        container.innerHTML = `<span class="text-[10px] text-slate-400 text-center px-1">Aucune photo</span>`;
+        removeBtn.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('uploadProjectPhotoBtn').onclick = () => document.getElementById('projectPhotoInput').click();
+    document.getElementById('projectPhotoInput').onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          currentProjectPhoto = ev.target.result;
+          updateProjectPhotoPreview();
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById('removeProjectPhotoBtn').onclick = () => {
+      currentProjectPhoto = null;
+      updateProjectPhotoPreview();
+    };
+
     document.getElementById('closeProjectModalBtn').onclick = () => hideModal('editProjectModal');
     document.getElementById('cancelProjectModalBtn').onclick = () => hideModal('editProjectModal');
 
     document.getElementById('projectForm').onsubmit = (e) => {
       e.preventDefault();
-      const activeProj = getActiveProject();
-      const projData = {
-        id: activeProj && state.currentView !== 'home' ? activeProj.id : "proj_" + Date.now(),
-        name: document.getElementById('projectInputName').value,
-        client: document.getElementById('projectInputClient').value,
-        surfaceTotal: parseFloat(document.getElementById('projectInputSurface').value) || 0,
-        location: document.getElementById('projectInputLocation').value,
-        status: document.getElementById('projectInputStatus').value,
-        estimatif: activeProj ? activeProj.estimatif : { tvaRate: "10", workType: "Rénovation globale", qualityLevel: "Standard", documents: [], items: [] },
-        planning: activeProj ? activeProj.planning : []
-      };
+      const nameVal = document.getElementById('projectInputName').value;
+      const clientVal = document.getElementById('projectInputClient').value;
+      const surfaceVal = parseFloat(document.getElementById('projectInputSurface').value) || 0;
+      const locationVal = document.getElementById('projectInputLocation').value;
+      const statusVal = document.getElementById('projectInputStatus').value;
 
-      const existingIndex = state.projects.findIndex(p => p.id === projData.id);
-      if (existingIndex >= 0) {
-        state.projects[existingIndex] = projData;
+      if (state.projectModalMode === 'edit') {
+        const proj = getActiveProject();
+        if (proj) {
+          proj.name = nameVal;
+          proj.client = clientVal;
+          proj.surfaceTotal = surfaceVal;
+          proj.location = locationVal;
+          proj.status = statusVal;
+          proj.photo = currentProjectPhoto;
+        }
       } else {
-        state.projects.push(projData);
-        state.activeProjectId = projData.id;
+        const newProj = {
+          id: "proj_" + Date.now(),
+          name: nameVal,
+          client: clientVal,
+          surfaceTotal: surfaceVal,
+          location: locationVal,
+          status: statusVal,
+          photo: currentProjectPhoto,
+          estimatif: { tvaRate: "10", workType: "Rénovation globale", qualityLevel: "Standard", documents: [], items: [] },
+          planning: []
+        };
+        state.projects.push(newProj);
+        state.activeProjectId = newProj.id;
       }
 
       saveData();
