@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orion BTP | Module M43 - Générateur de CCTP</title>
+    <style>
+        :root {
+            --bg-color: #07090e;
+            --card-bg: #0d121d;
+            --card-border: #1a2333;
+            --card-dashed-border: #25334d;
+            --accent-purple: #8b5cf6;
+            --accent-purple-hover: #7c3aed;
+            --accent-purple-glow: rgba(139, 92, 246, 0.25);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --btn-dark-bg: #131b2e;
+            --btn-dark-hover: #1c2742;
+            --warning-bg: rgba(234, 179, 8, 0.08);
+            --warning-border: rgba(234, 179, 8, 0.3);
+            --warning-text: #fde047;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        header {
+            height: 64px;
+            border-bottom: 1px solid #131927;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background-color: rgba(7, 9, 14, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px var(--accent-purple-glow);
+        }
+
+        .badge-module {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .nav-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--text-main);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-user {
+            background-color: var(--btn-dark-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- CONTAINER --- */
+        main {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            flex: 1;
+        }
+
+        /* --- DISCLAIMER BANNER --- */
+        .disclaimer-banner {
+            background-color: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            color: #fef08a;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .disclaimer-banner strong {
+            color: #fff;
+        }
+
+        .disclaimer-icon {
+            flex-shrink: 0;
+            color: var(--warning-text);
+            margin-top: 2px;
+        }
+
+        /* --- NAVIGATION TABS --- */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            background-color: rgba(139, 92, 246, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* --- CONTENT SECTIONS --- */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* BUTTONS */
+        .btn-secondary {
+            background-color: var(--btn-dark-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--btn-dark-hover);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-hover));
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 14px var(--accent-purple-glow);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        /* EMPTY STATE / DASHED CARD */
+        .dashboard-box {
+            background-color: var(--card-bg);
+            border: 1px dashed var(--card-dashed-border);
+            border-radius: 16px;
+            padding: 5rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .folder-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .dashboard-box h2 {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-box p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* DROPZONES GRID */
+        .dropzones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dropzone-card {
+            background-color: var(--card-bg);
+            border: 2px dashed var(--card-dashed-border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dropzone-card:hover {
+            border-color: var(--accent-purple);
+            background-color: rgba(139, 92, 246, 0.03);
+        }
+
+        .dropzone-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+        }
+
+        .dropzone-card h3 {
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .dropzone-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+        }
+
+        .dropzone-hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: auto;
+        }
+
+        /* FORM / BRANDING CONFIG */
+        .config-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 700px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: #07090e;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-purple);
+        }
+
+        .logo-upload-zone {
+            border: 2px dashed var(--card-dashed-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #07090e;
+            cursor: pointer;
+        }
+
+        .logo-upload-zone:hover {
+            border-color: var(--accent-purple);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV BAR -->
+    <header>
+        <div class="header-left">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><path d="M10 10 6.5 6.5"/><path d="m14 14 3.5 3.5"/></svg>
+                </div>
+                <span>Orion BTP</span>
+                <span class="badge-module">M43</span>
+            </div>
+            <a href="#" class="nav-back">&lt; Accueil Orion</a>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn" title="Mode d'affichage">☀️</button>
+            <button class="btn-user">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Connexion ∨
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main>
+
+        <!-- BANNIÈRE AVERTISSEMENT LEGAL / MAQUETTES CCTP -->
+        <div class="disclaimer-banner">
+            <div class="disclaimer-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+                <strong>Avertissement important :</strong> Les documents générés par le module M43 sont exclusivement des <strong>maquettes et trames indicatives de CCTP</strong>. Ils ne constituent pas des pièces d'exécution contractuelles définitives et <strong>ne doivent en aucun cas être diffusés ou transmis sans validation et vérification préalable</strong> par un maître d'œuvre ou un ingénieur qualifié.
+            </div>
+        </div>
+
+        <!-- TABS M43 -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('projects')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                Mes Projets CCTP
+            </button>
+            <button class="tab-btn" onclick="switchTab('deposits')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Espaces de Dépôt
+            </button>
+            <button class="tab-btn" onclick="switchTab('branding')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                Identité & Logo Entreprise
+            </button>
+        </div>
+
+        <!-- ONGLET 1 : MES PROJETS CCTP -->
+        <div id="tab-projects" class="tab-content active">
+            <div class="page-header">
+                <div class="page-title">
+                    <span class="tag-pill">Module M43</span>
+                    <h1>Mes Projets M43</h1>
+                    <p>Générez et structurez vos maquettes de Cahiers des Clauses Techniques Particulières.</p>
+                </div>
+                <div class="actions-group">
+                    <button class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Exporter
+                    </button>
+                    <button class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Importer
+                    </button>
+                    <button class="btn-primary">
+                        <span>+</span> Nouveau projet
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-box">
+                <div class="folder-icon-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                </div>
+                <h2>Aucun projet CCTP actif dans M43</h2>
+                <p>Créez votre premier projet pour importer vos notices, études et élaborer une maquette de CCTP.</p>
+                <button class="btn-primary">
+                    <span>+</span> Nouveau projet
+                </button>
+            </div>
+        </div>
+
+        <!-- ONGLET 2 : ESPACES DE DÉPÔT -->
+        <div id="tab-deposits" class="tab-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <span class="tag-pill">Sources & Documents</span>
+                    <h1>Dépôt de pièces techniques</h1>
+                    <p>Déposez les pièces d'entrée nécessaires à la constitution automatique de la maquette CCTP.</p>
+                </div>
+            </div>
+
+            <div class="dropzones-grid">
+                <!-- Zone 1 : Plans -->
+                <div class="dropzone-card">
+                    <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    </div>
+                    <h3>Plans de Chantier</h3>
+                    <p>Déposez vos fichiers DWG, PDF ou maquettes IFC.</p>
+                    <button class="btn-secondary" style="margin-bottom: 0.8rem;">Glisser ou Parcourir</button>
+                    <span class="dropzone-hint">Formats : .dwg, .pdf, .ifc (max 50 Mo)</span>
+                </div>
+
+                <!-- Zone 2 : Notice descriptive -->
+                <div class="dropzone-card">
+                    <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <h3>Notice Descriptive</h3>
+                    <p>Notice d'architecte, programme ou descriptif général.</p>
+                    <button class="btn-secondary" style="margin-bottom: 0.8rem;">Glisser ou Parcourir</button>
+                    <span class="dropzone-hint">Formats : .docx, .pdf, .odt</span>
+                </div>
+
+                <!-- Zone 3 : Étude technique -->
+                <div class="dropzone-card">
+                    <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    </div>
+                    <h3>Études Techniques</h3>
+                    <p>Notes de calcul, études fluides, thermique ou acoustique.</p>
+                    <button class="btn-secondary" style="margin-bottom: 0.8rem;">Glisser ou Parcourir</button>
+                    <span class="dropzone-hint">Formats : .pdf, .xlsx, .xls</span>
+                </div>
+
+                <!-- Zone 4 : Pièces complémentaires -->
+                <div class="dropzone-card">
+                    <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h3>Autres pièces / CCTG</h3>
+                    <p>Rapports sol, Diagnostics, Normes spécifiques.</p>
+                    <button class="btn-secondary" style="margin-bottom: 0.8rem;">Glisser ou Parcourir</button>
+                    <span class="dropzone-hint">Formats : .zip, .pdf</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET 3 : LOGO ET IDENTITÉ D'ENTREPRISE -->
+        <div id="tab-branding" class="tab-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <span class="tag-pill">Personnalisation</span>
+                    <h1>En-tête & Branding des CCTP</h1>
+                    <p>Configurez l'identité visuelle qui sera appliquée sur la page de garde des maquettes de CCTP.</p>
+                </div>
+            </div>
+
+            <div class="config-card">
+                <div class="form-group">
+                    <label>Logo de l'entreprise (Page de garde CCTP)</label>
+                    <div class="logo-upload-zone">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" style="margin-bottom:0.5rem;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <p style="font-size:0.875rem; color:#fff;">Cliquez ou glissez votre logo ici</p>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">PNG, SVG, JPG (Haute résolution conseillée)</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom du Maître d'Œuvre / Entreprise</label>
+                    <input type="text" class="form-control" placeholder="ex: Cabinet Orion Ingénierie">
+                </div>
+
+                <div class="form-group">
+                    <label>Coordonnées & Mentions Légales</label>
+                    <input type="text" class="form-control" placeholder="12 Avenue du BTP, 75000 Paris — Siret / RGE...">
+                </div>
+
+                <button class="btn-primary" style="margin-top: 1rem;">Enregistrer la configuration</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT TABS INTERACTIFS -->
+    <script>
+        function switchTab(tabId) {
+            // Masquer tous les contenus
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Désactiver tous les boutons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Activer l'onglet sélectionné
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
