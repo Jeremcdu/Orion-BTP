@@ -5,12 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orion BTP | Plateforme d'Outils & Inspiration BTP</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Google Fonts Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -56,7 +53,6 @@
     .star-twinkle { animation: starTwinkle 2.5s infinite ease-in-out; }
   </style>
 
-  <!-- SCRIPT ANTI-FLASH : Applique le dark mode avant même le rendu de la page -->
   <script>
     if (localStorage.getItem("themeOrionBTP") === "dark") {
       document.documentElement.classList.add("dark");
@@ -65,11 +61,9 @@
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300 flex flex-col">
 
-  <!-- TOP NAVIGATION BAR -->
   <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
-      <!-- Logo & Navigation -->
       <div class="flex items-center space-x-4 sm:space-x-6">
         <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
@@ -87,13 +81,11 @@
         </button>
       </div>
 
-      <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
 
-        <!-- Menu Utilisateur Dropdown -->
         <div class="relative">
           <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
             <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
@@ -103,7 +95,6 @@
             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
           </button>
 
-          <!-- Dropdown Menu -->
           <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden py-1 apple-glass">
             <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
               <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Compte Utilisateur</p>
@@ -150,17 +141,13 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
 
-    <!-- LANDING VIEW (PAGE D'ACCUEIL ORION BTP) -->
     <div id="landingView" class="space-y-12 py-4">
       
-      <!-- HERO SECTION : Sans cadre autour de la constellation -->
       <section class="relative rounded-3xl p-6 sm:p-10 lg:p-12 overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white border border-slate-800 shadow-2xl">
         <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          <!-- Bloc Texte (Partie Gauche) -->
           <div class="lg:col-span-7 space-y-4">
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
               <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-400"></i>
@@ -191,30 +178,24 @@
             </div>
           </div>
 
-          <!-- Bloc Graphique Constellation (Partie Droite) : Sans contour ni encadrement -->
           <div class="lg:col-span-5 flex items-center justify-center w-full">
             <div class="w-full max-w-md lg:max-w-none opacity-95 flex justify-center">
-              <svg class="w-full h-auto max-h-[360px] -translate-x-10"" xmlns="http://www.w3.org/2000/svg" viewBox="150 15 420 380" preserveAspectRatio="xMidYMid meet">
-                <!-- LIGNES DE LA CONSTELLATION D'ORION -->
+              <svg class="w-full h-auto max-h-[360px] -translate-x-10" xmlns="http://www.w3.org/2000/svg" viewBox="150 15 420 380" preserveAspectRatio="xMidYMid meet">
                 <line x1="400" y1="45" x2="270" y2="105" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
                 <line x1="400" y1="45" x2="530" y2="115" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="3 3" />
                 <line x1="270" y1="105" x2="530" y2="115" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" />
                 <line x1="270" y1="105" x2="350" y2="220" stroke="#818cf8" stroke-width="1.5" />
                 <line x1="530" y1="115" x2="450" y2="210" stroke="#818cf8" stroke-width="1.5" />
 
-                <!-- LA CEINTURE D'ORION -->
                 <line x1="350" y1="220" x2="400" y2="215" stroke="#38bdf8" stroke-width="2.5" />
                 <line x1="400" y1="215" x2="450" y2="210" stroke="#38bdf8" stroke-width="2.5" />
 
-                <!-- L'ÉPÉE D'ORION -->
                 <line x1="400" y1="215" x2="390" y2="275" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="2 2" />
 
-                <!-- Ceinture -> Pieds -->
                 <line x1="350" y1="220" x2="310" y2="360" stroke="#818cf8" stroke-width="1.5" />
                 <line x1="450" y1="210" x2="490" y2="350" stroke="#818cf8" stroke-width="1.5" />
                 <line x1="310" y1="360" x2="490" y2="350" stroke="#6366f1" stroke-width="1" opacity="0.5" />
 
-                <!-- ETOILES PRINCIPALES -->
                 <circle cx="270" cy="105" r="14" fill="#ef4444" opacity="0.25" class="star-twinkle" />
                 <circle cx="270" cy="105" r="7" fill="#f87171" class="star-twinkle" />
                 <text x="175" y="108" fill="#fca5a5" font-size="11" font-weight="bold">Bételgeuse</text>
@@ -237,7 +218,6 @@
                 <circle cx="490" cy="350" r="8" fill="#38bdf8" class="star-twinkle" />
                 <text x="510" y="355" fill="#7dd3fc" font-size="12" font-weight="bold">Rigel</text>
 
-                <!-- NEBULEUSES -->
                 <circle cx="390" cy="275" r="16" fill="#10b981" opacity="0.35" class="star-glow" />
                 <circle cx="390" cy="275" r="6" fill="#34d399" />
                 <text x="400" y="290" fill="#6ee7b7" font-size="11" font-weight="bold">M42</text>
@@ -256,7 +236,6 @@
         </div>
       </section>
 
-      <!-- SELECTION DES OUTILS (CARDS) -->
       <section class="space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
@@ -267,7 +246,6 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          <!-- MODULE M42 -->
           <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border-2 border-emerald-500/30 dark:border-emerald-500/30 hover:border-emerald-500 shadow-lg hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between">
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -294,7 +272,6 @@
             </div>
           </div>
 
-          <!-- MODULE M43 -->
           <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between">
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -321,7 +298,6 @@
             </div>
           </div>
 
-          <!-- MODULE M78 -->
           <div class="group relative rounded-3xl p-6 bg-white dark:bg-slate-900 border-2 border-blue-500/30 dark:border-blue-500/30 hover:border-blue-500 shadow-lg hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between">
             <div class="space-y-4">
               <div class="flex items-center justify-between">
@@ -341,7 +317,7 @@
             </div>
 
             <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
-              <a id="launchM78Btn"href="m78/index.html", class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
+              <a id="launchM78Btn" href="m78/index.html" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
                 <span>Accéder à l'outil M78</span>
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </a>
@@ -351,7 +327,6 @@
         </div>
       </section>
 
-      <!-- PRESENTATION PHILOSOPHIE -->
       <section class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
         <div class="max-w-2xl">
           <h3 class="text-lg sm:text-xl font-bold tracking-tight">Trois piliers pour la vie de vos chantiers</h3>
@@ -379,9 +354,7 @@
 
     </div>
 
-    <!-- DEDICATED ADMIN VIEW (NOUVEL ESPACE D'ADMINISTRATION ERGONOMIQUE) -->
     <div id="adminView" class="hidden space-y-8 py-2">
-      <!-- Header Admin -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
         <div class="space-y-1">
           <div class="flex items-center space-x-2">
@@ -397,7 +370,6 @@
         </button>
       </div>
 
-      <!-- Statistiques Globales -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
@@ -422,26 +394,40 @@
         </div>
       </div>
 
-      <!-- Section Utilisateurs -->
       <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h3 class="text-lg font-bold">Comptes Utilisateurs</h3>
-            <p class="text-xs text-slate-400">Consulter tous les utilisateurs enregistrés et leurs droits.</p>
+            <p class="text-xs text-slate-400">Rechercher un utilisateur par adresse e-mail pour afficher ses informations et gérer son compte.</p>
           </div>
-          <button id="adminAddNewUserBtn" class="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
+          <button id="adminAddNewUserBtn" class="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95 shrink-0">
             <i data-lucide="user-plus" class="w-4 h-4"></i>
             <span>Inscrire un utilisateur</span>
           </button>
         </div>
 
-        <div class="overflow-x-auto">
+        <form id="adminUserSearchForm" class="flex gap-2 pt-1">
+          <div class="relative flex-1">
+            <input type="email" id="adminUserSearchInput" placeholder="Saisir une adresse e-mail utilisateur à rechercher..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          </div>
+          <button type="submit" class="px-4 py-2.5 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1.5">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span>Rechercher</span>
+          </button>
+          <button type="button" id="adminUserSearchResetBtn" class="px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-xs transition-all active:scale-95 shrink-0">
+            Effacer
+          </button>
+        </form>
+
+        <div class="overflow-x-auto pt-2">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
                 <th class="py-3 px-4">Utilisateur</th>
                 <th class="py-3 px-4">Adresse E-mail</th>
-                <th class="py-3 px-4">Rôle</th>
+                <th class="py-3 px-4">Date Nais.</th>
+                <th class="py-3 px-4">Rôle / Métier</th>
                 <th class="py-3 px-4">Inscrit le</th>
                 <th class="py-3 px-4 text-right">Action</th>
               </tr>
@@ -452,12 +438,11 @@
         </div>
       </div>
 
-      <!-- Section Gestion des Clés d'Accès -->
       <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h3 class="text-lg font-bold">Gestion des Clés d'Accès aux Outils</h3>
-            <p class="text-xs text-slate-400">Générez, attribuez et révoquez les clés d'accès aux modules M42, M43 et M78.</p>
+            <p class="text-xs text-slate-400">Générez, attribuez et révoquez les clés mono ou multi-accès aux modules M42, M43 et M78.</p>
           </div>
           <button id="adminGenerateKeyBtn" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
             <i data-lucide="key" class="w-4 h-4"></i>
@@ -470,7 +455,7 @@
             <thead>
               <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
                 <th class="py-3 px-4">Clé d'accès</th>
-                <th class="py-3 px-4">Module Associé</th>
+                <th class="py-3 px-4">Module(s) Associé(s)</th>
                 <th class="py-3 px-4">Attribuer à (E-mail)</th>
                 <th class="py-3 px-4">Statut</th>
                 <th class="py-3 px-4 text-right">Actions</th>
@@ -485,9 +470,125 @@
 
   </main>
 
-  <!-- MODALES UTILISATEUR, CREATION DE CLE ET PARAMETRAGE -->
-  
-  <!-- MODAL : CREATION / ATTRIBUTION DE CLE ADMIN -->
+  <div id="registerModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Créer un compte</h3>
+            <p class="text-xs text-slate-400">Rejoignez la plateforme Orion BTP</p>
+          </div>
+        </div>
+        <button id="closeRegisterModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="registerForm" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Nom</label>
+            <input type="text" id="registerLastName" required placeholder="Dupont" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Prénom</label>
+            <input type="text" id="registerFirstName" required placeholder="Jean" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Date de naissance</label>
+            <input type="date" id="registerBirthDate" required class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1.5">Rôle / Métier</label>
+            <input type="text" id="registerRole" required placeholder="ex: Conducteur de travaux" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="registerEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
+          <input type="password" id="registerPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Créer mon compte</span>
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Connexion</h3>
+            <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
+          </div>
+        </div>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="loginForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
+          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="block text-slate-500 font-medium">Mot de passe</label>
+            <button type="button" id="forgotPasswordBtn" class="text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-medium">Mot de passe oublié ?</button>
+          </div>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Se connecter</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="forgotPasswordModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
+    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold">Mot de passe oublié</h3>
+            <p class="text-xs text-slate-400">Réinitialisation de votre accès</p>
+          </div>
+        </div>
+        <button id="closeForgotPasswordModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="forgotPasswordForm" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-500 font-medium mb-1.5">Adresse email associée à votre compte</label>
+          <input type="email" id="forgotPasswordEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
+          <span>Envoyer le lien de réinitialisation</span>
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <div id="createKeyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -497,7 +598,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold">Générer une clé d'accès</h3>
-            <p class="text-xs text-slate-400">Attribuer des droits d'accès à un outil</p>
+            <p class="text-xs text-slate-400">Attribuer des droits d'accès mono ou multi-outils</p>
           </div>
         </div>
         <button id="closeCreateKeyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -505,11 +606,13 @@
 
       <form id="createKeyForm" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Module / Outil Orion</label>
+          <label class="block text-slate-500 font-medium mb-1.5">Module / Accès Orion</label>
           <select id="keyInputTool" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500">
             <option value="M42">Module M42 - Préparation & Métrés</option>
             <option value="M43">Module M43 - Module Futur</option>
             <option value="M78">Module M78 - Suivi & Réserves</option>
+            <option value="M42 + M78">Multi-accès - M42 + M78</option>
+            <option value="M42 + M43 + M78">Multi-accès complet - M42 + M43 + M78</option>
           </select>
         </div>
         <div>
@@ -528,40 +631,6 @@
     </div>
   </div>
 
-  <!-- MODAL : CONNEXION -->
-  <div id="loginModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
-    <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
-      <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="log-in" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold">Connexion / Inscription</h3>
-            <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
-          </div>
-        </div>
-        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <form id="loginForm" class="space-y-4 text-xs">
-        <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Adresse email</label>
-          <input type="email" id="loginEmail" required placeholder="nom@entreprise.fr" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-        <div>
-          <label class="block text-slate-500 font-medium mb-1.5">Mot de passe</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-        <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
-          <span>Se connecter</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL : SIGNALER UN PROBLEME -->
   <div id="reportIssueModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -594,7 +663,6 @@
     </div>
   </div>
 
-  <!-- MODAL : POLITIQUE DE CONFIDENTIALITE -->
   <div id="privacyModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 sm:p-8 space-y-6 max-h-[85vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
@@ -622,7 +690,6 @@
     </div>
   </div>
 
-  <!-- MODAL : OUTILS FUTURS (M42 & M43) -->
   <div id="futureToolModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6 text-center">
       <div id="futureToolHeaderIcon" class="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl">
@@ -646,30 +713,30 @@
     </div>
   </div>
 
-  <!-- APPLICATION CODE SCRIPT -->
   <script>
-    // Configuration Administrateur & Liste des utilisateurs/clés d'accès
+    // Configuration Administrateur
     const ADMIN_CONFIG = {
       authorizedEmail: 'admin@orion.btp',
       authorizedPassword: '123'
     };
 
-    // État central de l'application (MODIFIÉ POUR LIRE LE LOCALSTORAGE)
+    // État central de l'application
     const state = {
       darkMode: localStorage.getItem('themeOrionBTP') === 'dark',
       currentView: 'landing', // 'landing', 'admin'
       currentUser: null,
+      userSearchQuery: '', // Recherche dans le tableau utilisateur
 
-      // Données Utilisateurs & Clés d'Accès pour l'administration
+      // Données Utilisateurs & Clés d'Accès
       registeredUsers: [
-        { id: 'usr-1', email: 'admin@orion.btp', name: 'Administrateur Orion', role: 'Administrateur', createdAt: '15/01/2026' },
-        { id: 'usr-2', email: 'jean.dupont@chantier-btp.fr', name: 'Jean Dupont', role: 'Ingénieur Travaux', createdAt: '02/02/2026' },
-        { id: 'usr-3', email: 'marie.curie@architecte-btp.fr', name: 'Marie Curie', role: 'Chef de Projet', createdAt: '10/02/2026' }
+        { id: 'usr-1', email: 'admin@orion.btp', firstName: 'Administrateur', lastName: 'Orion', birthDate: '1985-01-01', name: 'Administrateur Orion', role: 'Administrateur', createdAt: '15/01/2026' },
+        { id: 'usr-2', email: 'jean.dupont@chantier-btp.fr', firstName: 'Jean', lastName: 'Dupont', birthDate: '1990-05-12', name: 'Jean Dupont', role: 'Ingénieur Travaux', createdAt: '02/02/2026' },
+        { id: 'usr-3', email: 'marie.curie@architecte-btp.fr', firstName: 'Marie', lastName: 'Curie', birthDate: '1988-11-20', name: 'Marie Curie', role: 'Chef de Projet', createdAt: '10/02/2026' }
       ],
       accessKeys: [
         { id: 'key-1', code: 'ORION-M42-8921', tool: 'M42', assignedTo: 'jean.dupont@chantier-btp.fr', status: 'Active' },
-        { id: 'key-2', code: 'ORION-M78-4412', tool: 'M78', assignedTo: 'marie.curie@architecte-btp.fr', status: 'Active' },
-        { id: 'key-3', code: 'ORION-M43-1092', tool: 'M43', assignedTo: 'admin@orion.btp', status: 'Active' }
+        { id: 'key-2', code: 'ORION-MULTI-4412', tool: 'M42 + M78', assignedTo: 'marie.curie@architecte-btp.fr', status: 'Active' },
+        { id: 'key-3', code: 'ORION-ALL-1092', tool: 'M42 + M43 + M78', assignedTo: 'admin@orion.btp', status: 'Active' }
       ]
     };
 
@@ -759,31 +826,57 @@
 
     // Gestion de l'affichage du Dashboard Administrateur
     function renderAdminDashboardView() {
-      // Metriques de statistiques
+      // Métriques
       document.getElementById('adminStatUsersCount').textContent = state.registeredUsers.length;
       document.getElementById('adminStatKeysCount').textContent = state.accessKeys.filter(k => k.status === 'Active').length;
 
-      // Table des utilisateurs
+      // Table des utilisateurs avec recherche
       const usersBody = document.getElementById('adminUsersTableBody');
       usersBody.innerHTML = '';
-      state.registeredUsers.forEach(usr => {
+
+      if (!state.userSearchQuery) {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
         tr.innerHTML = `
-          <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-100">${usr.name}</td>
-          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${usr.email}</td>
-          <td class="py-3 px-4">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${usr.role === 'Administrateur' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">${usr.role}</span>
-          </td>
-          <td class="py-3 px-4 text-slate-400 text-[11px]">${usr.createdAt}</td>
-          <td class="py-3 px-4 text-right">
-            <button class="delete-user-btn text-rose-500 hover:underline text-[11px] font-medium" data-email="${usr.email}">Supprimer</button>
+          <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+            Aucun utilisateur affiché. Utilisez la barre de recherche ci-dessus avec une adresse e-mail pour retrouver un compte.
           </td>
         `;
         usersBody.appendChild(tr);
-      });
+      } else {
+        const matchingUsers = state.registeredUsers.filter(u => 
+          u.email.toLowerCase().includes(state.userSearchQuery.toLowerCase())
+        );
 
-      // Actions de suppression d'un utilisateur
+        if (matchingUsers.length === 0) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td colspan="6" class="py-8 text-center text-amber-600 dark:text-amber-400 text-xs font-medium">
+              Aucun utilisateur trouvé pour l'adresse "${state.userSearchQuery}".
+            </td>
+          `;
+          usersBody.appendChild(tr);
+        } else {
+          matchingUsers.forEach(usr => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+            tr.innerHTML = `
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-100">${usr.name}</td>
+              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${usr.email}</td>
+              <td class="py-3 px-4 text-slate-500 text-[11px]">${usr.birthDate || '-'}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${usr.role === 'Administrateur' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">${usr.role || 'Utilisateur'}</span>
+              </td>
+              <td class="py-3 px-4 text-slate-400 text-[11px]">${usr.createdAt}</td>
+              <td class="py-3 px-4 text-right">
+                <button class="delete-user-btn text-rose-600 hover:text-rose-700 hover:underline text-[11px] font-semibold" data-email="${usr.email}">Supprimer le compte</button>
+              </td>
+            `;
+            usersBody.appendChild(tr);
+          });
+        }
+      }
+
+      // Actions de suppression
       usersBody.querySelectorAll('.delete-user-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const email = e.currentTarget.getAttribute('data-email');
@@ -791,7 +884,7 @@
             alert("Impossible de supprimer le compte Administrateur principal.");
             return;
           }
-          if (confirm(`Voulez-vous vraiment supprimer l'utilisateur ${email} ?`)) {
+          if (confirm(`Voulez-vous vraiment supprimer le compte utilisateur lié à l'adresse : ${email} ?`)) {
             state.registeredUsers = state.registeredUsers.filter(u => u.email !== email);
             renderAdminDashboardView();
           }
@@ -804,10 +897,16 @@
       state.accessKeys.forEach(k => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+        
+        let badgeColor = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
+        if (k.tool === 'M42') badgeColor = "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
+        else if (k.tool === 'M43') badgeColor = "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300";
+        else if (k.tool.includes('+')) badgeColor = "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700";
+
         tr.innerHTML = `
           <td class="py-3 px-4 font-mono font-bold text-purple-600 dark:text-purple-400">${k.code}</td>
           <td class="py-3 px-4">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${k.tool === 'M42' ? 'bg-emerald-100 text-emerald-700' : k.tool === 'M43' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${k.tool}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${k.tool}</span>
           </td>
           <td class="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">${k.assignedTo}</td>
           <td class="py-3 px-4">
@@ -824,7 +923,6 @@
         keysBody.appendChild(tr);
       });
 
-      // Actions sur les clés (Statut, Régénération, Suppression)
       keysBody.querySelectorAll('.toggle-key-status-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const keyId = e.currentTarget.getAttribute('data-id');
@@ -841,7 +939,8 @@
           const keyId = e.currentTarget.getAttribute('data-id');
           const key = state.accessKeys.find(k => k.id === keyId);
           if (key) {
-            key.code = `ORION-${key.tool}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const prefix = key.tool.includes('+') ? 'MULTI' : key.tool;
+            key.code = `ORION-${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
             renderAdminDashboardView();
           }
         });
@@ -858,17 +957,24 @@
       });
     }
 
-    // Gestion du thème (MODIFIÉ POUR SAUVEGARDER LE LOCALSTORAGE)
+    // Formulaire de recherche utilisateur dans la Console Administrateur
+    document.getElementById('adminUserSearchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = document.getElementById('adminUserSearchInput').value.trim();
+      state.userSearchQuery = query;
+      renderAdminDashboardView();
+    });
+
+    document.getElementById('adminUserSearchResetBtn').addEventListener('click', () => {
+      document.getElementById('adminUserSearchInput').value = '';
+      state.userSearchQuery = '';
+      renderAdminDashboardView();
+    });
+
+    // Gestion du thème
     document.getElementById('themeToggleBtn').addEventListener('click', () => {
       state.darkMode = !state.darkMode;
-      
-      // Sauvegarde dans le navigateur
-      if (state.darkMode) {
-        localStorage.setItem('themeOrionBTP', 'dark');
-      } else {
-        localStorage.setItem('themeOrionBTP', 'light');
-      }
-      
+      localStorage.setItem('themeOrionBTP', state.darkMode ? 'dark' : 'light');
       render();
     });
 
@@ -887,17 +993,86 @@
       }
     });
 
-    // Modales Connexion & Administration
+    // Modales Connexion, Inscription, Mot de passe oublié & Admin
     const loginModal = document.getElementById('loginModal');
+    const registerModal = document.getElementById('registerModal');
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     const reportIssueModal = document.getElementById('reportIssueModal');
     const privacyModal = document.getElementById('privacyModal');
 
-    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
-      userDropdownMenu.classList.add('hidden');
-      loginModal.classList.remove('hidden');
-      loginModal.classList.add('flex');
+    // Mot de passe oublié Call
+    document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+      loginModal.classList.add('hidden');
+      loginModal.classList.remove('flex');
+      forgotPasswordModal.classList.remove('hidden');
+      forgotPasswordModal.classList.add('flex');
     });
 
+    document.getElementById('closeForgotPasswordModalBtn').addEventListener('click', () => {
+      forgotPasswordModal.classList.add('hidden');
+      forgotPasswordModal.classList.remove('flex');
+    });
+
+    document.getElementById('forgotPasswordForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('forgotPasswordEmail').value.trim();
+      alert(`Un e-mail de réinitialisation de mot de passe a été envoyé à l'adresse : ${email}`);
+      forgotPasswordModal.classList.add('hidden');
+      forgotPasswordModal.classList.remove('flex');
+      document.getElementById('forgotPasswordForm').reset();
+    });
+
+    // Inscription Modal Call
+    document.getElementById('dropdownRegisterBtn').addEventListener('click', () => {
+      userDropdownMenu.classList.add('hidden');
+      registerModal.classList.remove('hidden');
+      registerModal.classList.add('flex');
+    });
+
+    document.getElementById('closeRegisterModalBtn').addEventListener('click', () => {
+      registerModal.classList.add('hidden');
+      registerModal.classList.remove('flex');
+    });
+
+    // Formulaire d'inscription
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lastName = document.getElementById('registerLastName').value.trim();
+      const firstName = document.getElementById('registerFirstName').value.trim();
+      const birthDate = document.getElementById('registerBirthDate').value;
+      const role = document.getElementById('registerRole').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value.trim();
+
+      const fullName = `${firstName} ${lastName}`;
+      const isAdmin = (email.toLowerCase() === ADMIN_CONFIG.authorizedEmail.toLowerCase());
+
+      const newUser = {
+        id: 'usr-' + Date.now(),
+        lastName: lastName,
+        firstName: firstName,
+        name: fullName,
+        birthDate: birthDate,
+        role: role || 'Utilisateur',
+        email: email,
+        password: password,
+        createdAt: new Date().toLocaleDateString('fr-FR')
+      };
+
+      state.registeredUsers.push(newUser);
+      state.currentUser = {
+        name: fullName,
+        email: email,
+        isAdmin: isAdmin
+      };
+
+      registerModal.classList.add('hidden');
+      registerModal.classList.remove('flex');
+      document.getElementById('registerForm').reset();
+      render();
+    });
+
+    // Connexion Modal Call
     document.getElementById('dropdownLoginBtn').addEventListener('click', () => {
       userDropdownMenu.classList.add('hidden');
       loginModal.classList.remove('hidden');
@@ -915,23 +1090,13 @@
       const password = document.getElementById('loginPassword').value.trim();
 
       const isAdmin = (email.toLowerCase() === ADMIN_CONFIG.authorizedEmail.toLowerCase() && password === ADMIN_CONFIG.authorizedPassword);
+      const existingUser = state.registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
 
       state.currentUser = {
-        name: isAdmin ? 'Administrateur' : (email.split('@')[0] || 'Utilisateur'),
+        name: existingUser ? existingUser.name : (isAdmin ? 'Administrateur' : email.split('@')[0]),
         email: email,
         isAdmin: isAdmin
       };
-
-      // Si l'utilisateur n'est pas encore dans la liste enregistrée
-      if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-        state.registeredUsers.push({
-          id: 'usr-' + Date.now(),
-          email: email,
-          name: state.currentUser.name,
-          role: isAdmin ? 'Administrateur' : 'Utilisateur',
-          createdAt: new Date().toLocaleDateString('fr-FR')
-        });
-      }
 
       loginModal.classList.add('hidden');
       loginModal.classList.remove('flex');
@@ -945,7 +1110,6 @@
       render();
     });
 
-    // Ouverture de la NOUVELLE PAGE d'administration (Remplacement du Popup)
     document.getElementById('dropdownAdminBtn').addEventListener('click', () => {
       userDropdownMenu.classList.add('hidden');
       state.currentView = 'admin';
@@ -958,7 +1122,7 @@
       render();
     });
 
-    // Création & Attribution des Clés dans l'Espace Admin
+    // Clés d'accès
     const createKeyModal = document.getElementById('createKeyModal');
     document.getElementById('adminGenerateKeyBtn').addEventListener('click', () => {
       createKeyModal.classList.remove('hidden');
@@ -976,17 +1140,16 @@
       const email = document.getElementById('keyInputUserEmail').value.trim();
       const customCode = document.getElementById('keyInputCustomCode').value.trim();
 
-      const newKey = {
+      const keyPrefix = tool.includes('+') ? 'MULTI' : tool;
+
+      state.accessKeys.push({
         id: 'key-' + Date.now(),
-        code: customCode || `ORION-${tool}-${Math.floor(1000 + Math.random() * 9000)}`,
+        code: customCode || `ORION-${keyPrefix}-${Math.floor(1000 + Math.random() * 9000)}`,
         tool: tool,
         assignedTo: email,
         status: 'Active'
-      };
-
-      state.accessKeys.push(newKey);
+      });
       
-      // Auto-enregistrement de l'utilisateur si absent
       if (!state.registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
         state.registeredUsers.push({
           id: 'usr-' + Date.now(),
@@ -1003,17 +1166,8 @@
     });
 
     document.getElementById('adminAddNewUserBtn').addEventListener('click', () => {
-      const email = prompt("Saisissez l'adresse e-mail du nouvel utilisateur à inscrire :");
-      if (email && email.includes('@')) {
-        state.registeredUsers.push({
-          id: 'usr-' + Date.now(),
-          email: email,
-          name: email.split('@')[0],
-          role: 'Utilisateur',
-          createdAt: new Date().toLocaleDateString('fr-FR')
-        });
-        renderAdminDashboardView();
-      }
+      registerModal.classList.remove('hidden');
+      registerModal.classList.add('flex');
     });
 
     document.getElementById('dropdownReportIssueBtn').addEventListener('click', () => {
@@ -1029,7 +1183,7 @@
 
     document.getElementById('reportIssueForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      alert("Votre signalement a bien été transmitted au support technique d'Orion BTP.");
+      alert("Votre signalement a bien été transmis au support technique d'Orion BTP.");
       reportIssueModal.classList.add('hidden');
       reportIssueModal.classList.remove('flex');
     });
@@ -1063,7 +1217,7 @@
       render();
     });
 
-    // Modale Outils Futurs (M42 & M43)
+    // Modale Outils Futurs
     const futureToolModal = document.getElementById('futureToolModal');
     const futureToolData = {
       'M42': {
