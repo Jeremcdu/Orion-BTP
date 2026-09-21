@@ -3614,10 +3614,8 @@
     });
 
     // EVENEMENTS NAVIGATION & MODALS
-    document.getElementById('navLogoBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      state.currentView = 'home';
-      render();
+    document.getElementById('navLogoBtn').addEventListener('click', () => {
+  window.location.href = '../index.html';
     });
 
     document.getElementById('backToPreviousBtn').addEventListener('click', () => {
