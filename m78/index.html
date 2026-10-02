@@ -21,6 +21,10 @@
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
   </script>
+  <!-- html2pdf.js : génération et téléchargement direct de vrais PDF côté navigateur -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- docx : génération de vrais fichiers Office Open XML (.docx) côté navigateur -->
+  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 
   <!-- Google Fonts Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -436,6 +440,10 @@
           <i data-lucide="send" class="w-4 h-4"></i>
           <span>Convocations</span>
         </button>
+        <button id="reunionTabLayoutBtn" type="button" class="px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2">
+          <i data-lucide="layout-template" class="w-4 h-4"></i>
+          <span>Mise en page</span>
+        </button>
       </div>
 
       <!-- ONGLET 1 : COMPTE RENDU & REUNION -->
@@ -459,6 +467,17 @@
           <div id="companiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[380px] overflow-y-auto pr-1"></div>
         </section>
 
+        <!-- REMARQUES DES REUNIONS PRECEDENTES -->
+        <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+              <i data-lucide="history" class="w-5 h-5 text-amber-500"></i>
+              <span>Remarques des réunions précédentes</span>
+            </h3>
+          </div>
+          <div id="reunionPreviousActionsContainer" class="space-y-2"></div>
+        </section>
+
         <!-- SECTION DETAILS DE LA REUNION -->
         <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
           <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
@@ -466,6 +485,10 @@
               <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i>
               <span>Détails de la Réunion</span>
             </h3>
+            <button type="button" id="startNewReunionBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5 shrink-0" title="Archive la réunion actuelle et prépare la suivante">
+              <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+              <span>Nouvelle réunion</span>
+            </button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
@@ -500,7 +523,7 @@
                 <span>Ajouter une remarque</span>
               </button>
             </div>
-            <div id="reunionGeneralNotesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3 pt-1"></div>
+            <div id="reunionGeneralNotesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3 pt-1 max-h-[380px] overflow-y-auto pr-1"></div>
           </div>
 
           <!-- REMARQUES & ACTIONS PAR ENTREPRISE -->
@@ -513,7 +536,7 @@
               </button>
             </div>
 
-            <div id="reunionNotesContainer" class="space-y-3"></div>
+            <div id="reunionNotesContainer" class="space-y-3 max-h-[380px] overflow-y-auto pr-1"></div>
           </div>
         </section>
       </div>
@@ -557,38 +580,48 @@
             <div id="convocationCompaniesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[380px] overflow-y-auto pr-1"></div>
           </div>
 
-          <!-- FORMULAIRE / MODELE DU MESSAGE DE CONVOCATION -->
-          <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <div>
-              <label class="block text-slate-500 font-medium mb-1 text-xs">Objet de la convocation</label>
-              <input type="text" id="convocationSubjectInput" class="w-full px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500" />
+          <!-- RECAPITULATIF / ACTIONS SUR LA LISTE DES CONVOQUES -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="text-xs text-slate-400">
+              <span id="convocationRecipientsCount" class="font-semibold text-blue-600 dark:text-blue-400">0</span> entité(s) / personne(s) convoquée(s)
             </div>
-
-            <div>
-              <label class="block text-slate-500 font-medium mb-1 text-xs">Corps du message de convocation</label>
-              <textarea id="convocationBodyTextarea" rows="8" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-blue-500 font-sans leading-relaxed"></textarea>
-            </div>
-
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <div class="text-xs text-slate-400">
-                <span id="convocationRecipientsCount" class="font-semibold text-blue-600 dark:text-blue-400">0</span> destinataire(s) sélectionné(s)
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <button type="button" id="copyConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
-                  <i data-lucide="copy" class="w-4 h-4 text-blue-500"></i>
-                  <span>Copier le texte</span>
-                </button>
-                <button type="button" id="printConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
-                  <i data-lucide="printer" class="w-4 h-4 text-emerald-500"></i>
-                  <span>Imprimer / PDF</span>
-                </button>
-                <button type="button" id="sendEmailConvocationBtn" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center space-x-2">
-                  <i data-lucide="mail" class="w-4 h-4"></i>
-                  <span>Envoyer par E-mail (Mailto)</span>
-                </button>
-              </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="copyConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
+                <i data-lucide="copy" class="w-4 h-4 text-blue-500"></i>
+                <span>Copier la liste</span>
+              </button>
+              <button type="button" id="printConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
+                <i data-lucide="printer" class="w-4 h-4 text-emerald-500"></i>
+                <span>Imprimer / PDF</span>
+              </button>
             </div>
           </div>
+        </section>
+      </div>
+
+      <!-- ONGLET 3 : MISE EN PAGE (réglages du rendu du compte rendu) -->
+      <div id="reunionLayoutTabContent" class="hidden space-y-6">
+        <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
+          <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+              <i data-lucide="users" class="w-5 h-5 text-blue-500"></i>
+              <span>Présentation de la Maîtrise d'œuvre (MOE)</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Ces intervenants apparaîtront dans le tableau "Présentation de la maîtrise d'œuvre" du compte rendu.</p>
+          </div>
+          <div id="moeRolesContainer" class="space-y-2"></div>
+        </section>
+
+        <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
+          <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
+              <i data-lucide="file-text" class="w-5 h-5 text-blue-500"></i>
+              <span>Administratif & Marché</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Textes réglementaires et consignes repris dans le compte rendu.</p>
+          </div>
+          <div id="adminBlocksContainer" class="space-y-4"></div>
+          <button type="button" id="addAdminBlockBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Ajouter un bloc</button>
         </section>
       </div>
     </div>
@@ -751,7 +784,7 @@
           <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
           <div>
             <h3 class="text-base sm:text-lg font-bold leading-tight">Rapports et options d'export</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Personnalisez la mise en page, intégrez votre logo</p>
+            <p class="text-[10px] sm:text-xs text-slate-400">Intégrez votre logo et exportez votre rapport</p>
           </div>
         </div>
         <button id="closeReportConfigBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -772,23 +805,6 @@
               </button>
               <button type="button" id="removeLogoBtn" class="hidden text-rose-500 text-[11px] hover:underline">Supprimer le logo</button>
             </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <label class="block text-slate-500 font-medium mb-1.5">Couleur principale</label>
-            <div class="flex items-center space-x-2">
-              <input type="color" id="reportColorInput" value="#0071e3" class="w-10 h-10 rounded-xl border dark:border-slate-700 cursor-pointer p-1 bg-slate-50 dark:bg-slate-800" />
-              <span id="reportColorHex" class="font-mono text-slate-600 dark:text-slate-300">#0071e3</span>
-            </div>
-          </div>
-          <div>
-            <label class="block text-slate-500 font-medium mb-1.5">Mise en page</label>
-            <select id="reportLayoutSelect" class="w-full px-3 py-2.5 sm:py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-              <option value="standard">Standard Conforme</option>
-              <option value="compact">Synthétique & Compact</option>
-            </select>
           </div>
         </div>
 
@@ -857,6 +873,17 @@
               <div>
                 <label class="block text-slate-500 font-medium mb-1.5">Avancement (%)</label>
                 <input type="number" min="0" max="100" id="pinInputProgress" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs font-semibold" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-500 font-medium mb-1.5">Date de constat</label>
+                <input type="date" id="pinInputDateConstat" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs font-medium" />
+              </div>
+              <div>
+                <label class="block text-slate-500 font-medium mb-1.5">Date d'échéance</label>
+                <input type="date" id="pinInputDateEcheance" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 outline-none focus:ring-2 focus:ring-blue-500 text-xs font-medium" />
               </div>
             </div>
 
@@ -1064,17 +1091,24 @@
     // Chaque modèle possède désormais un identifiant, un titre, un contenu et un état de sélection.
     // Les anciennes données contenant uniquement une chaîne de caractères sont migrées automatiquement.
     const PREDEFINED_GENERAL_NOTES = [
-      { id: 'general_note_nettoyer_chantier', title: 'Nettoyer le chantier', text: '' },
-      { id: 'general_note_code_chantier', title: 'Code du chantier', text: '' },
-      { id: 'general_note_mise_en_garde_risques', title: 'Mise en garde sur les risques', text: '' },
-      { id: 'general_note_port_epi', title: 'Port des EPI', text: '' },
-      { id: 'general_note_regles_securite', title: 'Respect des règles de sécurité', text: '' },
-      { id: 'general_note_acces_degages', title: 'Maintenir les accès dégagés', text: '' },
-      { id: 'general_note_evacuation_dechets', title: 'Évacuation des déchets', text: '' },
-      { id: 'general_note_zones_stockage', title: 'Respect des zones de stockage', text: '' },
-      { id: 'general_note_verification_materiel', title: 'Vérification du matériel', text: '' },
-      { id: 'general_note_consigne_securite', title: 'Respect des consignes de sécurité', text: '' }
+      { id: 'general_note_nettoyer_chantier', title: 'Nettoyer le chantier', text: 'Propreté du chantier à maintenir en permanence. Chaque entreprise doit évacuer ses déchets et nettoyer sa zone d\'intervention en fin de journée.' },
+      { id: 'general_note_code_chantier', title: 'Code du chantier', text: 'Rappel du code d\'accès / consignes d\'entrée sur le chantier. Toute personne présente doit être identifiée et badgée.' },
+      { id: 'general_note_mise_en_garde_risques', title: 'Mise en garde sur les risques', text: 'Mise en garde générale sur les risques du chantier (co-activité, circulation d\'engins, travail en hauteur). Chaque entreprise doit sensibiliser son personnel.' },
+      { id: 'general_note_port_epi', title: 'Port des EPI', text: 'Respect des règles de sécurité et port des EPI obligatoire (casque, chaussures de sécurité, gilet haute visibilité) sur l\'ensemble du chantier.' },
+      { id: 'general_note_regles_securite', title: 'Respect des règles de sécurité', text: 'Respect des règles de sécurité générales et du PPSPS. Tout incident ou situation dangereuse doit être signalé immédiatement.' },
+      { id: 'general_note_evacuation_dechets', title: 'Évacuation des déchets', text: 'Évacuation régulière des déchets et gravats vers les bennes prévues à cet effet. Tri sélectif obligatoire.' },
+      { id: 'general_note_horaires', title: 'Respect des horaires d\'intervention', text: 'Respect des horaires d\'intervention définis pour le chantier. Toute intervention en dehors des horaires doit être validée au préalable.' },
     ];
+
+    // Conversion d'une date ISO (yyyy-mm-dd) vers le format français JJ/MM/AAAA.
+    function formatDateFR(isoDate) {
+      if (!isoDate) return '';
+      const parts = String(isoDate).split('-');
+      if (parts.length !== 3) return isoDate;
+      const [y, m, d] = parts;
+      if (!y || !m || !d) return isoDate;
+      return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
+    }
 
     const AVAILABLE_ICONS = [
       { id: 'building-2', label: 'Immeuble' },
@@ -1101,8 +1135,6 @@
       user: JSON.parse(localStorage.getItem('orion_btp_user')) || null,
       reportConfig: {
         logoUrl: '',
-        primaryColor: '#0071e3',
-        layoutStyle: 'standard',
         includePhotos: true
       },
       projects: JSON.parse(localStorage.getItem('orion_btp_projects')) || initialProjects,
@@ -1150,6 +1182,57 @@
           return company;
         });
       }
+    }
+
+    function normalizeDateForInput(value) {
+      if (value === null || value === undefined || value === '') return '';
+      const raw = String(value).trim();
+      const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+
+      const frMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (frMatch) {
+        return `${frMatch[3]}-${frMatch[2].padStart(2, '0')}-${frMatch[1].padStart(2, '0')}`;
+      }
+
+      return '';
+    }
+
+    // Migration douce des anciennes réserves : les nouvelles dates restent optionnelles et
+    // toutes les structures historiques dépourvues de ces propriétés continuent de fonctionner.
+    function ensureProjectReserves(proj) {
+      if (!proj) return;
+      if (!Array.isArray(proj.lots)) proj.lots = [];
+
+      proj.lots.forEach((lot) => {
+        if (!lot || typeof lot !== 'object') return;
+        if (!Array.isArray(lot.pins)) lot.pins = [];
+
+        const usedPinIds = new Set();
+        lot.pins = lot.pins.filter(pin => pin && typeof pin === 'object').map((pin) => {
+          if (!pin.id || usedPinIds.has(pin.id)) pin.id = createUniqueId('pin');
+          usedPinIds.add(pin.id);
+
+          if (!Array.isArray(pin.companies)) pin.companies = [];
+          if (!Array.isArray(pin.photos)) pin.photos = [];
+
+          // Les alias permettent aussi de récupérer proprement d'éventuels anciens imports.
+          // Si un ancien export contient un format de date non standard, on le conserve au lieu
+          // de l'effacer ; les champs <input type="date"> n'utiliseront que la version ISO valide.
+          const constatSource = pin.dateConstat ?? pin.observationDate ?? pin.dateObservation ?? pin.constatDate ?? '';
+          const echeanceSource = pin.dateEcheance ?? pin.dueDate ?? pin.deadline ?? pin.echeanceDate ?? '';
+          pin.dateConstat = normalizeDateForInput(constatSource) || (constatSource ? String(constatSource) : '');
+          pin.dateEcheance = normalizeDateForInput(echeanceSource) || (echeanceSource ? String(echeanceSource) : '');
+
+          return pin;
+        });
+      });
+    }
+
+    function isReunionNoteDone(note) {
+      if (!note || typeof note !== 'object') return false;
+      const status = String(note.status || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+      return note.done === true || ['fait', 'realise', 'realisee', 'termine', 'terminee'].includes(status);
     }
 
     function ensureProjectReunion(proj) {
@@ -1208,14 +1291,15 @@
         );
 
         const defaultNote = PREDEFINED_GENERAL_NOTES.find(n => n.title === title);
-        const normalized = {
+        const normalized = Object.assign(entry, {
+          done: isReunionNoteDone(entry),
           id: entry.id || (defaultNote ? defaultNote.id : createUniqueId('general_note')),
           title,
           text: textValue,
           selected: entry.selected !== undefined
             ? !!entry.selected
             : (entry.checked !== undefined ? !!entry.checked : true)
-        };
+        });
 
         if (!seenGeneralNoteIds.has(normalized.id)) {
           normalizedGeneralNotes.push(normalized);
@@ -1308,6 +1392,62 @@
       r.attendees = normalizedAttendees;
     }
 
+    const DEFAULT_MOE_ROLES = ['DET', 'OPC', 'VISA', 'CT', 'SPS', 'BET 1', 'BET 2'];
+
+    function ensureProjectLayoutSettings(proj) {
+      if (!proj) return;
+      if (!proj.layoutSettings || typeof proj.layoutSettings !== 'object') {
+        proj.layoutSettings = {};
+      }
+      const ls = proj.layoutSettings;
+
+      if (!Array.isArray(ls.moeRoles) || ls.moeRoles.length === 0) {
+        ls.moeRoles = DEFAULT_MOE_ROLES.map(role => ({
+          id: createUniqueId('moe'),
+          role,
+          intervenant: '',
+          contact: ''
+        }));
+      } else {
+        ls.moeRoles = ls.moeRoles.map(r => ({
+          id: r.id || createUniqueId('moe'),
+          role: r.role || '',
+          intervenant: r.intervenant || '',
+          contact: r.contact || ''
+        }));
+      }
+
+      if (!ls.admin || typeof ls.admin !== 'object') {
+        ls.admin = {
+          garantie: 'Caution bancaire ou retenue de garantie de 5% du montant du marché, conformément aux conditions administratives du marché.',
+          soustraitance: 'Rappel de l\'article 32 du CCG : toute sous-traitance doit faire l\'objet d\'un formulaire d\'agrément transmis dans un délai de 20 jours avant intervention du sous-traitant.',
+          travailDissimule: 'Lutte contre le travail dissimulé : attestation de vigilance URSSAF/RSI à jour obligatoire, ainsi que la liste des salariés étrangers le cas échéant.',
+          facturation: 'Les factures doivent être envoyées avant le 25 du mois, mentionner le SIRET, le code APE et le numéro de TVA intracommunautaire. Retenue de garantie 95% maximum sur situation, sur présentation du certificat de paiement. Délai de règlement : 45 jours.',
+          adresseFacturation: ''
+        };
+      }
+      if (!Array.isArray(ls.adminBlocks)) {
+        ls.adminBlocks = [
+          ['garantie', 'Garantie'], ['soustraitance', 'Sous-traitance'],
+          ['travailDissimule', 'Lutte contre le travail dissimulé'],
+          ['facturation', 'Facturation'], ['adresseFacturation', 'Adresse de facturation']
+        ].map(([key, title]) => ({ id: createUniqueId('admin'), key, title, text: ls.admin[key] || '' }));
+      } else {
+        const usedAdminIds = new Set();
+        ls.adminBlocks = ls.adminBlocks.filter(Boolean).map((block) => {
+          const normalized = Array.isArray(block)
+            ? { key: block[0] || '', title: block[1] || '', text: block[2] || '' }
+            : { ...block };
+
+          if (!normalized.id || usedAdminIds.has(normalized.id)) normalized.id = createUniqueId('admin');
+          usedAdminIds.add(normalized.id);
+          normalized.title = normalized.title || '';
+          normalized.text = normalized.text || '';
+          return normalized;
+        });
+      }
+    }
+
     function getCompanyAttendee(proj, company) {
       if (!proj || !company) return null;
       ensureProjectReunion(proj);
@@ -1366,6 +1506,7 @@
       if (proj) {
         ensureProjectCompanies(proj);
         ensureProjectReunion(proj);
+        ensureProjectReserves(proj);
       }
       return proj;
     }
@@ -1509,6 +1650,7 @@
 
       state.projects.forEach(proj => {
         ensureProjectCompanies(proj);
+        ensureProjectReserves(proj);
         let totalPins = 0;
         let resolvedPins = 0;
         if (proj.lots && Array.isArray(proj.lots)) {
@@ -1725,6 +1867,10 @@
         proj.reunion.generalNotes = [];
       }
 
+      if (!Array.isArray(proj.reunionHistory)) {
+        proj.reunionHistory = [];
+      }
+
       document.getElementById('reunionProjectNameDisplay').textContent = proj.name;
       document.getElementById('reunionProjectLocationDisplay').textContent = proj.location || 'Aucune adresse';
       document.getElementById('reunionProjectClientDisplay').textContent = proj.client || 'Non renseigné';
@@ -1737,26 +1883,195 @@
       document.getElementById('reunionInputNextDate').value = r.nextDate || '';
       document.getElementById('reunionInputSubject').value = r.subject || '';
 
+      ensureProjectLayoutSettings(proj);
+
       const crTab = document.getElementById('reunionMainTabContent');
       const convocTab = document.getElementById('reunionConvocationsTabContent');
+      const layoutTab = document.getElementById('reunionLayoutTabContent');
       const crBtn = document.getElementById('reunionTabCrBtn');
       const convocBtn = document.getElementById('reunionTabConvocationsBtn');
+      const layoutBtn = document.getElementById('reunionTabLayoutBtn');
+
+      const activeBtnClass = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md flex items-center space-x-2';
+      const inactiveBtnClass = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2';
+
+      crTab.classList.add('hidden');
+      convocTab.classList.add('hidden');
+      layoutTab.classList.add('hidden');
+      crBtn.className = inactiveBtnClass;
+      convocBtn.className = inactiveBtnClass;
+      layoutBtn.className = inactiveBtnClass;
 
       if (state.reunionTab === 'convocations') {
-        crTab.classList.add('hidden');
         convocTab.classList.remove('hidden');
-        crBtn.className = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2';
-        convocBtn.className = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md flex items-center space-x-2';
+        convocBtn.className = activeBtnClass;
         renderConvocationsTab(proj);
+      } else if (state.reunionTab === 'layout') {
+        layoutTab.classList.remove('hidden');
+        layoutBtn.className = activeBtnClass;
+        renderLayoutTab(proj);
       } else {
-        convocTab.classList.add('hidden');
         crTab.classList.remove('hidden');
-        convocBtn.className = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2';
-        crBtn.className = 'px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md flex items-center space-x-2';
+        crBtn.className = activeBtnClass;
         renderCompanyDirectory(proj);
+        renderReunionPreviousActions(proj);
         renderReunionGeneralNotes(proj);
         renderReunionNotes(proj);
       }
+    }
+
+    // ONGLET MISE EN PAGE : intervenants MOE + textes administratifs/marché
+    function renderLayoutTab(proj) {
+      ensureProjectLayoutSettings(proj);
+      const ls = proj.layoutSettings;
+
+      const container = document.getElementById('moeRolesContainer');
+      container.innerHTML = '';
+      ls.moeRoles.forEach((entry) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-1 sm:grid-cols-3 gap-2 items-center p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30';
+        row.innerHTML = `
+          <input type="text" value="${escapeHtml(entry.role)}" placeholder="Rôle (ex: DET, OPC...)" class="moe-role-input px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold outline-none" />
+          <input type="text" value="${escapeHtml(entry.intervenant)}" placeholder="Nom de l'intervenant" class="moe-intervenant-input px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs outline-none" />
+          <div class="flex items-center gap-2">
+            <input type="text" value="${escapeHtml(entry.contact)}" placeholder="Contact (tél / email)" class="moe-contact-input flex-1 px-3 py-2 rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-900 text-xs outline-none" />
+            <button type="button" class="moe-delete-btn p-2 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0" title="Supprimer">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        row.querySelector('.moe-role-input').addEventListener('input', (e) => { entry.role = e.target.value; saveData(); });
+        row.querySelector('.moe-intervenant-input').addEventListener('input', (e) => { entry.intervenant = e.target.value; saveData(); });
+        row.querySelector('.moe-contact-input').addEventListener('input', (e) => { entry.contact = e.target.value; saveData(); });
+        row.querySelector('.moe-delete-btn').addEventListener('click', () => {
+          ls.moeRoles = ls.moeRoles.filter(r => r.id !== entry.id);
+          saveData();
+          renderLayoutTab(proj);
+        });
+        container.appendChild(row);
+      });
+
+      const addBtnRow = document.createElement('button');
+      addBtnRow.type = 'button';
+      addBtnRow.className = 'w-full px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold text-xs hover:underline flex items-center justify-center space-x-1.5';
+      addBtnRow.innerHTML = '<i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Ajouter un intervenant MOE</span>';
+      addBtnRow.addEventListener('click', () => {
+        ls.moeRoles.push({ id: createUniqueId('moe'), role: '', intervenant: '', contact: '' });
+        saveData();
+        renderLayoutTab(proj);
+      });
+      container.appendChild(addBtnRow);
+
+      const adminContainer = document.getElementById('adminBlocksContainer');
+      adminContainer.innerHTML = '';
+      ls.adminBlocks.forEach(block => {
+        const row = document.createElement('div');
+        row.className = 'space-y-2 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/20';
+        row.dataset.blockId = block.id;
+        row.innerHTML = `<div class="flex items-center justify-between gap-3">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Bloc de mise en page</span>
+          <button type="button" class="admin-delete-btn p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="Supprimer ce bloc" aria-label="Supprimer ce bloc">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <label class="block text-xs font-medium">Titre du bloc
+          <input class="admin-title w-full px-4 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800" value="${escapeHtml(block.title)}" /></label>
+        <label class="block text-xs font-medium">Contenu
+          <textarea rows="3" class="admin-text w-full px-4 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800">${escapeHtml(block.text)}</textarea></label>`;
+        row.querySelector('.admin-title').oninput = e => { block.title = e.target.value; saveData(); };
+        row.querySelector('.admin-text').oninput = e => {
+          block.text = e.target.value;
+          if (block.key) ls.admin[block.key] = block.text;
+          saveData();
+        };
+        row.querySelector('.admin-delete-btn').addEventListener('click', () => {
+          if (!confirm(`Supprimer le bloc « ${block.title || 'Sans titre'} » ?`)) return;
+          ls.adminBlocks = ls.adminBlocks.filter(candidate => candidate.id !== block.id);
+          if (block.key && ls.admin && Object.prototype.hasOwnProperty.call(ls.admin, block.key)) {
+            delete ls.admin[block.key];
+          }
+          saveData();
+          renderLayoutTab(proj);
+        });
+        adminContainer.appendChild(row);
+      });
+      document.getElementById('addAdminBlockBtn').onclick = () => {
+        ls.adminBlocks.push({ id: createUniqueId('admin'), title: '', text: '' });
+        saveData();
+        renderLayoutTab(proj);
+        document.querySelector('#adminBlocksContainer > div:last-child input').focus();
+      };
+
+      lucide.createIcons();
+    }
+
+    // ACTIONS DES ENTREPRISES A VERIFIER DEPUIS LA REUNION PRECEDENTE
+    // Réutilise la structure existante des remarques par entreprise (proj.reunion.notes avec son statut
+    // "À faire" / "En cours" / "Fait") : lorsqu'une réunion est archivée via "Nouvelle réunion", ses
+    // remarques non marquées "Fait" sont celles qui restaient à traiter pour la réunion suivante.
+    function renderReunionPreviousActions(proj) {
+      const container = document.getElementById('reunionPreviousActionsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const history = Array.isArray(proj.reunionHistory) ? proj.reunionHistory : [];
+      const previousReunion = history.length > 0 ? history[history.length - 1] : null;
+      const previousNotes = previousReunion && Array.isArray(previousReunion.notes) ? previousReunion.notes : [];
+      const pendingActions = previousNotes.filter(note => !isReunionNoteDone(note) && !(proj.reunion.notes || []).some(current => current.id && current.id === note.id && isReunionNoteDone(current)));
+
+      if (!previousReunion || pendingActions.length === 0) {
+        container.innerHTML = `
+          <div class="text-xs text-slate-400 italic text-center py-4 border border-dashed rounded-2xl border-slate-200 dark:border-slate-800">
+            Aucune action à vérifier depuis la réunion précédente.
+          </div>
+        `;
+        return;
+      }
+
+      const companies = proj.companies || [];
+
+      pendingActions.forEach((note) => {
+        const company = companies.find(c => c.id === note.company || c.name === note.company);
+        const companyLabel = company ? company.name : (note.company || 'Entreprise non précisée');
+
+        const isDone = note.status === 'Fait';
+        const statusClasses = note.status === 'En cours'
+          ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400'
+          : 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400';
+
+        const row = document.createElement('div');
+        row.className = 'p-3.5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+
+        row.innerHTML = `
+          <div class="flex-1 min-w-0 space-y-1">
+            <div class="flex items-center flex-wrap gap-2">
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">${escapeHtml(companyLabel)}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusClasses}">${escapeHtml(note.status || 'À faire')}</span>
+              <span class="text-[10px] text-slate-400">Réunion n°${escapeHtml(String(previousReunion.number || '-'))}${previousReunion.date ? ' · ' + escapeHtml(formatDateFR(previousReunion.date)) : ''}</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 break-words">${escapeHtml(note.text || 'Sans description')}</p>
+            ${note.date ? `<p class="text-[10px] text-slate-400">Échéance : ${escapeHtml(formatDateFR(note.date))}</p>` : ''}
+          </div>
+          <button type="button" class="mark-prev-action-done-btn shrink-0 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors flex items-center space-x-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>Marquer comme fait</span>
+          </button>
+        `;
+
+        row.querySelector('.mark-prev-action-done-btn').addEventListener('click', () => {
+          // Reste synchronisé avec le système existant : on met à jour le statut de la remarque
+          // directement dans la réunion archivée d'origine.
+          note.status = 'Fait';
+          (proj.reunion.notes || []).filter(current => current.id && current.id === note.id).forEach(current => { current.status = 'Fait'; });
+          saveData();
+          renderReunionNotes(proj);
+          renderReunionPreviousActions(proj);
+        });
+
+        container.appendChild(row);
+      });
+
+      lucide.createIcons();
     }
 
     function renderCompanyDirectory(proj) {
@@ -1941,9 +2256,14 @@
               </span>
             </label>
 
-            <button type="button" class="delete-general-note-btn p-1.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0" title="Supprimer la remarque">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" class="toggle-general-note-done-btn px-2 py-1 rounded-xl text-[10px] font-bold transition-colors ${note.done ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-300'}" title="Marquer comme fait / à reporter">
+                ${note.done ? 'Fait' : 'À faire'}
+              </button>
+              <button type="button" class="delete-general-note-btn p-1.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0" title="Supprimer la remarque">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
 
           <div>
@@ -1978,6 +2298,12 @@
         card.querySelector('.general-note-text-input').addEventListener('input', (e) => {
           note.text = e.target.value;
           saveData();
+        });
+
+        card.querySelector('.toggle-general-note-done-btn').addEventListener('click', () => {
+          note.done = !note.done;
+          saveData();
+          renderReunionGeneralNotes(proj);
         });
 
         card.querySelector('.delete-general-note-btn').addEventListener('click', () => {
@@ -2069,6 +2395,7 @@
         card.querySelector('.note-status-select').addEventListener('change', (e) => {
           note.status = e.target.value;
           saveData();
+          renderReunionPreviousActions(proj);
         });
 
         card.querySelector('.note-text-input').addEventListener('input', (e) => {
@@ -2150,8 +2477,6 @@
       const convocNumberInput = document.getElementById('convocationNextNumberInput');
       const convocDateInput = document.getElementById('convocationNextDateInput');
       const convocLocationInput = document.getElementById('convocationLocationInput');
-      const convocSubjectInput = document.getElementById('convocationSubjectInput');
-      const convocBodyTextarea = document.getElementById('convocationBodyTextarea');
 
       convocNumberInput.value = nextNumber;
       convocDateInput.value = r.nextDate || '';
@@ -2159,48 +2484,21 @@
 
       if (!proj.reunion.convocationData) {
         proj.reunion.convocationData = {
-          selectedCompanies: (proj.companies || []).map(c => c.id || c.name),
-          subject: `Convocation - Réunion de Chantier N°${nextNumber} - ${proj.name}`,
-          message: ''
+          selectedCompanies: (proj.companies || []).map(c => c.id || c.name)
         };
       }
 
       const cData = proj.reunion.convocationData;
       if (!cData.selectedCompanies) cData.selectedCompanies = (proj.companies || []).map(c => c.id || c.name);
 
-      function generateDefaultMessage() {
-        const nextDateFormatted = convocDateInput.value ? new Date(convocDateInput.value).toLocaleDateString('fr-FR') : '[Date non définie]';
-        return `Bonjour,\n\nVous êtes convoqué(e) à la réunion de chantier N°${convocNumberInput.value} concernant le projet "${proj.name}".\n\nDétails de la réunion :\n- Date : ${nextDateFormatted}\n- Lieu : ${proj.location || 'Sur le chantier'}\n- Client : ${proj.client || 'Non renseigné'}\n\nMerci de bien vouloir confirmer votre présence et de vous munir des documents d'avancement nécessaires pour votre lot.\n\nCordialement,\nLa Maîtrise d'Œuvre`;
-      }
-
-      if (!cData.subject) cData.subject = `Convocation - Réunion de Chantier N°${nextNumber} - ${proj.name}`;
-      if (!cData.message) cData.message = generateDefaultMessage();
-
-      convocSubjectInput.value = cData.subject;
-      convocBodyTextarea.value = cData.message;
-
       convocDateInput.addEventListener('change', (e) => {
         proj.reunion.nextDate = e.target.value;
         const mainNextDate = document.getElementById('reunionInputNextDate');
         if (mainNextDate) mainNextDate.value = e.target.value;
-        cData.message = generateDefaultMessage();
-        convocBodyTextarea.value = cData.message;
         saveData();
       });
 
-      convocNumberInput.addEventListener('input', (e) => {
-        cData.message = generateDefaultMessage();
-        convocBodyTextarea.value = cData.message;
-        saveData();
-      });
-
-      convocSubjectInput.addEventListener('input', (e) => {
-        cData.subject = e.target.value;
-        saveData();
-      });
-
-      convocBodyTextarea.addEventListener('input', (e) => {
-        cData.message = e.target.value;
+      convocNumberInput.addEventListener('input', () => {
         saveData();
       });
 
@@ -2288,46 +2586,36 @@
       };
 
       document.getElementById('copyConvocationBtn').onclick = () => {
-        const text = document.getElementById('convocationBodyTextarea').value;
-        navigator.clipboard.writeText(text).then(() => {
-          alert("Le texte de convocation a été copié dans votre presse-papier.");
-        });
-      };
-
-      document.getElementById('sendEmailConvocationBtn').onclick = () => {
         const selected = companies.filter(c => cData.selectedCompanies.includes(c.id || c.name));
-        const emails = selected.map(c => c.email).filter(e => e && e.trim().length > 0);
-        
-        if (emails.length === 0) {
-          alert("Aucune adresse e-mail valide n'est renseignée pour les entreprises sélectionnées.");
-          return;
-        }
-
-        const subject = encodeURIComponent(document.getElementById('convocationSubjectInput').value);
-        const body = encodeURIComponent(document.getElementById('convocationBodyTextarea').value);
-        window.location.href = `mailto:${emails.join(',')}?subject=${subject}&body=${body}`;
+        const numberVal = document.getElementById('convocationNextNumberInput').value;
+        const dateVal = document.getElementById('convocationNextDateInput').value;
+        let text = `Convocation N°${numberVal} - Réunion de chantier du ${formatDateFR(dateVal) || '[date non définie]'}\n\n`;
+        text += "Entités / personnes convoquées :\n";
+        selected.forEach(c => { text += `- ${c.name}${c.contactPerson ? ' (' + c.contactPerson + ')' : ''}\n`; });
+        navigator.clipboard.writeText(text).then(() => {
+          alert("La liste de convocation a été copiée dans votre presse-papier.");
+        });
       };
 
       document.getElementById('printConvocationBtn').onclick = () => {
         const printWin = window.open('', '_blank');
-        const subject = document.getElementById('convocationSubjectInput').value;
-        const body = document.getElementById('convocationBodyTextarea').value.replace(/\n/g, '<br/>');
+        const numberVal = document.getElementById('convocationNextNumberInput').value;
+        const dateVal = document.getElementById('convocationNextDateInput').value;
         const selected = companies.filter(c => cData.selectedCompanies.includes(c.id || c.name));
 
-        let html = `<html><head><title>${escapeHtml(subject)}</title>`;
+        let html = `<html><head><title>Convocation N°${escapeHtml(String(numberVal))}</title>`;
         html += `<style>
           body { font-family: Arial, sans-serif; padding: 30px; color: #333; line-height: 1.6; }
-          h1 { color: #0071e3; border-b: 2px solid #0071e3; padding-bottom: 8px; font-size: 20px; }
+          h1 { color: #0071e3; border-bottom: 2px solid #0071e3; padding-bottom: 8px; font-size: 20px; }
           .section { margin-top: 20px; }
           table { width: 100%; border-collapse: collapse; margin-top: 15px; }
           th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
           th { background-color: #f5f5f7; }
         </style></head><body>`;
 
-        html += `<h1>${escapeHtml(subject)}</h1>`;
-        html += `<div class="section"><p>${body}</p></div>`;
-        html += `<div class="section"><h3>Entreprises et intervenants convoqués</h3><table><thead><tr><th>Entreprise</th><th>Lot</th><th>Contact</th><th>Email / Téléphone</th></tr></thead><tbody>`;
-        
+        html += `<h1>Convocation N°${escapeHtml(String(numberVal))} - Réunion de chantier du ${escapeHtml(formatDateFR(dateVal) || '[date non définie]')}</h1>`;
+        html += `<div class="section"><h3>Entités / personnes convoquées</h3><table><thead><tr><th>Entreprise</th><th>Lot</th><th>Contact</th><th>Email / Téléphone</th></tr></thead><tbody>`;
+
         selected.forEach(c => {
           html += `<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.lot)}</td><td>${escapeHtml(c.contactPerson)}</td><td>${escapeHtml(c.email || '-')} / ${escapeHtml(c.phone || '-')}</td></tr>`;
         });
@@ -2651,6 +2939,8 @@
           status: '0',
           progress: 0,
           description: '',
+          dateConstat: '',
+          dateEcheance: '',
           companies: [],
           photos: [],
           x: percentX,
@@ -2754,6 +3044,16 @@
             <h4 class="font-bold text-xs text-slate-900 dark:text-slate-100 leading-snug">${escapeHtml(pin.title || 'Sans titre')}</h4>
             ${pin.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">${escapeHtml(pin.description)}</p>` : ''}
           </div>
+          <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+            <div class="rounded-xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-700 px-2 py-1.5">
+              <span class="block text-[9px] uppercase tracking-wide text-slate-400">Constat</span>
+              <span class="font-semibold text-slate-700 dark:text-slate-300">${escapeHtml(formatDateFR(pin.dateConstat) || '—')}</span>
+            </div>
+            <div class="rounded-xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-700 px-2 py-1.5">
+              <span class="block text-[9px] uppercase tracking-wide text-slate-400">Échéance</span>
+              <span class="font-semibold text-slate-700 dark:text-slate-300">${escapeHtml(formatDateFR(pin.dateEcheance) || '—')}</span>
+            </div>
+          </div>
           ${companiesHtml}
         `;
 
@@ -2776,12 +3076,35 @@
       document.getElementById('pinInputTitle').value = pin.title || '';
       document.getElementById('pinInputStatusSelect').value = pin.status || '0';
       document.getElementById('pinInputProgress').value = pin.progress || 0;
+      document.getElementById('pinInputDateConstat').value = normalizeDateForInput(pin.dateConstat);
+      document.getElementById('pinInputDateEcheance').value = normalizeDateForInput(pin.dateEcheance);
       document.getElementById('pinInputDescription').value = pin.description || '';
 
       renderPinCompanies(pin);
       renderPinPhotos(pin);
 
       showModal('editPinModal');
+    }
+
+    // Détermine si une entrée entreprise précise (identifiée par son id unique) est sélectionnée pour ce repère.
+    // Corrige le bug où deux entrées de même nom (ex: même entreprise sur deux lots avec des intervenants
+    // différents) étaient sélectionnées simultanément : la sélection se fait désormais sur l'identifiant
+    // unique de l'entrée, et non plus sur le nom. Une compatibilité est conservée avec les anciennes
+    // données enregistrées par nom (avant ce correctif), tant que ce nom ne désigne qu'une seule entrée.
+    function isPinCompanySelected(pin, comp, companies) {
+      if (!pin || !Array.isArray(pin.companies)) return false;
+
+      if (pin.companies.includes(comp.id)) return true;
+
+      if (pin.companies.includes(comp.name)) {
+        const sameNameCompanies = (companies || []).filter(c => c.name === comp.name);
+        if (sameNameCompanies.length <= 1) return true;
+        // Plusieurs entrées partagent ce nom : l'ancienne référence par nom ne peut désigner
+        // qu'une seule d'entre elles (la première), afin de ne pas les sélectionner toutes.
+        return sameNameCompanies[0].id === comp.id;
+      }
+
+      return false;
     }
 
     // CARTE DES ENTREPRISES DANS LEVE DE RESERVES (AFFICHAGE SANS TRONQUER LES NOMS LONGS)
@@ -2816,7 +3139,7 @@
 
       companies.forEach(comp => {
         if (!pin.companies) pin.companies = [];
-        const isSelected = pin.companies.some(c => c === comp.id || c === comp.name);
+        const isSelected = isPinCompanySelected(pin, comp, companies);
 
         const card = document.createElement('div');
         card.className = `p-3.5 rounded-2xl border transition-all cursor-pointer select-none space-y-2 flex flex-col justify-between ${
@@ -2848,11 +3171,21 @@
 
         card.addEventListener('click', () => {
           if (!pin.companies) pin.companies = [];
-          if (isSelected) {
-            pin.companies = pin.companies.filter(c => c !== comp.id && c !== comp.name);
+          if (isPinCompanySelected(pin, comp, companies)) {
+            // On retire uniquement l'entrée correspondant à CETTE entreprise précise (par identifiant unique),
+            // ainsi que son éventuelle ancienne référence par nom si elle ne désignait qu'elle (migration douce).
+            pin.companies = pin.companies.filter(c => {
+              if (c === comp.id) return false;
+              if (c === comp.name) {
+                const sameNameCompanies = companies.filter(cc => cc.name === comp.name);
+                if (sameNameCompanies.length <= 1 || sameNameCompanies[0].id === comp.id) return false;
+              }
+              return true;
+            });
           } else {
-            pin.companies.push(comp.name);
+            pin.companies.push(comp.id);
           }
+          saveData();
           renderPinCompanies(pin);
         });
 
@@ -2928,6 +3261,8 @@
       currentEditingPin.title = document.getElementById('pinInputTitle').value.trim();
       currentEditingPin.status = document.getElementById('pinInputStatusSelect').value;
       currentEditingPin.progress = parseInt(document.getElementById('pinInputProgress').value) || 0;
+      currentEditingPin.dateConstat = normalizeDateForInput(document.getElementById('pinInputDateConstat').value);
+      currentEditingPin.dateEcheance = normalizeDateForInput(document.getElementById('pinInputDateEcheance').value);
       currentEditingPin.description = document.getElementById('pinInputDescription').value.trim();
 
       saveData();
@@ -3227,6 +3562,7 @@
           const imported = JSON.parse(event.target.result);
           if (Array.isArray(imported)) {
             state.projects = imported;
+            state.projects.forEach(proj => ensureProjectReserves(proj));
             if (state.projects.length > 0) state.activeProjectId = state.projects[0].id;
             saveData();
             render();
@@ -3242,7 +3578,12 @@
     });
 
     // RAPPORTS ET CONFIGURATION EXPORT
-    document.getElementById('openReportConfigBtn').addEventListener('click', () => showModal('reportConfigModal'));
+    document.getElementById('openReportConfigBtn').addEventListener('click', () => {
+      const isReunion = state.currentView === 'reunion';
+      document.getElementById('exportExcelReportBtn').classList.toggle('hidden', isReunion);
+      document.getElementById('photoOptionRow').classList.toggle('hidden', isReunion);
+      showModal('reportConfigModal');
+    });
     document.getElementById('closeReportConfigBtn').addEventListener('click', () => hideModal('reportConfigModal'));
 
     document.getElementById('uploadLogoBtn').addEventListener('click', () => document.getElementById('logoFileInput').click());
@@ -3265,9 +3606,8 @@
       document.getElementById('removeLogoBtn').classList.add('hidden');
     });
 
-    document.getElementById('reportColorInput').addEventListener('input', (e) => {
-      state.reportConfig.primaryColor = e.target.value;
-      document.getElementById('reportColorHex').textContent = e.target.value;
+    document.getElementById('reportIncludePhotosCheckbox').addEventListener('change', e => {
+      state.reportConfig.includePhotos = e.target.checked;
     });
 
     // OUTILS DE TRI POUR LE RAPPORT DES RESERVES
@@ -3291,8 +3631,8 @@
             })
             .find(value => value !== null);
 
-          if (aOrder !== undefined && bOrder !== undefined && aOrder !== bOrder) {
-            return aOrder - bOrder;
+          if (aOrder !== undefined && bOrder !== undefined) {
+            return aOrder - bOrder || a.originalIndex - b.originalIndex;
           }
           if (aOrder !== undefined) return -1;
           if (bOrder !== undefined) return 1;
@@ -3302,17 +3642,23 @@
         });
     }
 
-    function getReportPins(lot) {
+    function getReportPins(lot, proj) {
+      const companyLabel = pin => (pin.companies || []).map(ref => {
+        const company = (proj.companies || []).find(c => c.id === ref || c.name === ref);
+        return company ? `${company.name} (${company.lot || ''})` : String(ref);
+      }).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true })).join(', ');
       return (lot.pins || [])
         .map((pin, originalIndex) => ({ pin, originalIndex }))
         .sort((a, b) => {
-          const aNumberValue = a.pin.reserveNumber ?? a.pin.number ?? a.pin.numero ?? a.pin.index;
-          const bNumberValue = b.pin.reserveNumber ?? b.pin.number ?? b.pin.numero ?? b.pin.index;
+          const byCompany = companyLabel(a.pin).localeCompare(companyLabel(b.pin), 'fr', { numeric: true });
+          if (byCompany) return byCompany;
+          const aNumberValue = a.pin.reserveNumber ?? a.pin.number ?? a.pin.numero ?? a.pin.index ?? (a.originalIndex + 1);
+          const bNumberValue = b.pin.reserveNumber ?? b.pin.number ?? b.pin.numero ?? b.pin.index ?? (b.originalIndex + 1);
           const aNumber = Number(aNumberValue);
           const bNumber = Number(bNumberValue);
 
-          if (Number.isFinite(aNumber) && Number.isFinite(bNumber) && aNumber !== bNumber) {
-            return aNumber - bNumber;
+          if (Number.isFinite(aNumber) && Number.isFinite(bNumber)) {
+            return aNumber - bNumber || a.originalIndex - b.originalIndex;
           }
           if (Number.isFinite(aNumber)) return -1;
           if (Number.isFinite(bNumber)) return 1;
@@ -3321,32 +3667,90 @@
         });
     }
 
-    // EXPORT PDF RAPPORT
-    document.getElementById('exportPdfReportBtn').addEventListener('click', () => {
-      const proj = getActiveProject();
-      if (!proj) return;
+    // EXPORT PDF / WORD : génération de fichiers réels sans passer par la boîte d'impression du navigateur.
+    function sanitizeFilenamePart(value, fallback = 'document') {
+      const normalized = String(value || fallback)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\\/:*?"<>|]/g, '-')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      return normalized || fallback;
+    }
 
-      const printWin = window.open('', '_blank');
-      if (!printWin) {
-        alert("Impossible d'ouvrir la fenêtre d'impression. Vérifiez que les fenêtres contextuelles sont autorisées.");
-        return;
+    function getReportDownloadFilename(proj, extension) {
+      const today = new Date().toISOString().split('T')[0];
+      const projectPart = sanitizeFilenamePart(proj.name || 'chantier');
+      if (state.currentView === 'reunion') {
+        const reunionDate = normalizeDateForInput(proj.reunion && proj.reunion.date) || today;
+        return `Compte-rendu-reunion-${projectPart}-${reunionDate}.${extension}`;
       }
+      return `Rapport-reserves-${projectPart}-${today}.${extension}`;
+    }
 
-      let html = `<html><head><title>Rapport - ${escapeHtml(proj.name)}</title>`;
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+
+    function waitForElementImages(root, timeoutMs = 12000) {
+      const images = Array.from(root.querySelectorAll('img'));
+      if (images.length === 0) return Promise.resolve();
+
+      const wait = Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      }));
+
+      return Promise.race([wait, new Promise(resolve => setTimeout(resolve, timeoutMs))]);
+    }
+
+    function setExportButtonBusy(button, busy, busyLabel) {
+      if (!button) return;
+      if (busy) {
+        if (!button.dataset.originalHtml) button.dataset.originalHtml = button.innerHTML;
+        button.disabled = true;
+        button.classList.add('opacity-70', 'cursor-wait');
+        button.innerHTML = `<span>${escapeHtml(busyLabel || 'Génération...')}</span>`;
+      } else {
+        button.disabled = false;
+        button.classList.remove('opacity-70', 'cursor-wait');
+        if (button.dataset.originalHtml) {
+          button.innerHTML = button.dataset.originalHtml;
+          delete button.dataset.originalHtml;
+          lucide.createIcons();
+        }
+      }
+    }
+
+    function buildReportHtml(proj) {
+      let html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport - ${escapeHtml(proj.name)}</title>`;
       html += `<style>
-        @page { size: A4; margin: 14mm; }
-        * { box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; padding: 0; color: #333; background: #fff; line-height: 1.45; }
-        h1 { color: ${state.reportConfig.primaryColor}; margin: 0 0 5px; }
-        h2 { color: ${state.reportConfig.primaryColor}; margin-top: 0; }
-        h3 { color: #333; margin-top: 22px; }
-        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; vertical-align: top; }
-        th { background-color: ${state.reportConfig.primaryColor}; color: white; }
-        ul { margin: 8px 0; padding-left: 20px; }
+        .report-export-content, .report-export-content * { box-sizing: border-box; }
+        .report-export-content { width: 190mm; font-family: Arial, sans-serif; margin: 0; padding: 0; color: #333; background: #fff; line-height: 1.45; }
+        .report-export-content h1 { color: #0071e3; margin: 0 0 5px; }
+        .report-export-content h2 { color: #0071e3; margin-top: 0; }
+        .report-export-content h3 { color: #333; margin-top: 22px; margin-bottom: 8px; break-after: avoid; page-break-after: avoid; }
+        .report-export-content .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
+        .report-export-content table { width: 100%; border-collapse: collapse; margin-top: 10px; break-inside: auto; page-break-inside: auto; }
+        .report-export-content th, .report-export-content td { border: 1px solid #ddd; padding: 7px; text-align: left; font-size: 11px; vertical-align: top; }
+        .report-export-content th { background-color: #0071e3; color: white; }
+        .report-export-content thead { display: table-header-group; }
+        .report-export-content tr { break-inside: avoid; page-break-inside: avoid; }
+        .report-export-content ul { margin: 8px 0; padding-left: 20px; }
         .report-cover {
-          min-height: 268mm;
+          min-height: 255mm;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -3354,136 +3758,126 @@
           text-align: center;
           page-break-after: always;
           break-after: page;
-          padding: 8mm 0;
+          padding: 5mm 0;
         }
-        .report-cover-top {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 16px;
-          text-align: left;
-        }
-        .report-cover-brand {
-          font-size: 11px;
-          font-weight: 700;
-          color: #888;
-          letter-spacing: .08em;
-          text-transform: uppercase;
-        }
-        .report-cover-client {
-          margin-top: 7mm;
-          font-size: 15px;
-          color: #555;
-          font-weight: 600;
-        }
-        .report-cover-title {
-          margin-top: 4mm;
-          font-size: 28px;
-          line-height: 1.15;
-          font-weight: 800;
-          color: #222;
-        }
-        .report-cover-subtitle {
-          margin-top: 3mm;
-          font-size: 13px;
-          color: #777;
-        }
+        .report-cover-top { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; text-align: left; }
+        .report-cover-brand { font-size: 11px; font-weight: 700; color: #888; letter-spacing: .08em; text-transform: uppercase; }
+        .report-cover-client { margin-top: 7mm; font-size: 15px; color: #555; font-weight: 600; }
+        .report-cover-title { margin-top: 4mm; font-size: 28px; line-height: 1.15; font-weight: 800; color: #222; }
+        .report-cover-subtitle { margin-top: 3mm; font-size: 13px; color: #777; }
         .report-cover-image-wrap {
-          width: 100%;
-          max-width: 175mm;
-          height: 170mm;
-          margin-top: 20mm;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          background: #f8fafc;
+          width: 100%; max-width: 175mm; height: 145mm; margin-top: 10mm;
+          display: flex; align-items: center; justify-content: center; overflow: hidden;
+          border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc;
+          break-inside: avoid; page-break-inside: avoid;
         }
-        .report-cover-image {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
-        .report-cover-placeholder {
-          padding: 20mm;
-          color: #999;
-          font-size: 12px;
-        }
-        .report-cover-footer {
-          margin-top: auto;
-          font-size: 11px;
-          color: #999;
-        }
-        .report-page {
-          display: block;
-        }
+        .report-cover-image { width: 100%; height: 100%; object-fit: contain; }
+        .report-cover-placeholder { padding: 20mm; color: #999; font-size: 12px; }
+        .report-zone { margin-top: 18px; }
+        .reserve-table { table-layout: fixed; }
+        .reserve-table td { overflow-wrap: anywhere; font-size: 9px; padding: 5px; }
+        .reserve-table th { font-size: 9px; padding: 5px; }
+        .reserve-photo { display: block; width: 100%; max-height: 34mm; object-fit: contain; margin-bottom: 4px; break-inside: avoid; page-break-inside: avoid; }
         .report-lot-title {
-          margin-top: 24px;
-          padding: 8px 10px;
-          border-left: 4px solid ${state.reportConfig.primaryColor};
-          background: #f5f5f7;
-          color: #333;
-          font-size: 15px;
-          font-weight: 700;
+          margin-top: 20px; padding: 8px 10px; border-left: 4px solid #0071e3;
+          background: #f5f5f7; color: #333; font-size: 15px; font-weight: 700;
+          break-after: avoid; page-break-after: avoid;
         }
         .report-note-title { font-weight: 700; margin-bottom: 3px; }
         .report-note-text { color: #555; white-space: pre-line; }
-        @media print {
-          .report-cover-image-wrap { break-inside: avoid; }
-          tr, img { break-inside: avoid; }
+        .report-header { margin-bottom: 10px; break-inside: avoid; page-break-inside: avoid; }
+        .report-header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+        .report-header-logo { width: 45mm; max-height: 22mm; display: flex; align-items: center; }
+        .report-header-logo img { max-width: 100%; max-height: 22mm; object-fit: contain; }
+        .report-header-logo-placeholder { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #888; text-transform: uppercase; }
+        .report-header-titles { flex: 1; text-align: right; }
+        .report-header-titles h1 { font-size: 15px; line-height: 1.3; margin: 0 0 4px; color: #0071e3; }
+        .report-header-project { font-size: 13px; font-weight: 700; color: #444; text-transform: uppercase; }
+        .report-header-photo {
+          margin-top: 10px; width: 100%; height: 55mm; border: 1px solid #e5e7eb; border-radius: 6px;
+          background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden;
+          break-inside: avoid; page-break-inside: avoid;
         }
+        .report-header-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .report-header-photo-placeholder { font-size: 11px; color: #999; }
+        .report-admin-block { margin-top: 10px; font-size: 12px; break-inside: avoid; page-break-inside: avoid; }
+        .report-footer { display: flex; justify-content: space-between; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 4px; margin-top: 18px; }
       </style></head><body>`;
 
-      if (state.currentView === 'reunion' && proj.reunion) {
-        if (state.reportConfig.logoUrl) {
-          html += `<img src="${state.reportConfig.logoUrl}" style="height: 50px; float: right;" />`;
+      if (state.currentView === 'reunion') {
+        ensureProjectReunion(proj);
+        ensureProjectLayoutSettings(proj);
+        const ls = proj.layoutSettings;
+        const cData = (proj.reunion.convocationData && proj.reunion.convocationData.selectedCompanies) || [];
+
+        html += `<div class="report-header">
+          <div class="report-header-top">
+            <div class="report-header-logo">${state.reportConfig.logoUrl ? `<img src="${state.reportConfig.logoUrl}" alt="Logo" />` : `<span class="report-header-logo-placeholder">SCAR Ingénierie</span>`}</div>
+            <div class="report-header-titles">
+              <h1>COMPTE RENDU DE LA REUNION DE CHANTIER N° ${escapeHtml(String(proj.reunion.number || 1))} DU ${escapeHtml(formatDateFR(proj.reunion.date) || '-')}</h1>
+              <div class="report-header-project">${escapeHtml((proj.name || '').toUpperCase())}</div>
+            </div>
+          </div>
+          <div class="report-header-photo">
+            ${proj.photo ? `<img src="${proj.photo}" alt="Photo du chantier" />` : `<span class="report-header-photo-placeholder">Photo du chantier</span>`}
+          </div>
+        </div>`;
+
+        if (proj.reunion.subject) {
+          html += `<h3>Ordre du jour</h3><div class="report-note-text">${escapeHtml(proj.reunion.subject)}</div>`;
         }
-        html += `<h1>${escapeHtml(proj.name)}</h1>`;
-        html += `<div class="meta">Client: ${escapeHtml(proj.client || 'N/A')} | Adresse: ${escapeHtml(proj.location || 'N/A')} | Statut: ${escapeHtml(proj.status || 'En cours')}</div>`;
+        if (proj.reunion.nextDate) {
+          html += `<div class="meta" style="margin-top:8px;">Prochaine réunion : ${escapeHtml(formatDateFR(proj.reunion.nextDate))}</div>`;
+        }
 
-        html += `<h2>Compte-Rendu de Réunion N°${proj.reunion.number || 1}</h2>`;
-        html += `<p><strong>Date:</strong> ${proj.reunion.date || '-'} | <strong>Prochaine réunion:</strong> ${proj.reunion.nextDate || '-'}</p>`;
-        html += `<p><strong>Sujets:</strong> ${escapeHtml(proj.reunion.subject || '-')}</p>`;
+        html += `<h3>Entreprises & Intervenants</h3><table><thead><tr><th>Lots</th><th>Entreprises</th><th>Intervenants</th><th>Contact</th><th>Présence</th><th>Convocation</th></tr></thead><tbody>`;
+        (proj.companies || []).forEach(c => {
+          const att = getCompanyAttendee(proj, c);
+          const presStr = att ? (att.present ? `Présent${att.delay ? ` (${att.delay} min retard)` : ''}` : 'Absent') : 'Non renseigné';
+          const isConvoked = cData.includes(c.id || c.name);
+          html += `<tr><td>${escapeHtml(c.lot)}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.contactPerson)}</td><td>${escapeHtml(c.phone)} ${escapeHtml(c.email)}</td><td>${escapeHtml(presStr)}</td><td>${isConvoked ? 'Oui' : 'Non'}</td></tr>`;
+        });
+        html += `</tbody></table>`;
 
-        const selectedGeneralNotes = (proj.reunion.generalNotes || []).filter(note => {
-          if (typeof note === 'string') return true;
-          return !!note.selected;
+        html += `<h3>Présentation de la maîtrise d'œuvre</h3><table><thead><tr><th>Rôle</th><th>Intervenant</th><th>Contact</th></tr></thead><tbody>`;
+        (ls.moeRoles || []).forEach(m => {
+          html += `<tr><td>${escapeHtml(m.role)}</td><td>${escapeHtml(m.intervenant)}</td><td>${escapeHtml(m.contact)}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+
+        html += `<h3>Administratif & Marché</h3>`;
+        (ls.adminBlocks || []).forEach(block => {
+          if (!block || !block.text) return;
+          html += `<div class="report-admin-block"><div class="report-note-title">${escapeHtml(block.title || 'Sans titre')}</div><div class="report-note-text">${escapeHtml(block.text)}</div></div>`;
         });
 
+        const selectedGeneralNotes = (proj.reunion.generalNotes || []).filter(note => typeof note === 'string' || !!note.selected);
+        html += `<h3>Remarques Générales</h3>`;
         if (selectedGeneralNotes.length > 0) {
-          html += `<h3>Consignes & Remarques Générales du Chantier</h3><ul>`;
+          html += `<ul>`;
           selectedGeneralNotes.forEach(note => {
             if (typeof note === 'string') {
               html += `<li style="font-size:12px; margin-bottom:7px;"><div class="report-note-title">${escapeHtml(note)}</div></li>`;
             } else {
               html += `<li style="font-size:12px; margin-bottom:9px;"><div class="report-note-title">${escapeHtml(note.title || 'Sans titre')}</div>`;
-              if (note.text) {
-                html += `<div class="report-note-text">${escapeHtml(note.text)}</div>`;
-              }
+              if (note.text) html += `<div class="report-note-text">${escapeHtml(note.text)}</div>`;
               html += `</li>`;
             }
           });
           html += `</ul>`;
+        } else {
+          html += `<p style="font-size:12px; color:#999;">Aucune remarque générale sélectionnée.</p>`;
         }
 
-        html += `<h3>Entreprises & Intervenants</h3><table><thead><tr><th>Entreprise</th><th>Lot</th><th>Contact</th><th>Présence / Retard</th><th>Tél / Email</th></tr></thead><tbody>`;
-        (proj.companies || []).forEach(c => {
-          const att = getCompanyAttendee(proj, c);
-          const presStr = att ? (att.present ? `Présent${att.delay ? ` (${att.delay} min retard)` : ''}` : 'Absent') : 'Non renseigné';
-          html += `<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.lot)}</td><td>${escapeHtml(c.contactPerson)}</td><td>${escapeHtml(presStr)}</td><td>${escapeHtml(c.phone)} ${escapeHtml(c.email)}</td></tr>`;
-        });
-        html += `</tbody></table>`;
-
-        html += `<h3>Remarques & Actions par Entreprise</h3><table><thead><tr><th>Entreprise</th><th>Statut</th><th>Remarque</th><th>Date d'échéance</th></tr></thead><tbody>`;
+        html += `<h3>Remarques Individuelles</h3><table><thead><tr><th>Entreprise</th><th>Statut</th><th>Remarque</th><th>Date d'échéance</th></tr></thead><tbody>`;
         (proj.reunion.notes || []).forEach(n => {
-          html += `<tr><td>${escapeHtml(n.company)}</td><td>${escapeHtml(n.status)}</td><td>${escapeHtml(n.text)}</td><td>${escapeHtml(n.date || '-')}</td></tr>`;
+          const companyName = ((proj.companies || []).find(c => c.id === n.company || c.name === n.company) || {}).name || n.company || '—';
+          html += `<tr><td>${escapeHtml(companyName)}</td><td>${escapeHtml(n.status || '')}</td><td>${escapeHtml(n.text || '')}</td><td>${escapeHtml(formatDateFR(n.date) || '-')}</td></tr>`;
         });
         html += `</tbody></table>`;
+        html += `<div class="report-footer"><span>${escapeHtml(proj.name || '')}</span><span>Compte rendu de réunion</span></div>`;
       } else {
-        // PAGE 1 : Présentation du projet
+        ensureProjectReserves(proj);
         html += `<section class="report-cover">`;
         html += `<div class="report-cover-top">`;
         html += `<div><div class="report-cover-brand">Rapport de réserves</div>`;
@@ -3491,108 +3885,437 @@
         html += `<div class="report-cover-title">${escapeHtml(proj.name || 'Projet sans nom')}</div>`;
         html += `<div class="report-cover-subtitle">${escapeHtml(proj.location || '')}</div></div>`;
         if (state.reportConfig.logoUrl) {
-          html += `<img src="${state.reportConfig.logoUrl}" style="height: 45px; max-width: 55mm; object-fit: contain;" />`;
+          html += `<img src="${state.reportConfig.logoUrl}" style="height:45px; max-width:55mm; object-fit:contain;" alt="Logo" />`;
         }
         html += `</div>`;
-
         html += `<div class="report-cover-image-wrap">`;
-        if (proj.photo) {
-          html += `<img src="${proj.photo}" class="report-cover-image" alt="Image du projet" />`;
-        } else {
-          html += `<div class="report-cover-placeholder">Aucune image de projet enregistrée.</div>`;
-        }
-        html += `</div>`;
+        html += proj.photo
+          ? `<img src="${proj.photo}" class="report-cover-image" alt="Image du projet" />`
+          : `<div class="report-cover-placeholder">Aucune image de projet enregistrée.</div>`;
+        html += `</div></section>`;
 
-        html += `<div class="report-cover-footer">${escapeHtml(proj.status || 'En cours')}</div>`;
-        html += `</section>`;
-
-        // PAGE 2 : Rapport des réserves
         html += `<section class="report-page">`;
         html += `<h1>${escapeHtml(proj.name || 'Projet sans nom')}</h1>`;
-        html += `<div class="meta">Client: ${escapeHtml(proj.client || 'N/A')} | Adresse: ${escapeHtml(proj.location || 'N/A')} | Statut: ${escapeHtml(proj.status || 'En cours')}</div>`;
+        html += `<div class="meta">Client: ${escapeHtml(proj.client || 'N/A')} | Adresse: ${escapeHtml(proj.location || 'N/A')}</div>`;
         html += `<h2>Synthèse des Réserves</h2>`;
 
         getReportLots(proj).forEach(({ lot }) => {
-          html += `<div class="report-lot-title">LOT — ${escapeHtml(lot.name || 'Lot sans nom')}</div>`;
-
-          const pins = getReportPins(lot);
+          html += `<section class="report-zone"><div class="report-lot-title">ZONE — ${escapeHtml(lot.name || 'Lot sans nom')}</div>`;
+          const pins = getReportPins(lot, proj);
           if (pins.length === 0) {
-            html += `<p style="font-size:12px; color:#999;">Aucune réserve enregistrée.</p>`;
+            html += `<p style="font-size:12px; color:#999;">Aucune réserve enregistrée.</p></section>`;
             return;
           }
 
-          html += `<table><thead><tr><th>N°</th><th>Intitulé</th><th>Avancement</th><th>Entreprises & Lots</th><th>Description</th></tr></thead><tbody>`;
+          html += `<table class="reserve-table"><colgroup><col style="width:16%"><col style="width:6%"><col style="width:14%"><col style="width:9%"><col style="width:14%"><col style="width:25%"><col style="width:16%"></colgroup><thead><tr><th>Entreprise &amp; lots</th><th>N°</th><th>Intitulé</th><th>Avancement</th><th>Dates</th><th>Descriptif</th><th>Photos</th></tr></thead><tbody>`;
 
           pins.forEach(({ pin, originalIndex }) => {
             const reserveNumberValue = pin.reserveNumber ?? pin.number ?? pin.numero;
-            const reserveNumber = Number.isFinite(Number(reserveNumberValue))
-              ? Number(reserveNumberValue)
-              : originalIndex + 1;
-
+            const reserveNumber = Number.isFinite(Number(reserveNumberValue)) ? Number(reserveNumberValue) : originalIndex + 1;
             const compListFormatted = (pin.companies || []).map(cRef => {
               const found = (proj.companies || []).find(c => c.id === cRef || c.name === cRef);
-              if (found) {
-                return found.lot ? `${found.name} (${found.lot})` : found.name;
-              }
+              if (found) return found.lot ? `${found.name} (${found.lot})` : found.name;
               return cRef;
             }).join(', ');
+            const datesHtml = `<strong>Constat :</strong> ${escapeHtml(formatDateFR(pin.dateConstat) || '—')}<br><strong>Échéance :</strong> ${escapeHtml(formatDateFR(pin.dateEcheance) || '—')}`;
 
             html += `<tr>
-              <td>Réserve n°${String(reserveNumber).padStart(3, '0')}</td>
-              <td>${escapeHtml(pin.title)}</td>
-              <td>${escapeHtml(pin.progress || 0)}%</td>
               <td>${escapeHtml(compListFormatted || '—')}</td>
-              <td>${escapeHtml(pin.description)}</td>
+              <td>${String(reserveNumber).padStart(3, '0')}</td>
+              <td>${escapeHtml(pin.title || '')}</td>
+              <td>${escapeHtml(pin.progress || 0)}%</td>
+              <td>${datesHtml}</td>
+              <td class="report-note-text">${escapeHtml(pin.description || '')}</td>
+              <td>${state.reportConfig.includePhotos ? (pin.photos || []).map(src => `<img class="reserve-photo" src="${src}" alt="Photo de la réserve" />`).join('') || '—' : 'Non incluses'}</td>
             </tr>`;
           });
 
-          html += `</tbody></table>`;
+          html += `</tbody></table></section>`;
         });
-
         html += `</section>`;
       }
 
       html += `</body></html>`;
+      return html;
+    }
 
-      printWin.document.write(html);
-      printWin.document.close();
+    async function exportReportAsPdf(proj) {
+      if (typeof window.html2pdf !== 'function') {
+        throw new Error("La bibliothèque de génération PDF n'est pas disponible.");
+      }
 
-      const reportImages = Array.from(printWin.document.images);
-      const waitForImages = reportImages.length > 0
-        ? Promise.all(reportImages.map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-              img.onload = resolve;
-              img.onerror = resolve;
-            });
-          }))
-        : Promise.resolve();
+      const parser = new DOMParser();
+      const parsed = parser.parseFromString(buildReportHtml(proj), 'text/html');
+      const host = document.createElement('div');
+      host.setAttribute('aria-hidden', 'true');
+      host.style.cssText = 'position:fixed; left:-100000px; top:0; width:190mm; background:#fff; color:#333; z-index:-1;';
+      parsed.head.querySelectorAll('style').forEach(styleNode => host.appendChild(styleNode.cloneNode(true)));
 
-      waitForImages.then(() => {
-        setTimeout(() => {
-          printWin.focus();
-          printWin.print();
-        }, 250);
+      const content = document.createElement('div');
+      content.className = 'report-export-content';
+      content.innerHTML = parsed.body.innerHTML;
+      host.appendChild(content);
+      document.body.appendChild(host);
+
+      try {
+        await waitForElementImages(host);
+        const filename = getReportDownloadFilename(proj, 'pdf');
+        const worker = window.html2pdf().set({
+          margin: [10, 10, 12, 10],
+          filename,
+          image: { type: 'jpeg', quality: 0.97 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: '#ffffff',
+            logging: false,
+            scrollX: 0,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+          pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.report-admin-block', '.report-header', '.report-lot-title', '.report-cover-image-wrap'] }
+        }).from(content).toPdf();
+
+        const pdf = await worker.get('pdf');
+        const totalPages = pdf.internal.getNumberOfPages();
+        for (let page = 1; page <= totalPages; page += 1) {
+          pdf.setPage(page);
+          pdf.setFontSize(8);
+          pdf.setTextColor(130);
+          pdf.text(String(proj.name || ''), 10, 291);
+          pdf.text(`Page ${page} sur ${totalPages}`, 200, 291, { align: 'right' });
+        }
+        await worker.save();
+      } finally {
+        host.remove();
+      }
+    }
+
+    function dataUrlToDocxImageData(dataUrl) {
+      if (!dataUrl || typeof dataUrl !== 'string') return null;
+      const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (!match) return null;
+
+      let type = match[1].toLowerCase();
+      if (type === 'jpeg') type = 'jpg';
+      if (!['png', 'jpg', 'gif', 'bmp'].includes(type)) return null;
+
+      try {
+        const binary = atob(match[2]);
+        const data = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i += 1) data[i] = binary.charCodeAt(i);
+        return { type, data };
+      } catch (error) {
+        console.warn('Image DOCX ignorée : données invalides.', error);
+        return null;
+      }
+    }
+
+    function getImageDimensions(dataUrl) {
+      return new Promise(resolve => {
+        if (!dataUrl) return resolve({ width: 1, height: 1 });
+        const img = new Image();
+        const timer = setTimeout(() => resolve({ width: 1, height: 1 }), 5000);
+        img.onload = () => {
+          clearTimeout(timer);
+          resolve({ width: img.naturalWidth || img.width || 1, height: img.naturalHeight || img.height || 1 });
+        };
+        img.onerror = () => {
+          clearTimeout(timer);
+          resolve({ width: 1, height: 1 });
+        };
+        img.src = dataUrl;
       });
-    });
+    }
 
-    // EXPORT WORD & EXCEL
-    document.getElementById('exportWordReportBtn').addEventListener('click', () => {
+    async function createDocxImageParagraph(dataUrl, maxWidth = 520, maxHeight = 280) {
+      if (!window.docx) return null;
+      const imageData = dataUrlToDocxImageData(dataUrl);
+      if (!imageData) return null;
+
+      const dimensions = await getImageDimensions(dataUrl);
+      const ratio = Math.min(maxWidth / dimensions.width, maxHeight / dimensions.height, 1);
+      const width = Math.max(1, Math.round(dimensions.width * ratio));
+      const height = Math.max(1, Math.round(dimensions.height * ratio));
+
+      return new window.docx.Paragraph({
+        alignment: window.docx.AlignmentType.CENTER,
+        spacing: { before: 120, after: 180 },
+        children: [new window.docx.ImageRun({
+          type: imageData.type,
+          data: imageData.data,
+          transformation: { width, height }
+        })]
+      });
+    }
+
+    function docxHeading(text, level = 1) {
+      const headingMap = {
+        1: window.docx.HeadingLevel.HEADING_1,
+        2: window.docx.HeadingLevel.HEADING_2,
+        3: window.docx.HeadingLevel.HEADING_3
+      };
+      return new window.docx.Paragraph({
+        heading: headingMap[level] || window.docx.HeadingLevel.HEADING_2,
+        spacing: { before: level === 1 ? 200 : 160, after: 100 },
+        children: [new window.docx.TextRun({ text: String(text || ''), bold: true, color: level === 1 ? '0071E3' : '333333' })]
+      });
+    }
+
+    function docxParagraph(text, options = {}) {
+      return new window.docx.Paragraph({
+        spacing: { after: 100 },
+        bullet: options.bullet ? { level: 0 } : undefined,
+        children: [new window.docx.TextRun({
+          text: String(text === undefined || text === null ? '' : text),
+          bold: !!options.bold,
+          italics: !!options.italics,
+          color: options.color || '333333'
+        })]
+      });
+    }
+
+    function docxParagraphsFromText(text) {
+      const raw = String(text || '');
+      if (!raw.trim()) return [docxParagraph('')];
+      return raw.split(/\r?\n/).map(line => docxParagraph(line));
+    }
+
+    function docxTableCell(value, isHeader = false) {
+      return new window.docx.TableCell({
+        margins: { top: 80, bottom: 80, left: 90, right: 90 },
+        shading: isHeader ? { fill: 'EAF2FB' } : undefined,
+        verticalAlign: window.docx.VerticalAlign.CENTER,
+        children: [new window.docx.Paragraph({
+          children: [new window.docx.TextRun({
+            text: String(value === undefined || value === null || value === '' ? '—' : value),
+            bold: isHeader,
+            color: isHeader ? '0B4F8A' : '333333',
+            size: 18
+          })]
+        })]
+      });
+    }
+
+    function docxTable(headers, rows) {
+      const border = { style: window.docx.BorderStyle.SINGLE, size: 1, color: 'D9E2EC' };
+      return new window.docx.Table({
+        width: { size: 100, type: window.docx.WidthType.PERCENTAGE },
+        borders: { top: border, bottom: border, left: border, right: border, insideHorizontal: border, insideVertical: border },
+        rows: [
+          new window.docx.TableRow({
+            tableHeader: true,
+            cantSplit: true,
+            children: headers.map(header => docxTableCell(header, true))
+          }),
+          ...rows.map(row => new window.docx.TableRow({
+            cantSplit: true,
+            children: row.map(value => docxTableCell(value, false))
+          }))
+        ]
+      });
+    }
+
+    async function buildWordReportDocument(proj) {
+      if (!window.docx) throw new Error("La bibliothèque DOCX n'est pas disponible.");
+
+      const children = [];
+      const title = state.currentView === 'reunion'
+        ? `Compte rendu de la réunion de chantier n° ${proj.reunion.number || 1}`
+        : `Rapport de réserves — ${proj.name || 'Projet'}`;
+
+      children.push(docxHeading(title, 1));
+      children.push(docxParagraph(`Projet : ${proj.name || '—'}`, { bold: true }));
+      children.push(docxParagraph(`Client : ${proj.client || '—'}`));
+      children.push(docxParagraph(`Adresse : ${proj.location || '—'}`));
+
+      if (state.currentView === 'reunion') {
+        ensureProjectReunion(proj);
+        ensureProjectLayoutSettings(proj);
+        const reunion = proj.reunion;
+        const ls = proj.layoutSettings;
+        const cData = (reunion.convocationData && reunion.convocationData.selectedCompanies) || [];
+
+        children.push(docxParagraph(`Date : ${formatDateFR(reunion.date) || '—'}`));
+        children.push(docxParagraph(`Prochaine réunion : ${formatDateFR(reunion.nextDate) || '—'}`));
+
+        const logoParagraph = await createDocxImageParagraph(state.reportConfig.logoUrl, 180, 80);
+        if (logoParagraph) children.push(logoParagraph);
+        const projectPhotoParagraph = await createDocxImageParagraph(proj.photo, 520, 250);
+        if (projectPhotoParagraph) children.push(projectPhotoParagraph);
+
+        if (reunion.subject) {
+          children.push(docxHeading('Ordre du jour', 2));
+          children.push(...docxParagraphsFromText(reunion.subject));
+        }
+
+        children.push(docxHeading('Entreprises & Intervenants', 2));
+        children.push(docxTable(
+          ['Lots', 'Entreprises', 'Intervenants', 'Contact', 'Présence', 'Convocation'],
+          (proj.companies || []).map(c => {
+            const att = getCompanyAttendee(proj, c);
+            const presence = att ? (att.present ? `Présent${att.delay ? ` (${att.delay} min retard)` : ''}` : 'Absent') : 'Non renseigné';
+            return [c.lot || '—', c.name || '—', c.contactPerson || '—', [c.phone, c.email].filter(Boolean).join(' / ') || '—', presence, cData.includes(c.id || c.name) ? 'Oui' : 'Non'];
+          })
+        ));
+
+        children.push(docxHeading("Présentation de la maîtrise d'œuvre", 2));
+        children.push(docxTable(
+          ['Rôle', 'Intervenant', 'Contact'],
+          (ls.moeRoles || []).map(role => [role.role || '—', role.intervenant || '—', role.contact || '—'])
+        ));
+
+        children.push(docxHeading('Administratif & Marché', 2));
+        const visibleAdminBlocks = (ls.adminBlocks || []).filter(block => block && (block.title || block.text));
+        if (visibleAdminBlocks.length === 0) {
+          children.push(docxParagraph('Aucun bloc administratif.'));
+        } else {
+          visibleAdminBlocks.forEach(block => {
+            children.push(docxHeading(block.title || 'Sans titre', 3));
+            children.push(...docxParagraphsFromText(block.text || ''));
+          });
+        }
+
+        children.push(docxHeading('Remarques générales', 2));
+        const selectedGeneralNotes = (reunion.generalNotes || []).filter(note => typeof note === 'string' || !!note.selected);
+        if (selectedGeneralNotes.length === 0) {
+          children.push(docxParagraph('Aucune remarque générale sélectionnée.'));
+        } else {
+          selectedGeneralNotes.forEach(note => {
+            if (typeof note === 'string') {
+              children.push(docxParagraph(note, { bullet: true }));
+            } else {
+              const label = [note.title || 'Sans titre', note.text || ''].filter(Boolean).join(' — ');
+              children.push(docxParagraph(label, { bullet: true }));
+            }
+          });
+        }
+
+        children.push(docxHeading('Remarques individuelles', 2));
+        children.push(docxTable(
+          ['Entreprise', 'Statut', 'Remarque', "Date d'échéance"],
+          (reunion.notes || []).map(note => {
+            const companyName = ((proj.companies || []).find(c => c.id === note.company || c.name === note.company) || {}).name || note.company || '—';
+            return [companyName, note.status || '—', String(note.text || '').replace(/\r?\n/g, ' / '), formatDateFR(note.date) || '—'];
+          })
+        ));
+
+        const notesWithPhotos = (reunion.notes || []).filter(note => Array.isArray(note.photos) && note.photos.length > 0);
+        if (notesWithPhotos.length > 0) {
+          children.push(docxHeading('Photos des remarques', 2));
+          for (const note of notesWithPhotos) {
+            const companyName = ((proj.companies || []).find(c => c.id === note.company || c.name === note.company) || {}).name || note.company || 'Remarque';
+            children.push(docxParagraph(companyName, { bold: true }));
+            for (const photo of note.photos) {
+              const paragraph = await createDocxImageParagraph(photo, 500, 260);
+              if (paragraph) children.push(paragraph);
+            }
+          }
+        }
+      } else {
+        ensureProjectReserves(proj);
+        const logoParagraph = await createDocxImageParagraph(state.reportConfig.logoUrl, 180, 80);
+        if (logoParagraph) children.push(logoParagraph);
+        const projectPhotoParagraph = await createDocxImageParagraph(proj.photo, 520, 250);
+        if (projectPhotoParagraph) children.push(projectPhotoParagraph);
+
+        children.push(docxHeading('Synthèse des réserves', 2));
+        for (const { lot } of getReportLots(proj)) {
+          children.push(docxHeading(`Zone — ${lot.name || 'Sans nom'}`, 3));
+          const pins = getReportPins(lot, proj);
+          if (pins.length === 0) {
+            children.push(docxParagraph('Aucune réserve enregistrée.'));
+            continue;
+          }
+
+          const rows = pins.map(({ pin, originalIndex }) => {
+            const reserveNumberValue = pin.reserveNumber ?? pin.number ?? pin.numero;
+            const reserveNumber = Number.isFinite(Number(reserveNumberValue)) ? Number(reserveNumberValue) : originalIndex + 1;
+            const companies = (pin.companies || []).map(cRef => {
+              const found = (proj.companies || []).find(c => c.id === cRef || c.name === cRef);
+              return found ? (found.lot ? `${found.name} (${found.lot})` : found.name) : cRef;
+            }).join(', ');
+            return [
+              String(reserveNumber).padStart(3, '0'),
+              pin.title || '—',
+              `${pin.progress || 0}%`,
+              formatDateFR(pin.dateConstat) || '—',
+              formatDateFR(pin.dateEcheance) || '—',
+              companies || '—',
+              String(pin.description || '').replace(/\r?\n/g, ' / ')
+            ];
+          });
+          children.push(docxTable(['N°', 'Intitulé', 'Avancement', 'Constat', 'Échéance', 'Entreprises & lots', 'Descriptif'], rows));
+
+          if (state.reportConfig.includePhotos) {
+            for (const { pin, originalIndex } of pins) {
+              if (!Array.isArray(pin.photos) || pin.photos.length === 0) continue;
+              children.push(docxParagraph(`Photos — Réserve ${String(originalIndex + 1).padStart(3, '0')} : ${pin.title || 'Sans titre'}`, { bold: true }));
+              for (const photo of pin.photos) {
+                const paragraph = await createDocxImageParagraph(photo, 480, 240);
+                if (paragraph) children.push(paragraph);
+              }
+            }
+          }
+        }
+      }
+
+      return new window.docx.Document({
+        creator: 'Orion BTP',
+        title,
+        description: state.currentView === 'reunion' ? 'Compte rendu de réunion de chantier' : 'Rapport de réserves de chantier',
+        sections: [{
+          properties: {
+            page: {
+              size: { width: 11906, height: 16838 },
+              margin: { top: 720, right: 720, bottom: 720, left: 720 }
+            }
+          },
+          children
+        }]
+      });
+    }
+
+    document.getElementById('exportPdfReportBtn').addEventListener('click', async () => {
       const proj = getActiveProject();
       if (!proj) return;
-      const content = `<html><body><h1>Rapport Chantier - ${escapeHtml(proj.name)}</h1><p>Client: ${escapeHtml(proj.client || 'N/A')}</p></body></html>`;
-      const blob = new Blob(['\ufeff' + content], { type: 'application/msword' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Rapport_${proj.name}.doc`;
-      a.click();
+      const button = document.getElementById('exportPdfReportBtn');
+      setExportButtonBusy(button, true, 'PDF...');
+      try {
+        await exportReportAsPdf(proj);
+        hideModal('reportConfigModal');
+      } catch (error) {
+        console.error('Erreur export PDF :', error);
+        alert(`Impossible de générer le PDF : ${error.message || error}`);
+      } finally {
+        setExportButtonBusy(button, false);
+      }
+    });
+
+    document.getElementById('exportWordReportBtn').addEventListener('click', async () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      const button = document.getElementById('exportWordReportBtn');
+      setExportButtonBusy(button, true, 'Word...');
+      try {
+        const documentFile = await buildWordReportDocument(proj);
+        const blob = await window.docx.Packer.toBlob(documentFile);
+        downloadBlob(blob, getReportDownloadFilename(proj, 'docx'));
+        hideModal('reportConfigModal');
+      } catch (error) {
+        console.error('Erreur export Word :', error);
+        alert(`Impossible de générer le fichier Word : ${error.message || error}`);
+      } finally {
+        setExportButtonBusy(button, false);
+      }
     });
 
     document.getElementById('exportExcelReportBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if (!proj) return;
-      let csv = "Zone;N° Réserve;Intitulé;Avancement;Entreprises & Lots;Description\n";
+      if (state.currentView === 'reunion') return;
+      let csv = "Zone;N° Réserve;Intitulé;Avancement;Date de constat;Date d\'échéance;Entreprises & Lots;Description\n";
       (proj.lots || []).forEach(lot => {
         (lot.pins || []).forEach((p, idx) => {
           const compListFormatted = (p.companies || []).map(cRef => {
@@ -3602,7 +4325,7 @@
             }
             return cRef;
           }).join(', ');
-          csv += `"${lot.name}";"Réserve n°${String(idx + 1).padStart(3, '0')}";"${p.title}";"${p.progress || 0}%";"${compListFormatted}";"${p.description}"\n`;
+          csv += `"${lot.name}";"Réserve n°${String(idx + 1).padStart(3, '0')}";"${p.title}";"${p.progress || 0}%";"${formatDateFR(p.dateConstat) || ''}";"${formatDateFR(p.dateEcheance) || ''}";"${compListFormatted}";"${p.description}"\n`;
         });
       });
       const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -3711,6 +4434,11 @@
       renderReunionModule();
     });
 
+    document.getElementById('reunionTabLayoutBtn').addEventListener('click', () => {
+      state.reunionTab = 'layout';
+      renderReunionModule();
+    });
+
     document.getElementById('addGeneralReunionNoteBtn').addEventListener('click', () => {
       const proj = getActiveProject();
       if (!proj) return;
@@ -3736,6 +4464,44 @@
       proj.reunion.notes.push({ id: 'note_' + Date.now(), company: '', status: 'À faire', text: '', date: '', photos: [] });
       saveData();
       renderReunionNotes(proj);
+    });
+
+    document.getElementById('startNewReunionBtn').addEventListener('click', () => {
+      const proj = getActiveProject();
+      if (!proj) return;
+      ensureProjectReunion(proj);
+
+      if (!confirm("Archiver la réunion actuelle et préparer une nouvelle réunion ?\nLes remarques par entreprise de la réunion en cours seront conservées dans l'historique et seules les remarques non réalisées seront reprises pour la prochaine réunion.")) {
+        return;
+      }
+
+      if (!Array.isArray(proj.reunionHistory)) proj.reunionHistory = [];
+
+      // On archive un instantané de la réunion actuelle (numéro, date, notes par entreprise avec leur statut)
+      // afin que la prochaine réunion puisse retrouver les actions restant à traiter.
+      proj.reunionHistory.push(JSON.parse(JSON.stringify({
+        number: proj.reunion.number,
+        date: proj.reunion.date,
+        nextDate: proj.reunion.nextDate,
+        subject: proj.reunion.subject,
+        notes: proj.reunion.notes || [],
+        generalNotes: proj.reunion.generalNotes || []
+      })));
+
+      // Les éléments clôturés restent dans l'historique, sans être repris à la réunion suivante.
+      const carriedIndividualNotes = (proj.reunion.notes || []).filter(n => !isReunionNoteDone(n));
+      const carriedGeneralNotes = (proj.reunion.generalNotes || []).filter(n => !isReunionNoteDone(n));
+
+      const previousNumber = parseInt(proj.reunion.number, 10);
+      proj.reunion.number = Number.isFinite(previousNumber) ? previousNumber + 1 : (proj.reunion.number || 1);
+      proj.reunion.date = proj.reunion.nextDate || new Date().toISOString().split('T')[0];
+      proj.reunion.nextDate = '';
+      proj.reunion.subject = '';
+      proj.reunion.notes = carriedIndividualNotes;
+      proj.reunion.generalNotes = carriedGeneralNotes;
+
+      saveData();
+      renderReunionModule();
     });
 
     ['reunionInputNumber', 'reunionInputDate', 'reunionInputNextDate', 'reunionInputSubject'].forEach(id => {
