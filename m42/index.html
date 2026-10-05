@@ -57,6 +57,43 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.7); }
     .apple-glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .drag-over-active { border-color: #10b981 !important; background-color: rgba(16, 185, 129, 0.05) !important; }
+
+    .project-banner { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:24px 30px; border-radius:24px; border:1px solid #e8edf4; background:#fff; box-shadow:0 4px 14px rgba(15,23,42,.035); }
+    .project-banner-main { min-width:0; }
+    .project-banner h1 { overflow-wrap:anywhere; }
+    .project-meta { display:flex; gap:12px; flex-shrink:0; }
+    .project-meta-card { padding:12px 16px; border:1px solid #edf2f7; border-radius:18px; background:#f8faff; font-size:12px; min-width:116px; max-width:240px; overflow-wrap:anywhere; }
+    .project-meta-card dt { color:#94a3b8; font-weight:600; margin-bottom:3px; }
+    .project-meta-card dd { font-weight:600; }
+    .module-header-actions { display:flex; gap:10px; }
+    .module-header-actions.hidden { display:none; }
+    .module-header-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:8px 12px; border-radius:12px; border:1px solid #dde5ef; background:white; color:#475569; font-size:12px; font-weight:600; box-shadow:0 2px 3px rgba(15,23,42,.05); white-space:nowrap; }
+    .module-header-button:hover { background:#f8fafc; }
+    .dark .project-banner { background:#0f172a; border-color:#1e293b; }
+    .dark .project-meta-card { background:#172033; border-color:#263449; }
+    .dark .module-header-button { background:#1e293b; border-color:#334155; color:#e2e8f0; }
+    .dark .module-header-button:hover { background:#334155; }
+    .reorder-controls { display:flex; align-items:center; gap:4px; }
+    .reorder-controls button { padding:6px; border-radius:6px; min-height:32px; }
+    .reorder-controls button:hover { background:rgba(148,163,184,.18); }
+    .reorder-controls button:disabled { opacity:.3; cursor:not-allowed; }
+    .reorder-controls button:focus-visible, .module-header-button:focus-visible { outline:2px solid #3b82f6; outline-offset:2px; }
+    .reorder-handle { cursor:grab; }
+    .reorder-handle:active { cursor:grabbing; }
+    #m42TableBody .drop-before td { box-shadow:inset 0 3px #3b82f6; }
+    #m42TableBody .drop-after td { box-shadow:inset 0 -3px #3b82f6; }
+    #m42TableBody .dragging { opacity:.45; }
+    @media(max-width:767px) {
+      header > div { height:auto !important; min-height:64px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }
+      header > div > div { min-width:0; }
+      header > div > div:last-child { flex-wrap:wrap; }
+      .reorder-controls button { min-height:44px; min-width:44px; }
+      .module-header-actions { gap:6px; }
+      .module-header-button { padding:8px; font-size:11px; }
+      .project-banner { align-items:stretch; flex-direction:column; gap:16px; padding:22px; }
+      .project-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .project-meta-card { min-width:0; max-width:none; }
+    }
   </style>
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
@@ -85,6 +122,10 @@
 
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="moduleHeaderActions" class="module-header-actions hidden">
+          <button type="button" id="moduleEditProjectBtn" class="module-header-button"><i data-lucide="pencil" class="w-4 h-4 text-blue-500"></i><span>Modifier le projet</span></button>
+          <button type="button" id="openReportConfigBtn" class="module-header-button"><i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i><span>Rapports</span></button>
+        </div>
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
         </button>
@@ -301,7 +342,7 @@
         <div id="selectModuleM42" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="sparkles" class="w-7 h-7"></i>
+              <i data-lucide="calculator" class="w-7 h-7"></i>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Estimatif Projet BTP</h3>
@@ -342,30 +383,19 @@
     <div id="m42View" class="hidden space-y-6">
       
       <!-- Banner Projet -->
-      <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="space-y-2 text-left">
-            <div class="flex items-center space-x-2">
-              <span id="m42ProjectStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
-            </div>
-            <h1 id="m42ProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
-              <span id="m42ProjectLocationDisplay"></span>
-            </p>
+      <section class="project-banner">
+        <div class="project-banner-main space-y-2 text-left">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="m42ProjectStatusBadge" class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><i data-lucide="calculator" class="w-3.5 h-3.5"></i>Module Estimation</span>
           </div>
-
-          <div class="flex flex-wrap items-center gap-3">
-            <button id="openReportConfigBtn" class="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold transition-all shadow-sm active:scale-95 flex items-center space-x-2">
-              <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
-              <span>Rapports & Exports</span>
-            </button>
-            <button id="quickGenerateAiBtn" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/25 active:scale-95 flex items-center space-x-2">
-              <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span>Générer par M42</span>
-            </button>
-          </div>
+          <h1 id="m42ProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i><span id="m42ProjectLocationDisplay" class="break-words min-w-0"></span></p>
         </div>
+        <dl class="project-meta">
+          <div class="project-meta-card"><dt>Client</dt><dd id="m42ProjectClientDisplay"></dd></div>
+          <div class="project-meta-card"><dt>Surface totale</dt><dd id="m42ProjectSurfaceDisplay"></dd></div>
+        </dl>
       </section>
 
       <!-- PANNEAU IMPORT DOCUMENTS & PROMPT -->
@@ -469,6 +499,7 @@
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="border-b dark:border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+                <th class="py-3 px-3">Ordre</th>
                 <th class="py-3 px-3">Lot / Réf</th>
                 <th class="py-3 px-3">Désignation des ouvrages</th>
                 <th class="py-3 px-3 text-center">Unité</th>
@@ -496,36 +527,30 @@
     <div id="planningView" class="hidden space-y-6">
       
       <!-- Banner Projet Planning -->
-      <section class="rounded-3xl p-5 sm:p-8 apple-glass border border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 shadow-lg transition-all">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div class="space-y-2 text-left">
-            <div class="flex items-center space-x-2">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600">Module Planning</span>
-            </div>
-            <h1 id="planningProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
-              <span id="planningProjectLocationDisplay"></span>
-            </p>
+      <section class="project-banner">
+        <div class="project-banner-main space-y-2 text-left">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="planningProjectStatusBadge" class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>Module Planning</span>
           </div>
-
-          <div class="flex items-center space-x-3">
-            <button id="syncPlanningFromEstimatifBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 flex items-center space-x-2">
-              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-              <span>Générer depuis l'estimatif</span>
-            </button>
-          </div>
+          <h1 id="planningProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i><span id="planningProjectLocationDisplay" class="break-words min-w-0"></span></p>
         </div>
+        <dl class="project-meta">
+          <div class="project-meta-card"><dt>Client</dt><dd id="planningProjectClientDisplay"></dd></div>
+          <div class="project-meta-card"><dt>Surface totale</dt><dd id="planningProjectSurfaceDisplay"></dd></div>
+        </dl>
       </section>
 
       <!-- TIMELINE & DÉROULÉ DES PHASES -->
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-6">
-        <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b dark:border-slate-800">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
             <i data-lucide="calendar-range" class="w-5 h-5 text-emerald-500"></i>
             <span>Planning Prévisionnel par Phases</span>
           </h3>
           <span id="planningTotalDuration" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Durée : 0 semaines</span>
+          <button id="syncPlanningFromEstimatifBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>Générer depuis l'estimatif</span></button>
         </div>
 
         <div id="planningPhasesContainer" class="space-y-4 text-left"></div>
@@ -597,7 +622,7 @@
           <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
           <div>
             <h3 class="text-base sm:text-lg font-bold leading-tight">Rapports et options d'export</h3>
-            <p class="text-[10px] sm:text-xs text-slate-400">Générez vos documents professionnels</p>
+            <p class="text-[10px] sm:text-xs text-slate-400">Rapports de l’estimatif du projet actif. PDF et Word : simulations existantes.</p>
           </div>
         </div>
         <button id="closeReportConfigBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -785,6 +810,7 @@
       });
 
       const activeProject = getActiveProject();
+      document.getElementById('moduleHeaderActions').classList.toggle('hidden', !activeProject || !['m42', 'planning'].includes(state.currentView));
 
       if (state.currentView === 'home' || !activeProject) {
         if (homeView) homeView.classList.remove('hidden');
@@ -925,6 +951,16 @@
     }
 
     // --- LOGIQUE DU MODULE M42 (ESTIMATIF & DOCUMENTS) ---
+    function renderProjectBanner(prefix, proj) {
+      const info = (value, fallback) => value == null || String(value).trim() === '' ? fallback : String(value);
+      document.getElementById(prefix + 'ProjectStatusBadge').textContent = info(proj.status, 'Statut non renseigné');
+      document.getElementById(prefix + 'ProjectNameDisplay').textContent = info(proj.name, 'Projet sans nom');
+      document.getElementById(prefix + 'ProjectLocationDisplay').textContent = info(proj.location, 'Adresse non renseignée');
+      document.getElementById(prefix + 'ProjectClientDisplay').textContent = info(proj.client, 'Client non renseigné');
+      const surface = proj.surfaceTotal;
+      document.getElementById(prefix + 'ProjectSurfaceDisplay').textContent = surface == null || String(surface).trim() === '' ? 'Surface non renseignée' : info(surface, '0') + ' m²';
+    }
+
     function renderM42Module() {
       const proj = getActiveProject();
       if (!proj) return;
@@ -934,9 +970,7 @@
       }
       if (!proj.estimatif.documents) proj.estimatif.documents = [];
 
-      document.getElementById('m42ProjectNameDisplay').textContent = proj.name;
-      document.getElementById('m42ProjectLocationDisplay').textContent = proj.location || 'Non renseigné';
-      document.getElementById('m42ProjectStatusBadge').textContent = proj.status || 'En cours';
+      renderProjectBanner('m42', proj);
       document.getElementById('m42TvaSelect').value = proj.estimatif.tvaRate || "10";
       document.getElementById('m42WorkTypeSelect').value = proj.estimatif.workType || "Rénovation globale";
       document.getElementById('m42QualitySelect').value = proj.estimatif.qualityLevel || "Standard";
@@ -956,7 +990,13 @@
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors';
+        tr.dataset.itemIndex = index;
         tr.innerHTML = `
+          <td class="py-3 px-2"><div class="reorder-controls">
+            <button type="button" draggable="true" class="reorder-handle" aria-label="Glisser la ligne ${index + 1}" title="Glisser pour réordonner" ${items.length < 2 ? 'disabled' : ''}><i data-lucide="grip-vertical" class="w-4 h-4"></i></button>
+            <button type="button" data-move="-1" aria-label="Monter la ligne ${index + 1}" title="Monter" ${index === 0 ? 'disabled' : ''}><i data-lucide="arrow-up" class="w-4 h-4 inline-block"></i><span class="ml-1 text-[10px]">Monter</span></button>
+            <button type="button" data-move="1" aria-label="Descendre la ligne ${index + 1}" title="Descendre" ${index === items.length - 1 ? 'disabled' : ''}><i data-lucide="arrow-down" class="w-4 h-4 inline-block"></i><span class="ml-1 text-[10px]">Descendre</span></button>
+          </div></td>
           <td class="py-3 px-3 font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">${escapeHtml(item.lot)}</td>
           <td class="py-3 px-3 text-slate-800 dark:text-slate-200">${escapeHtml(item.designation)}</td>
           <td class="py-3 px-3 text-center font-mono text-slate-500">${escapeHtml(item.unit)}</td>
@@ -1073,6 +1113,71 @@
       renderM42Module();
     }
 
+    // Delegated events survive each table render without accumulating handlers.
+    let estimatifDrag = null;
+    const estimatifBody = document.getElementById('m42TableBody');
+    function clearEstimatifDrop() {
+      estimatifBody.querySelectorAll('.drop-before, .drop-after, .dragging').forEach(row => row.classList.remove('drop-before', 'drop-after', 'dragging'));
+    }
+    function moveEstimatifItem(from, to, focusDirection) {
+      const proj = getActiveProject();
+      const items = proj && proj.estimatif && proj.estimatif.items;
+      if (!items || !Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to < 0 || from >= items.length || to >= items.length || from === to) return;
+      const [item] = items.splice(from, 1);
+      items.splice(to, 0, item);
+      if (state.editingEstimatifItemIndex === from) state.editingEstimatifItemIndex = to;
+      else if (state.editingEstimatifItemIndex !== null && from < state.editingEstimatifItemIndex && to >= state.editingEstimatifItemIndex) state.editingEstimatifItemIndex--;
+      else if (state.editingEstimatifItemIndex !== null && from > state.editingEstimatifItemIndex && to <= state.editingEstimatifItemIndex) state.editingEstimatifItemIndex++;
+      saveData();
+      renderM42Module();
+      const row = estimatifBody.querySelector(`[data-item-index="${to}"]`);
+      const control = focusDirection && row.querySelector(`[data-move="${focusDirection}"]:not(:disabled)`);
+      (control || row.querySelector('.reorder-handle')).focus();
+    }
+    estimatifBody.addEventListener('click', e => {
+      const button = e.target.closest('button[data-move]');
+      if (!button || button.disabled) return;
+      const index = Number(button.closest('tr').dataset.itemIndex);
+      moveEstimatifItem(index, index + Number(button.dataset.move), button.dataset.move);
+    });
+    estimatifBody.addEventListener('dragstart', e => {
+      const handle = e.target.closest('.reorder-handle');
+      if (!handle || handle.disabled) { e.preventDefault(); return; }
+      const row = handle.closest('tr');
+      estimatifDrag = { index: Number(row.dataset.itemIndex), projectId: getActiveProject().id };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(estimatifDrag.index));
+      row.classList.add('dragging');
+    });
+    estimatifBody.addEventListener('dragover', e => {
+      if (!estimatifDrag || estimatifDrag.projectId !== getActiveProject()?.id) return;
+      const row = e.target.closest('tr[data-item-index]');
+      if (!row) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      estimatifBody.querySelectorAll('.drop-before, .drop-after').forEach(el => el.classList.remove('drop-before', 'drop-after'));
+      const rect = row.getBoundingClientRect();
+      row.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drop-before' : 'drop-after');
+    });
+    estimatifBody.addEventListener('drop', e => {
+      if (!estimatifDrag) return;
+      e.preventDefault();
+      const row = e.target.closest('tr[data-item-index]');
+      const drag = estimatifDrag;
+      estimatifDrag = null;
+      if (row && drag.projectId === getActiveProject()?.id) {
+        const rect = row.getBoundingClientRect();
+        const slot = Number(row.dataset.itemIndex) + (e.clientY >= rect.top + rect.height / 2 ? 1 : 0);
+        clearEstimatifDrop();
+        moveEstimatifItem(drag.index, slot > drag.index ? slot - 1 : slot);
+      }
+      clearEstimatifDrop();
+    });
+    estimatifBody.addEventListener('dragleave', e => {
+      if (!estimatifBody.contains(e.relatedTarget)) clearEstimatifDrop();
+    });
+    estimatifBody.addEventListener('dragend', () => { estimatifDrag = null; clearEstimatifDrop(); });
+
     function editEstimatifItem(index) {
       const proj = getActiveProject();
       if (!proj || !proj.estimatif.items[index]) return;
@@ -1107,8 +1212,7 @@
         generatePlanningFromEstimatifData(proj);
       }
 
-      document.getElementById('planningProjectNameDisplay').textContent = proj.name;
-      document.getElementById('planningProjectLocationDisplay').textContent = proj.location || 'Adresse non renseignée';
+      renderProjectBanner('planning', proj);
 
       const container = document.getElementById('planningPhasesContainer');
       container.innerHTML = '';
@@ -1151,15 +1255,13 @@
 
       let currentWeek = 1;
       const planning = [];
-      const lotsMap = {};
+      const lotsMap = new Map();
 
       proj.estimatif.items.forEach(i => {
-        if (!lotsMap[i.lot]) lotsMap[i.lot] = 0;
-        lotsMap[i.lot] += (i.qty * i.unitPrice);
+        lotsMap.set(i.lot, (lotsMap.get(i.lot) || 0) + (i.qty * i.unitPrice));
       });
 
-      Object.keys(lotsMap).forEach((lot) => {
-        const cost = lotsMap[lot];
+      lotsMap.forEach((cost, lot) => {
         const dur = Math.max(1, Math.round(cost / 3000));
         planning.push({
           phase: lot,
@@ -1236,7 +1338,6 @@
     }
 
     // --- EVENT LISTENERS & MODALS ---
-    document.getElementById('quickGenerateAiBtn').onclick = generateAiEstimatif;
     document.getElementById('runPromptAiBtn').onclick = generateAiEstimatif;
 
     document.getElementById('m42TvaSelect').onchange = (e) => {
@@ -1282,10 +1383,12 @@
       renderM42Module();
     };
 
+    document.getElementById('moduleEditProjectBtn').onclick = () => openEditProjectModal(getActiveProject());
+
     // Exports CSV / PDF / Word
     const openReportBtn = document.getElementById('openReportConfigBtn');
     if (openReportBtn) {
-      openReportBtn.onclick = () => showModal('reportConfigModal');
+      openReportBtn.onclick = () => { if (getActiveProject()) showModal('reportConfigModal'); };
     }
 
     document.getElementById('exportExcelReportBtn').onclick = () => {
@@ -1355,7 +1458,7 @@
         document.getElementById('projectModalTitle').textContent = "Modifier le projet";
         document.getElementById('projectInputName').value = proj.name || '';
         document.getElementById('projectInputClient').value = proj.client || '';
-        document.getElementById('projectInputSurface').value = proj.surfaceTotal || '';
+        document.getElementById('projectInputSurface').value = proj.surfaceTotal ?? '';
         document.getElementById('projectInputLocation').value = proj.location || '';
         document.getElementById('projectInputStatus').value = proj.status || 'En conception';
         currentProjectPhoto = proj.photo || null;
