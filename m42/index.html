@@ -226,7 +226,7 @@
 
       <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
         <p><strong>1. Stockage Local :</strong> Les données de vos estimatifs BTP, plannings et documents importés sont conservées localement sur votre navigateur.</p>
-        <p><strong>2. Traitement IA M42 :</strong> La génération automatisée de métrés s'effectue en temps réel pour sécuriser vos tarifs et délais.</p>
+        <p><strong>2. Traitement M42 :</strong> La génération automatisée de métrés s'effectue en temps réel pour sécuriser vos tarifs et délais.</p>
         <p><strong>3. Exports de Rapports :</strong> Tous les documents et estimatifs générés vous appartiennent.</p>
       </div>
 
@@ -306,7 +306,7 @@
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Estimatif Projet BTP</h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Importez vos documents techniques (CCTP, plans, devis) et générez le devis & métré DPGF du projet grâce à l'IA M42.
+                Importez vos documents techniques (CCTP, plans, devis) et générez le devis & métré DPGF du projet grâce à M42.
               </p>
             </div>
           </div>
@@ -362,18 +362,18 @@
             </button>
             <button id="quickGenerateAiBtn" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/25 active:scale-95 flex items-center space-x-2">
               <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span>Générer par IA M42</span>
+              <span>Générer par M42</span>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- PANNEAU IMPORT DOCUMENTS & PROMPT IA -->
+      <!-- PANNEAU IMPORT DOCUMENTS & PROMPT -->
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
         <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
             <i data-lucide="bot" class="w-5 h-5 text-emerald-500"></i>
-            <span>Assistant IA M42 - Paramétrage & Documents</span>
+            <span>Paramétrage & Documents</span>
           </h3>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300">Modèle BTP v4.2</span>
         </div>
@@ -424,7 +424,7 @@
         </div>
 
         <div class="text-left">
-          <label class="block text-slate-500 font-medium mb-1.5 text-xs">Consignes particulières pour les agents IA M42</label>
+          <label class="block text-slate-500 font-medium mb-1.5 text-xs">Consignes | Descriptif du projet</label>
           <div class="flex flex-col sm:flex-row gap-2">
             <input type="text" id="m42PromptInput" placeholder="ex: Analyse du CCTP joint, rénovation T3 75m², remplacement électricité et parquet..." class="flex-1 px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
             <button id="runPromptAiBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1.5 shrink-0">
