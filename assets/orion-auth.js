@@ -34,15 +34,33 @@
   }
   function blocked(error) {
     document.documentElement.classList.add('orion-locked');
+    try {if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');}catch{}
     readyDOM(()=>{
       let box=document.getElementById('orionGate');
-      if(!box){box=document.createElement('div');box.id='orionGate';document.body.append(box);}
-      box.replaceChildren();
-      const title=document.createElement('h1');title.textContent='Accès Orion BTP';
-      const p=document.createElement('p');p.textContent=error?.message||'Connectez-vous à un compte autorisé pour ouvrir ce module.';
-      const a=document.createElement('a');a.href=portal();a.textContent='Mon compte et mes accès';
-      const b=document.createElement('button');b.textContent='Réessayer';b.onclick=()=>location.reload();
-      box.append(title,p,a,b);
+      if(!box){box=document.createElement('main');box.id='orionGate';document.body.append(box);}
+      box.replaceChildren();box.setAttribute('aria-labelledby','orionGateTitle');
+      const node=(tag,text,parent,className)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(className)n.className=className;if(parent)parent.append(n);return n;};
+      const icon=(parent,kind)=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',kind==='brand'?'m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z':'M7 10V7a5 5 0 0 1 10 0v3M6 10h12v11H6V10Zm6 5v2');svg.append(path);parent.append(svg);};
+      const header=node('header',null,box,'gate-header'),brand=node('a',null,header,'gate-brand');brand.href=new URL('index.html',root).href;icon(node('span',null,brand,'gate-brand-icon'),'brand');node('span','Orion BTP',brand);
+      const home=node('a','← Retour à l’accueil',header,'gate-home');home.href=new URL('index.html',root).href;
+      const layout=node('div',null,box,'gate-layout'),intro=node('aside',null,layout,'gate-intro');
+      node('span','ESPACE ORION',intro,'gate-overline');node('h2','Les bons outils, pour chaque étape du chantier.',intro);node('p','Préparation, documents et suivi terrain : vos accès sont gérés depuis votre profil Orion.',intro);
+      const modules=node('div',null,intro,'gate-module-list');for(const [code,name] of [['M42','Préparation & métrés'],['M43','CCTP & documents'],['M78','Suivi & réserves']]){const row=node('div',null,modules);node('span',code,row,'gate-module-code '+code.toLowerCase());node('span',name,row);}
+      const card=node('section',null,layout,'gate-card'),symbol=node('div',null,card,'gate-lock');icon(symbol,'lock');
+      const names={m42:'M42 · Préparation & métrés',m43:'M43 · CCTP & documents',m78:'M78 · Suivi & réserves'};
+      node('span',names[moduleName]||'Votre espace Orion',card,'gate-module-label');
+      // Translate expected failures; never show raw server/network errors to users.
+      const reason=String(error?.message||'');let title='Accès non autorisé',copy='Votre compte ne dispose pas encore de l’accès à ce module. Contactez votre administrateur pour demander son activation.',action='Ouvrir mon profil';
+      if(!client){title='Service indisponible';copy='La connexion à Orion n’est pas disponible pour le moment. Contactez l’administrateur ou réessayez plus tard.';}
+      else if(/connexion requise|not authenticated|not logged|auth session missing|jwt|session.*(expired|missing|changed)|session a changé|compte a changé/i.test(reason)){title='Connexion nécessaire';copy='Connectez-vous à votre compte Orion pour consulter vos accès et ouvrir ce module.';action='Se connecter';}
+      else if(/failed to fetch|fetch failed|network|timeout|timed out|load failed|réseau/i.test(reason)){title='Connexion interrompue';copy='Nous ne pouvons pas vérifier vos accès pour le moment. Vérifiez votre connexion internet, puis réessayez.';}
+      else if(/administration refusée|double authentification|aal2|mfa/i.test(reason)){title='Vérification nécessaire';copy='L’administration nécessite un compte administrateur actif et une double authentification. Ouvrez votre profil pour effectuer cette vérification.';}
+      else if(/profil introuvable/i.test(reason)){title='Profil indisponible';copy='Votre profil ne peut pas être chargé. Contactez l’administrateur pour vérifier votre compte.';}
+      const heading=node('h1',title,card);heading.id='orionGateTitle';heading.tabIndex=-1;
+      const message=node('p',copy,card,'gate-message');message.setAttribute('role','alert');
+      const actions=node('div',null,card,'gate-actions'),account=node('a',action,actions,'gate-primary');account.href=portal();
+      const retry=node('button','Réessayer',actions,'gate-secondary');retry.type='button';retry.onclick=()=>location.reload();
+      node('p','Les autorisations sont accordées par votre administrateur, module par module.',card,'gate-note');heading.focus({preventScroll:true});
     });
   }
   if(client)client.auth.onAuthStateChange((event,session)=>{
@@ -68,7 +86,7 @@
       if(client){const {error}=await client.auth.signOut();if(error){alert(error.message);return;}}
       location.href=portal();return;
     }
-    if(/^(dropdown(Login|Register|Admin)Btn|openLoginModalBtn|openRegisterModalBtn|loginBtn|registerBtn)$/.test(b.id)){
+    if(/^(dropdown(Login|Register|Admin|Account)Btn|openLoginModalBtn|openRegisterModalBtn|loginBtn|registerBtn)$/.test(b.id)){
       e.preventDefault();e.stopImmediatePropagation();location.href=portal(/register/i.test(b.id)?'register':/admin/i.test(b.id)?'admin':'login');
     }
   },true);
@@ -79,7 +97,7 @@
     }
   },true);
   readyDOM(()=>{
-    if(document.getElementById('orionAccountLink'))return;
+    if(!moduleName || document.getElementById('orionAccountLink'))return;
     const a=document.createElement('a');a.id='orionAccountLink';a.href=portal();a.textContent='Mon compte · Accès · Administration';
     a.style.cssText='position:fixed;bottom:80px;right:12px;z-index:160;background:#0f172a;color:white;border-radius:12px;padding:10px;font:13px system-ui';document.body.append(a);
   });
