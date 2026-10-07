@@ -3,6 +3,7 @@
   const root = new URL('../', document.currentScript.src);
   const moduleName = document.documentElement.dataset.orionModule;
   const cfg = window.ORION_CONFIG || {};
+  try { document.documentElement.classList.toggle('dark',localStorage.getItem('theme')==='dark'); } catch {}
   let client=null,configError='';
   try {
     if(cfg.url && cfg.publishableKey){
@@ -25,7 +26,9 @@
   async function access() {
     if(!client) return null;
     const {data,error}=await client.auth.getUser(); if(error || !data.user) return null;
-    return rpc('orion_my_access');
+    const result=await rpc('orion_my_access');
+    if(result?.user)result.user={...result.user,name:result.user.full_name||result.user.email||'Mon compte',isAdmin:result.is_admin};
+    return result;
   }
   async function guard() {
     const data=await rpc('orion_require_module',{p_module:moduleName});
@@ -56,10 +59,12 @@
       else if(/failed to fetch|fetch failed|network|timeout|timed out|load failed|réseau/i.test(reason)){title='Connexion interrompue';copy='Nous ne pouvons pas vérifier vos accès pour le moment. Vérifiez votre connexion internet, puis réessayez.';}
       else if(/administration refusée|double authentification|aal2|mfa/i.test(reason)){title='Vérification nécessaire';copy='L’administration nécessite un compte administrateur actif et une double authentification. Ouvrez votre profil pour effectuer cette vérification.';}
       else if(/profil introuvable/i.test(reason)){title='Profil indisponible';copy='Votre profil ne peut pas être chargé. Contactez l’administrateur pour vérifier votre compte.';}
+      else if(/conflit|sauvegarde|projets|pièce jointe|données/i.test(reason)){title='Synchronisation à vérifier';copy='Vos projets sur cet appareil sont conservés. Exportez votre brouillon avant de recharger, puis vérifiez votre connexion et réessayez.';}
       const heading=node('h1',title,card);heading.id='orionGateTitle';heading.tabIndex=-1;
       const message=node('p',copy,card,'gate-message');message.setAttribute('role','alert');
       const actions=node('div',null,card,'gate-actions'),account=node('a',action,actions,'gate-primary');account.href=portal();
       const retry=node('button','Réessayer',actions,'gate-secondary');retry.type='button';retry.onclick=()=>location.reload();
+      if(window.OrionCloud?.enabled){const backup=node('button','Exporter le brouillon',actions,'gate-secondary');backup.type='button';backup.onclick=()=>OrionCloud.exportDraft();}
       node('p','Les autorisations sont accordées par votre administrateur, module par module.',card,'gate-note');heading.focus({preventScroll:true});
     });
   }
@@ -69,7 +74,7 @@
   });
   window.OrionAuth={client,configError,rpc,access,guard,portal,root,blocked};
   window.OrionReady=(async()=>{
-    if(!moduleName){try{window.OrionSession=await access();}catch{}return;}
+    if(!moduleName){try{window.OrionSession=await access();window.OrionAccountId=window.OrionSession?.user?.id;}catch{}return;}
     document.documentElement.classList.add('orion-locked');
     try {
       const data=await guard(); window.OrionAccountId=data.user_id; window.OrionSession=await access();
@@ -83,6 +88,7 @@
     const b=e.target.closest('button,a');if(!b)return;
     if(/logout/i.test(b.id)){
       e.preventDefault();e.stopImmediatePropagation();
+      if(window.OrionStore){try{await OrionStore.flush();}catch(error){OrionUI.notify('Déconnexion interrompue : exportez votre brouillon avant de quitter.',true);return;}}
       if(client){const {error}=await client.auth.signOut();if(error){alert(error.message);return;}}
       location.href=portal();return;
     }
@@ -97,8 +103,18 @@
     }
   },true);
   readyDOM(()=>{
-    if(!moduleName || document.getElementById('orionAccountLink'))return;
-    const a=document.createElement('a');a.id='orionAccountLink';a.href=portal();a.textContent='Mon compte · Accès · Administration';
-    a.style.cssText='position:fixed;bottom:80px;right:12px;z-index:160;background:#0f172a;color:white;border-radius:12px;padding:10px;font:13px system-ui';document.body.append(a);
+    const menu=document.getElementById('userDropdownMenu');
+    if(!menu)return;
+    menu.setAttribute('aria-label','Compte et administration');
+    const add=(id,label,mode)=>{
+      if(document.getElementById(id))return;
+      const a=document.createElement('a');a.id=id;a.href=portal(mode);a.textContent=label;
+      a.className='block w-full text-left px-4 py-3 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800';
+      menu.append(a);
+    };
+    add('orionMenuAccountLink','Mon compte et mes accès','login');
+    window.OrionReady.then(()=>{
+      if(window.OrionSession?.is_admin)add('orionMenuAdminLink','Administration','admin');
+    });
   });
 })();

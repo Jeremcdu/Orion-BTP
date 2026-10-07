@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html data-orion-module="m78" lang="fr" class="h-full">
 <head>
-<link rel="stylesheet" href="../assets/auth.css"><script src="../assets/orion-config.js"></script><script src="../assets/supabase.js"></script><script src="../assets/orion-auth.js"></script>
-<script>window.OrionReady.then(()=>{
+<link rel="stylesheet" href="../assets/auth.css"><script src="../assets/orion-config.js"></script><script src="../assets/supabase.js"></script><script src="../assets/orion-auth.js"></script><script src="../assets/orion-cloud.js"></script><script src="../assets/orion-navigation.js"></script>
+<script>window.OrionReady = window.OrionReady.then(async()=>{
 
 /* Orion front-end foundation v2. Embedded identically in all four pages.
- * Backend seam: replace OrionStore.adapter.commit(base, draft) and initial loading
- * with authenticated API calls + atomic server version checks. Never put secrets here.
- * Local adapter uses Web Locks or an IndexedDB transaction, merges fields by stable IDs,
- * and refuses conflicting changes. localStorage is a local cache, not cloud storage.
+ * Authenticated projects use OrionCloud with atomic server revision checks.
+ * The existing merge, validation, local cache and JSON backup format are preserved.
+ * Guest pages retain their local adapter. Never put server secrets here.
  */
 (() => {
   'use strict';
@@ -43,6 +42,11 @@
     const close = document.createElement('button'); close.type = 'button'; close.textContent = '×'; close.setAttribute('aria-label', 'Fermer la notification');
     close.style.cssText = 'font:22px system-ui;border:0;background:transparent;color:inherit;cursor:pointer';
     close.onclick = () => notice.remove(); notice.append(text, close);
+    if (error && window.OrionCloud?.enabled) {
+      const backup = document.createElement('button'); backup.type = 'button'; backup.textContent = 'Exporter le brouillon';
+      backup.style.cssText = 'font:12px system-ui;white-space:nowrap;text-decoration:underline;cursor:pointer';
+      backup.onclick = () => OrionCloud.exportDraft(); notice.append(backup);
+    }
     if (!error) showNotice.timer = setTimeout(() => notice.remove(), 6000);
   }
   function merge(base, draft, remote, path = 'projets') {
@@ -156,7 +160,7 @@
     }
     visit(projects); return projects;
   }
-  function read() { return validate(normalizeLegacy(JSON.parse(localStorage.getItem(KEY) || '[]'))); }
+  function read() { return validate(normalizeLegacy(window.OrionCloud?.ready ? OrionCloud.projects : JSON.parse(localStorage.getItem(KEY) || '[]'))); }
   // On file:// or environments without Web Locks, a readwrite IDB transaction
   // serializes the synchronous localStorage update without disabling concurrency checks.
   let localLockDb;
@@ -180,6 +184,7 @@
   }
   const adapter = {
     async commit(base, draft) {
+      if (window.OrionCloud?.enabled) return OrionCloud.commit(base, draft, merge, validate);
       if(document.documentElement.dataset.orionModule) await OrionAuth.guard();
       const commit = () => {
         const result = validate(merge(base, draft, read()));
@@ -198,13 +203,14 @@
     let next;
     try { next = validate(normalizeLegacy(copy(projects))); } catch(e) { fault=e; tell(e.message,true); return Promise.reject(e); }
     const before = baseline; baseline = next; pending++; sequence++;
-    tell('Enregistrement local…');
+    tell(OrionCloud.enabled ? 'Enregistrement sur votre compte…' : 'Enregistrement local…');
     const job = queue.then(async () => {
       if (fault) throw fault;
-      await adapter.commit(before,next);
+      try { await adapter.commit(before,next); }
+      catch (error) { try { await OrionCloud.keepDraft(getDraft()); } catch {} throw error; }
     });
     queue = job.catch(error => { fault=error; });
-    job.then(() => { pending--; if (!pending && !fault) tell('Enregistré sur cet appareil · Aucun envoi au serveur.'); }, error => {
+    job.then(() => { pending--; if (!pending && !fault) tell(OrionCloud.enabled ? 'Enregistré sur votre compte.' : 'Enregistré sur cet appareil.'); }, error => {
       pending--; tell('Non enregistré : ' + error.message + ' Exportez le brouillon avant de recharger.',true);
     });
     return job;
@@ -226,8 +232,19 @@
     });
     return database;
   }
-  async function fileGet(id) {const database=await db();return new Promise((resolve,reject)=>{const r=database.transaction('files').objectStore('files').get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
-  async function filePut(id,blob) {const database=await db();return new Promise((resolve,reject)=>{const tx=database.transaction('files','readwrite');tx.objectStore('files').put(blob,id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error || Error('Écriture annulée.'));});}
+  async function localFileGet(id) {const database=await db();return new Promise((resolve,reject)=>{const r=database.transaction('files').objectStore('files').get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+  async function localFilePut(id,blob) {const database=await db();return new Promise((resolve,reject)=>{const tx=database.transaction('files','readwrite');tx.objectStore('files').put(blob,id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error || Error('Écriture annulée.'));});}
+  async function fileGet(id) {
+    const local = await localFileGet(id);
+    if (local) return local;
+    const remote = await OrionCloud.download(id);
+    if (remote) { try { await localFilePut(id,remote); } catch {} }
+    return remote;
+  }
+  async function filePut(id,blob) {
+    await localFilePut(id,blob);
+    await OrionCloud.upload(id,blob);
+  }
   const dataUrl = blob => new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(blob);});
   function fromDataUrl(value) {
     if (typeof value !== 'string' || !/^data:[^,]*;base64,/.test(value)) throw Error('Pièce jointe invalide.');
@@ -260,7 +277,7 @@
     await flush();
     const result=[...current,...projects];await save(result);return result;
   }
-  window.OrionStore={adapter,load,latest:read,save,flush,merge,validate,normalizeLegacy,bind:fn=>{getDraft=fn;},fileGet,filePut,dataUrl,download,backup,importFile,
+  window.OrionStore={adapter,load,latest:read,save,flush,merge,validate,normalizeLegacy,attachments,draft:()=>copy(getDraft()),bind:fn=>{getDraft=fn;},fileGet,filePut,dataUrl,download,backup,importFile,
     get pending(){return pending;},get fault(){return fault;},get sequence(){return sequence;}};
   window.OrionUI={notify:(message,error=false)=>{status=message;showNotice(message,error);},unavailable:()=>showNotice('Fonction disponible après connexion au backend. Aucun compte créé ni message envoyé.')};
   // Only cosmetic preferences are persisted here. Authentication requires a server.
@@ -273,7 +290,7 @@
   OrionDomReady(()=>{
     if (fault) showNotice(status, true);
     const privacy=document.getElementById('privacyModal');
-    if(privacy){const p=privacy.querySelector('.space-y-4');if(p)p.textContent='Les comptes et droits sont gérés sur le serveur. Les projets restent dans ce navigateur, séparés par identifiant de compte. Les données locales ne sont pas chiffrées et une révocation ne supprime pas les copies téléchargées. Effacer les données du navigateur peut les supprimer. Exportez régulièrement une sauvegarde JSON complète. Le partage et la synchronisation des projets ne sont pas encore activés.';}
+    if(privacy){const p=privacy.querySelector('.space-y-4');if(p)p.textContent='Les projets et pièces jointes sont enregistrés sur votre compte Orion BTP et accessibles depuis vos appareils après connexion. Les accès aux modules et aux données sont contrôlés sur le serveur. Ce navigateur conserve un cache et les brouillons en attente ; une révocation ne supprime pas les copies déjà téléchargées. Exportez régulièrement une sauvegarde JSON complète.';}
     // Label legacy controls and give clickable cards a keyboard equivalent.
     const decorate=()=>{
       document.querySelectorAll('[id^="selectModule"],#projectsGrid > div.cursor-pointer').forEach(el=>{if(el.dataset.orionKeyboard)return;el.dataset.orionKeyboard='true';el.tabIndex=0;el.setAttribute('role','button');el.addEventListener('keydown',e=>{if(e.target===el && ['Enter',' '].includes(e.key)){e.preventDefault();el.click();}});});
@@ -290,7 +307,8 @@
 })();
 
 
-}).catch(OrionAuth.blocked);</script>
+  await OrionCloud.initialize(OrionStore);
+}).catch(error => { OrionAuth.blocked(error); return new Promise(() => {}); });</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orion BTP - M78 | Gestionnaire de chantier</title>
@@ -8661,31 +8679,74 @@ video {
     document.getElementById('zoomOutBtn').addEventListener('click', () => { state.zoom = Math.max(0.3, state.zoom - 0.25); updateCanvasTransform(); });
     document.getElementById('zoomResetBtn').addEventListener('click', () => { state.zoom = 1; state.pan = { x: 0, y: 0 }; updateCanvasTransform(); });
 
-    let isPanning = false;
-    let panStart = { x: 0, y: 0 };
     const activeCanvas = document.getElementById('activeCanvas');
-
-    activeCanvas.addEventListener('mousedown', (e) => {
-      if (state.activeTool === 'select') {
-        isPanning = true;
-        panStart = { x: e.clientX - state.pan.x, y: e.clientY - state.pan.y };
-        activeCanvas.style.cursor = 'grabbing';
+    const pointers = new Map();
+    let gesture = null, suppressCanvasClick = false;
+    const canvasPoint = point => {
+      const rect = activeCanvas.getBoundingClientRect();
+      return { x: point.x - rect.left - rect.width / 2, y: point.y - rect.top - rect.height / 2 };
+    };
+    function startGesture() {
+      const values = [...pointers.values()];
+      if (values.length >= 2) {
+        const [a,b] = values;
+        gesture = {
+          distance: Math.max(1, Math.hypot(b.x-a.x,b.y-a.y)), zoom: state.zoom,
+          pan: { ...state.pan }, midpoint: canvasPoint({ x:(a.x+b.x)/2, y:(a.y+b.y)/2 })
+        };
+        suppressCanvasClick = true;
+      } else if (values.length === 1) {
+        gesture = { point: { ...values[0] }, pan: { ...state.pan } };
+      } else {
+        gesture = null;
+        document.getElementById('canvasTransformGroup').style.transition = '';
+        activeCanvas.style.cursor = state.activeTool === 'select' ? 'grab' : 'crosshair';
       }
+    }
+    activeCanvas.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (!pointers.size) suppressCanvasClick = false;
+      pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+      document.getElementById('canvasTransformGroup').style.transition = 'none';
+      startGesture();
     });
-
-    window.addEventListener('mousemove', (e) => {
-      if (isPanning && state.activeTool === 'select') {
-        state.pan = { x: e.clientX - panStart.x, y: e.clientY - panStart.y };
+    window.addEventListener('pointermove', event => {
+      if (!pointers.has(event.pointerId)) return;
+      pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+      const values = [...pointers.values()];
+      if (values.length >= 2 && gesture?.distance) {
+        const [a,b] = values, midpoint = canvasPoint({ x:(a.x+b.x)/2, y:(a.y+b.y)/2 });
+        const zoom = Math.min(5, Math.max(0.3, gesture.zoom * Math.hypot(b.x-a.x,b.y-a.y) / gesture.distance));
+        const ratio = zoom / gesture.zoom;
+        state.pan = {
+          x: midpoint.x - (gesture.midpoint.x - gesture.pan.x) * ratio,
+          y: midpoint.y - (gesture.midpoint.y - gesture.pan.y) * ratio
+        };
+        state.zoom = zoom; suppressCanvasClick = true;
         updateCanvasTransform();
+      } else if (gesture?.point) {
+        const dx = event.clientX - gesture.point.x, dy = event.clientY - gesture.point.y;
+        if (Math.hypot(dx,dy) > 5) suppressCanvasClick = true;
+        if (state.activeTool === 'select' && suppressCanvasClick) {
+          state.pan = { x:gesture.pan.x+dx, y:gesture.pan.y+dy };
+          activeCanvas.style.cursor = 'grabbing'; updateCanvasTransform();
+        }
       }
     });
-
-    window.addEventListener('mouseup', () => {
-      if (isPanning) {
-        isPanning = false;
-        if (state.activeTool === 'select') activeCanvas.style.cursor = 'grab';
+    const endPointer = event => {
+      if (!pointers.delete(event.pointerId)) return;
+      if (event.type === 'pointercancel') suppressCanvasClick = true;
+      startGesture();
+    };
+    window.addEventListener('pointerup', endPointer);
+    window.addEventListener('pointercancel', endPointer);
+    window.addEventListener('blur', () => { pointers.clear(); suppressCanvasClick = true; startGesture(); });
+    // A drag/pinch never places a reserve or opens the marker under the final finger.
+    activeCanvas.addEventListener('click', event => {
+      if (suppressCanvasClick && event.detail !== 0) {
+        event.preventDefault(); event.stopImmediatePropagation(); suppressCanvasClick = false;
       }
-    });
+    }, true);
 
     activeCanvas.addEventListener('wheel', (e) => {
       e.preventDefault();
@@ -10100,10 +10161,6 @@ video {
     });
 
     // EVENEMENTS NAVIGATION & MODALS
-    document.getElementById('navLogoBtn').addEventListener('click', () => {
-  window.location.href = '../index.html';
-    });
-
     document.getElementById('backToPreviousBtn').addEventListener('click', () => {
       if (state.currentView === 'project' || state.currentView === 'reunion') {
         state.currentView = 'projectHub';

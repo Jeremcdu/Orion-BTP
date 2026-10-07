@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Page introuvable — Orion BTP</title>
+  <script>try{document.documentElement.classList.toggle('dark',localStorage.getItem('theme')==='dark');}catch{}</script>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100svh;display:flex;flex-direction:column;background:#f5f5f7;color:#0f172a;font:16px/1.6 system-ui,-apple-system,sans-serif}.dark body{background:#020617;color:#f1f5f9}header{padding:24px max(24px,calc((100vw - 1120px)/2));border-bottom:1px solid #94a3b833}.brand{display:inline-flex;gap:12px;align-items:center;color:inherit;font-weight:750;text-decoration:none}.brand svg{width:38px;height:38px;padding:8px;color:white;border-radius:12px;background:linear-gradient(45deg,#2563eb,#6366f1,#9333ea)}main{width:min(680px,calc(100% - 40px));margin:auto;padding:60px 0}.code{font-size:clamp(80px,20vw,140px);font-weight:800;letter-spacing:-.07em;line-height:1;color:#6366f1}h1{font-size:clamp(26px,5vw,40px);letter-spacing:-.04em;margin:28px 0 12px}p{color:#64748b;max-width:510px}.dark p{color:#94a3b8}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.actions a{padding:13px 20px;border-radius:12px;text-decoration:none;font-size:14px;font-weight:650;background:#4f46e5;color:white}.actions a.secondary{background:transparent;border:1px solid #94a3b866;color:inherit}a:focus-visible{outline:3px solid #818cf8;outline-offset:4px}footer{padding:24px;text-align:center;font-size:12px;color:#64748b}@media(max-width:480px){.actions{flex-direction:column}.actions a{text-align:center}}
+  </style>
+</head>
+<body>
+  <header><a class="brand" data-home href="/Orion-BTP/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/></svg>Orion BTP</a></header>
+  <main>
+    <div class="code" aria-hidden="true">404</div>
+    <h1>Cette page est introuvable.</h1>
+    <p>Le lien a peut-être changé ou la page n’existe plus. Retrouvez vos outils depuis l’accueil ou votre espace compte.</p>
+    <nav class="actions" aria-label="Continuer dans Orion BTP"><a data-home href="/Orion-BTP/">Retour à l’accueil</a><a id="accountLink" class="secondary" href="/Orion-BTP/compte.html">Mon compte</a></nav>
+  </main>
+  <footer>Orion BTP · Préparation, documents et suivi de chantier</footer>
+  <script>
+    const base = location.pathname === '/Orion-BTP' || location.pathname.startsWith('/Orion-BTP/') ? '/Orion-BTP/' : '/';
+    document.querySelectorAll('[data-home]').forEach(a => a.href = base);
+    document.getElementById('accountLink').href = base + 'compte.html';
+  </script>
+</body>
+</html>
