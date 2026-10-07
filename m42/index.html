@@ -5467,9 +5467,6 @@ video {
     #m42TableBody .drop-after td { box-shadow:inset 0 -3px #3b82f6; }
     #m42TableBody .dragging { opacity:.45; }
     @media(max-width:767px) {
-      header > div { height:auto !important; min-height:64px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }
-      header > div > div { min-width:0; }
-      header > div > div:last-child { flex-wrap:wrap; }
       .reorder-controls button { min-height:44px; min-width:44px; }
       .module-header-actions { gap:6px; }
       .module-header-button { padding:8px; font-size:11px; }
@@ -5488,16 +5485,17 @@ video {
     #m42EstimateTable td:nth-child(3){min-width:230px;overflow-wrap:anywhere}
     #m42EstimateTable th{white-space:nowrap}
   </style>
+  <link rel="stylesheet" href="../assets/orion-responsive.css">
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
 
   <!-- TOP NAVIGATION BAR -->
-  <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
+  <header class="orion-module-header sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo & Navigation -->
       <div class="flex items-center space-x-3 sm:space-x-4">
-          <a id="navLogoBtn" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
+          <a id="navLogoBtn" aria-label="Orion BTP — Retour à l’accueil" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
             <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
           </div>
@@ -5516,8 +5514,8 @@ video {
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div id="moduleHeaderActions" class="module-header-actions hidden">
-          <button type="button" id="moduleEditProjectBtn" class="module-header-button"><i data-lucide="pencil" class="w-4 h-4 text-blue-500"></i><span>Modifier le projet</span></button>
-          <button type="button" id="openReportConfigBtn" class="module-header-button"><i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i><span>Exports</span></button>
+          <button type="button" id="moduleEditProjectBtn" title="Modifier le projet" aria-label="Modifier le projet" class="module-header-button"><i data-lucide="pencil" class="w-4 h-4 text-blue-500"></i><span>Modifier le projet</span></button>
+          <button type="button" id="openReportConfigBtn" title="Exports" aria-label="Exports" class="module-header-button"><i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i><span>Exports</span></button>
         </div>
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
           <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>

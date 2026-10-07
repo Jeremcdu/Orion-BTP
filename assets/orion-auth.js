@@ -106,11 +106,15 @@
     const menu=document.getElementById('userDropdownMenu');
     if(!menu)return;
     menu.setAttribute('aria-label','Compte et administration');
+    const section=document.createElement('div');
+    section.id='orionMenuAccountSection';
+    section.className='py-1 border-b border-slate-100 dark:border-slate-800';
+    menu.insertBefore(section,menu.children[1]||null);
     const add=(id,label,mode)=>{
       if(document.getElementById(id))return;
       const a=document.createElement('a');a.id=id;a.href=portal(mode);a.textContent=label;
       a.className='block w-full text-left px-4 py-3 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800';
-      menu.append(a);
+      section.append(a);
     };
     add('orionMenuAccountLink','Mon compte et mes accès','login');
     window.OrionReady.then(()=>{
