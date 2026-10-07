@@ -1,0 +1,1 @@
+html.orion-locked body > :not(#orionGate){display:none!important}#orionGate{max-width:620px;margin:15vh auto;padding:32px;background:#fff;color:#0f172a;font:16px system-ui;border-radius:18px}#orionGate a,#orionGate button{display:inline-block;margin:12px;padding:12px;border:1px solid #94a3b8;border-radius:8px}

@@ -1,0 +1,12 @@
+{
+  "name": "orion-backend-comptes",
+  "private": true,
+  "scripts": {
+    "test": "node verification/database.cjs && node verification/interface.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "jsdom": "26.1.0",
+    "fake-indexeddb": "6.2.5"
+  }
+}
