@@ -5440,7 +5440,7 @@ video {
         </button>
 
         <div class="relative">
-          <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
+          <button id="userMenuBtn" aria-label="Profil et accès au compte" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
             <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <i data-lucide="user" class="w-3.5 h-3.5"></i>
             </div>
@@ -5463,6 +5463,11 @@ video {
               <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
                 <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
                 <span>Se connecter</span>
+              </button>
+
+              <button id="dropdownAccountBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+                <i data-lucide="user" class="w-4 h-4 text-blue-500"></i>
+                <span>Mon compte et mes accès</span>
               </button>
 
               <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
@@ -6086,6 +6091,7 @@ video {
     };
 
     function updateAuthUI() {
+      const accountBtn = document.getElementById('dropdownAccountBtn');
       const registerBtn = document.getElementById('dropdownRegisterBtn');
       const loginBtn = document.getElementById('dropdownLoginBtn');
       const logoutBtn = document.getElementById('dropdownLogoutBtn');
@@ -6094,6 +6100,7 @@ video {
       const privacyBtn = document.getElementById('dropdownPrivacyBtn');
 
       if (!state.currentUser) {
+        if (accountBtn) accountBtn.classList.add('hidden');
         if (registerBtn) registerBtn.classList.remove('hidden');
         if (loginBtn) loginBtn.classList.remove('hidden');
         if (logoutBtn) logoutBtn.classList.add('hidden');
@@ -6101,6 +6108,7 @@ video {
         if (reportIssueBtn) reportIssueBtn.classList.add('hidden');
         if (privacyBtn) privacyBtn.classList.remove('hidden');
       } else {
+        if (accountBtn) accountBtn.classList.remove('hidden');
         if (registerBtn) registerBtn.classList.add('hidden');
         if (loginBtn) loginBtn.classList.add('hidden');
         if (logoutBtn) logoutBtn.classList.remove('hidden');
