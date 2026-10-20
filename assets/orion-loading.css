@@ -1,0 +1,14 @@
+.orion-booting body > :not(#orionLoading):not(#orionGate) { visibility: hidden; pointer-events: none; }
+#orionLoading.orion-loading { position: fixed; inset: 0; z-index: 1000; display: grid; place-content: center; justify-items: center; gap: 16px; padding: 24px; background: #f5f5f7; color: #0f172a; text-align: center; font: 14px/1.6 Inter,system-ui,sans-serif; }
+html.orion-locked body > #orionLoading.orion-loading { display: grid !important; }
+.dark #orionLoading.orion-loading { background: #020617; color: #f1f5f9; }
+#orionLoading .loading-brand { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; color: white; background: linear-gradient(45deg,#2563eb,#6366f1,#9333ea); }
+#orionLoading .loading-brand svg { width: 28px; height: 28px; }
+#orionLoading strong { font-size: 18px; font-weight: 700; }
+#orionLoadingMessage { max-width: 320px; color: #64748b; margin: 0; }
+.dark #orionLoadingMessage { color: #94a3b8; }
+#orionLoading .loading-spinner { width: 24px; height: 24px; border: 2px solid #94a3b833; border-top-color: #6366f1; border-radius: 50%; animation: orion-spin .8s linear infinite; }
+#orionLoadingRetry { padding: 10px 18px; border: 1px solid #64748b; border-radius: 12px; font: inherit; color: inherit; background: transparent; cursor: pointer; }
+#orionLoadingRetry[hidden] { display: none; }
+@keyframes orion-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #orionLoading .loading-spinner { animation: none; } }

@@ -65,7 +65,7 @@
       const actions=node('div',null,card,'gate-actions'),account=node('a',action,actions,'gate-primary');account.href=portal();
       const retry=node('button','Réessayer',actions,'gate-secondary');retry.type='button';retry.onclick=()=>location.reload();
       if(window.OrionCloud?.enabled){const backup=node('button','Exporter le brouillon',actions,'gate-secondary');backup.type='button';backup.onclick=()=>OrionCloud.exportDraft();}
-      node('p','Les autorisations sont accordées par votre administrateur, module par module.',card,'gate-note');heading.focus({preventScroll:true});
+      node('p','Les autorisations sont accordées par votre administrateur, module par module.',card,'gate-note');window.OrionLoading?.finish();heading.focus({preventScroll:true});
     });
   }
   if(client)client.auth.onAuthStateChange((event,session)=>{

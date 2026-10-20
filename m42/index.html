@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html data-orion-module="m42" lang="fr" class="h-full">
 <head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/orion-loading.css"><script src="../assets/orion-loading.js"></script><script src="../assets/orion-resources.js"></script>
 <link rel="stylesheet" href="../assets/auth.css"><script src="../assets/orion-config.js"></script><script src="../assets/supabase.js"></script><script src="../assets/orion-auth.js"></script><script src="../assets/orion-cloud.js"></script><script src="../assets/orion-navigation.js"></script>
 <script>window.OrionReady = window.OrionReady.then(async()=>{
 
@@ -309,8 +311,6 @@
 
   await OrionCloud.initialize(OrionStore);
 }).catch(error => { OrionAuth.blocked(error); return new Promise(() => {}); });</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orion BTP - M42 | Estimatif & Planning</title>
   
   <!-- Script anti-flash (FOUC) -->
@@ -5412,19 +5412,8 @@ video {
     padding-right: 2rem;
   }
 }</style>
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@0.468.0"></script>
-  <!-- PDF.js CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-  <script>window.OrionReady.then(()=>{
-
-    OrionDomReady( () => {
-      if (window.pdfjsLib) {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-      }
-    });
-  
-}).catch(OrionAuth.blocked);</script>
+  <!-- Lucide 0.468.0 hosted with the site; static icons are already SVG. -->
+  <script src="../assets/lucide-0.468.0.min.js"></script>
 
   <!-- Google Fonts Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5475,8 +5464,6 @@ video {
       .project-meta-card { min-width:0; max-width:none; }
     }
   </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 <style>
     /* Keep the full monetary value and currency together, including on mobile. */
     #m42EstimateTable{min-width:960px;table-layout:auto}
@@ -5488,6 +5475,14 @@ video {
   <link rel="stylesheet" href="../assets/orion-responsive.css">
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+  <div id="orionLoading" class="orion-loading" role="status" aria-live="polite">
+    <span class="loading-brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/><path d="M20 2v4M18 4h4"/></svg></span>
+    <strong>Orion BTP</strong>
+    <span class="loading-spinner" aria-hidden="true"></span>
+    <p id="orionLoadingMessage">Préparation de votre espace…</p>
+    <button type="button" id="orionLoadingRetry" hidden>Réessayer</button>
+  </div>
+
 
   <!-- TOP NAVIGATION BAR -->
   <header class="orion-module-header sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
@@ -5497,7 +5492,7 @@ video {
       <div class="flex items-center space-x-3 sm:space-x-4">
           <a id="navLogoBtn" aria-label="Orion BTP — Retour à l’accueil" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
           </div>
           <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
             <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
@@ -5506,7 +5501,7 @@ video {
         </a>
 
         <button id="backToPreviousBtn" class="hidden inline-flex items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="w-4 h-4 mr-1" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
           <span id="backToPreviousText">Retour</span>
         </button>
       </div>
@@ -5514,21 +5509,21 @@ video {
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div id="moduleHeaderActions" class="module-header-actions hidden">
-          <button type="button" id="moduleEditProjectBtn" title="Modifier le projet" aria-label="Modifier le projet" class="module-header-button"><i data-lucide="pencil" class="w-4 h-4 text-blue-500"></i><span>Modifier le projet</span></button>
-          <button type="button" id="openReportConfigBtn" title="Exports" aria-label="Exports" class="module-header-button"><i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i><span>Exports</span></button>
+          <button type="button" id="moduleEditProjectBtn" title="Modifier le projet" aria-label="Modifier le projet" class="module-header-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg><span>Modifier le projet</span></button>
+          <button type="button" id="openReportConfigBtn" title="Exports" aria-label="Exports" class="module-header-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg><span>Exports</span></button>
         </div>
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
-          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon" data-lucide="moon" class="w-4 h-4" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
         </button>
 
         <!-- Menu Utilisateur Dropdown -->
         <div class="relative">
           <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
             <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user" class="w-3.5 h-3.5" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
             <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
           </button>
 
           <!-- Dropdown Menu -->
@@ -5540,30 +5535,30 @@ video {
 
             <div class="py-1">
               <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="user-plus" class="w-4 h-4 text-blue-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
                 <span>S'inscrire</span>
               </button>
 
               <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
                 <span>Se connecter</span>
               </button>
 
               <!-- Affiché uniquement quand connecté -->
               <button id="dropdownReportIssueBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-4 h-4 text-amber-500" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
                 <span>Signaler un problème</span>
               </button>
 
               <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="shield-check" class="w-4 h-4 text-blue-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
                 <span>Politique de confidentialité</span>
               </button>
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 py-1">
               <button id="dropdownLogoutBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" class="w-4 h-4" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
                 <span>Se déconnecter</span>
               </button>
             </div>
@@ -5580,14 +5575,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="log-in" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-5 h-5" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Connexion / Inscription</h3>
             <p class="text-xs text-slate-400">Accédez à votre espace Orion BTP</p>
           </div>
         </div>
-        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="loginForm" class="space-y-4 text-xs">
@@ -5601,7 +5596,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2">
           <span>Se connecter</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
       </form>
     </div>
@@ -5613,14 +5608,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-5 h-5" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Signaler un problème</h3>
             <p class="text-xs text-slate-400">Support & Assistance Technique</p>
           </div>
         </div>
-        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="reportIssueForm" class="space-y-4 text-xs">
@@ -5634,7 +5629,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
           <span>Envoyer le signalement</span>
-          <i data-lucide="send" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-4 h-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
         </button>
       </form>
     </div>
@@ -5646,14 +5641,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-5 h-5" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Politique de confidentialité</h3>
             <p class="text-xs text-slate-400">Protection des données & sécurité</p>
           </div>
         </div>
-        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -5681,18 +5676,18 @@ video {
         
         <div class="flex flex-wrap items-center gap-2">
           <button id="exportProjectsBtn" title="Exporter tous les projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
-            <i data-lucide="download" class="w-4 h-4 text-emerald-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
             <span>Exporter</span>
           </button>
           
           <button id="importProjectsBtn" title="Importer des projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
-            <i data-lucide="upload" class="w-4 h-4 text-emerald-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
             <span>Importer</span>
           </button>
           <input type="file" id="importProjectsInput" accept=".json" class="hidden" />
 
           <button id="createNewProjectBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2 shrink-0">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Nouveau projet</span>
           </button>
         </div>
@@ -5709,13 +5704,13 @@ video {
             <span id="hubStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
             <h1 id="hubProjectName" class="text-2xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p id="hubProjectLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1 mt-1">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span id="hubLocationText"></span>
             </p>
           </div>
           <div class="flex items-center space-x-3">
             <button id="hubEditProjectBtn" class="px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all flex items-center space-x-2 shadow-sm">
-              <i data-lucide="edit-3" class="w-4 h-4 text-emerald-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
               <span>Modifier le projet</span>
             </button>
           </div>
@@ -5733,7 +5728,7 @@ video {
         <div id="selectModuleM42" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="calculator" class="w-7 h-7"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calculator" class="w-7 h-7" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Estimatif Projet BTP</h3>
@@ -5744,7 +5739,7 @@ video {
           </div>
           <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <span>Ouvrir l'estimatif</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </div>
         </div>
 
@@ -5752,7 +5747,7 @@ video {
         <div id="selectModulePlanning" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="calendar-range" class="w-7 h-7"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-range" class="w-7 h-7" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M16 2v4"></path><path d="M3 10h18"></path><path d="M8 2v4"></path><path d="M17 14h-6"></path><path d="M13 18H7"></path><path d="M7 14h.01"></path><path d="M17 18h.01"></path></svg>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Planning Estimatif</h3>
@@ -5763,7 +5758,7 @@ video {
           </div>
           <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <span>Accéder au planning</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </div>
         </div>
 
@@ -5778,10 +5773,10 @@ video {
         <div class="project-banner-main space-y-2 text-left">
           <div class="flex flex-wrap items-center gap-2">
             <span id="m42ProjectStatusBadge" class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><i data-lucide="calculator" class="w-3.5 h-3.5"></i>Module Estimation</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calculator" class="w-3.5 h-3.5" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>Module Estimation</span>
           </div>
           <h1 id="m42ProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i><span id="m42ProjectLocationDisplay" class="break-words min-w-0"></span></p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg><span id="m42ProjectLocationDisplay" class="break-words min-w-0"></span></p>
         </div>
         <dl class="project-meta">
           <div class="project-meta-card"><dt>Client</dt><dd id="m42ProjectClientDisplay"></dd></div>
@@ -5793,7 +5788,7 @@ video {
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
         <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-            <i data-lucide="bot" class="w-5 h-5 text-emerald-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="bot" class="w-5 h-5 text-emerald-500" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
             <span>Paramétrage & Documents</span>
           </h3>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300">Modèle local de démonstration</span>
@@ -5805,7 +5800,7 @@ video {
           <div id="m42DocDropzone" class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 transition-colors">
             <input type="file" id="m42DocInput" multiple accept=".pdf,.docx,.txt,.csv,.png,.jpg" class="hidden" />
             <div class="flex flex-col items-center justify-center space-y-1">
-              <i data-lucide="file-up" class="w-6 h-6 text-emerald-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-up" class="w-6 h-6 text-emerald-500" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M12 12v6"></path><path d="m15 15-3-3-3 3"></path></svg>
               <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">Glissez vos fichiers ici ou cliquez pour importer</p>
               <p class="text-[10px] text-slate-400">PDF, TXT, Word, Images acceptés</p>
             </div>
@@ -5849,7 +5844,7 @@ video {
           <div class="flex flex-col sm:flex-row gap-2">
             <input type="text" id="m42PromptInput" disabled title="Analyse du descriptif disponible avec le backend" placeholder="Analyse automatique disponible après raccordement au backend" class="flex-1 px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-emerald-500" />
             <button id="runPromptAiBtn" class="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1.5 shrink-0">
-              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="w-4 h-4" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
               <span>Charger un exemple</span>
             </button>
           </div>
@@ -5880,7 +5875,7 @@ video {
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
         <div class="flex items-center justify-between pb-3 border-b dark:border-slate-800">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-500" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M8 13h2"></path><path d="M14 13h2"></path><path d="M8 17h2"></path><path d="M14 17h2"></path></svg>
             <span>Détail de l'Estimatif par Lots (DPGF)</span>
           </h3>
           <span id="itemsCountBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">0 prestation(s)</span>
@@ -5906,7 +5901,7 @@ video {
 
         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
           <button id="addEstimatifItemBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all active:scale-95 flex items-center space-x-2 shadow-md shadow-emerald-500/20">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Ajouter une ligne</span>
           </button>
         </div>
@@ -5922,10 +5917,10 @@ video {
         <div class="project-banner-main space-y-2 text-left">
           <div class="flex flex-wrap items-center gap-2">
             <span id="planningProjectStatusBadge" class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"></span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>Module Planning</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-range" class="w-3.5 h-3.5" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M16 2v4"></path><path d="M3 10h18"></path><path d="M8 2v4"></path><path d="M17 14h-6"></path><path d="M13 18H7"></path><path d="M7 14h.01"></path><path d="M17 18h.01"></path></svg>Module Planning</span>
           </div>
           <h1 id="planningProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i><span id="planningProjectLocationDisplay" class="break-words min-w-0"></span></p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg><span id="planningProjectLocationDisplay" class="break-words min-w-0"></span></p>
         </div>
         <dl class="project-meta">
           <div class="project-meta-card"><dt>Client</dt><dd id="planningProjectClientDisplay"></dd></div>
@@ -5937,11 +5932,11 @@ video {
       <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-6">
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b dark:border-slate-800">
           <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-            <i data-lucide="calendar-range" class="w-5 h-5 text-emerald-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-range" class="w-5 h-5 text-emerald-500" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M16 2v4"></path><path d="M3 10h18"></path><path d="M8 2v4"></path><path d="M17 14h-6"></path><path d="M13 18H7"></path><path d="M7 14h.01"></path><path d="M17 18h.01"></path></svg>
             <span>Planning Prévisionnel par Phases</span>
           </h3>
           <span id="planningTotalDuration" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Durée : 0 semaines</span>
-          <button id="syncPlanningFromEstimatifBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>Générer depuis l'estimatif</span></button>
+          <button id="syncPlanningFromEstimatifBtn" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="refresh-cw" class="w-4 h-4" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg><span>Générer depuis l'estimatif</span></button>
         </div>
 
         <div id="planningPhasesContainer" class="space-y-4 text-left"></div>
@@ -5957,11 +5952,11 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="edit-3" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-5 h-5" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
           </div>
           <h3 id="estimatifModalTitle" class="text-base sm:text-lg font-bold">Ajouter une ligne d'estimatif</h3>
         </div>
-        <button id="closeEstimatifItemModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeEstimatifItemModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="estimatifItemForm" class="space-y-4 text-xs">
@@ -5998,7 +5993,7 @@ video {
         <div class="flex items-center justify-end space-x-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelEstimatifItemModalBtn" class="px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
           <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center space-x-1.5">
-            <i data-lucide="check" class="w-4 h-4"></i><span>Enregistrer</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" class="w-4 h-4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Enregistrer</span>
           </button>
         </div>
       </form>
@@ -6010,13 +6005,13 @@ video {
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto text-left">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg></div>
           <div>
             <h3 class="text-base sm:text-lg font-bold leading-tight">Exports et options</h3>
             <p class="text-[10px] sm:text-xs text-slate-400">Exports réels du brouillon : PDF, Word et CSV.</p>
           </div>
         </div>
-        <button id="closeReportConfigBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeReportConfigBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <div class="space-y-4 text-xs sm:text-sm">
@@ -6024,15 +6019,15 @@ video {
           <span class="block font-semibold text-slate-700 dark:text-slate-300 text-sm">Formats d'export disponibles :</span>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <button type="button" id="exportPdfReportBtn" class="px-3 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
-              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
               <span>Export PDF</span>
             </button>
             <button type="button" id="exportWordReportBtn" class="px-3 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
-              <i data-lucide="file-code" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-code" class="w-4 h-4" aria-hidden="true"><path d="M10 12.5 8 15l2 2.5"></path><path d="m14 12.5 2 2.5-2 2.5"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path></svg>
               <span>Export Word</span>
             </button>
             <button type="button" id="exportExcelReportBtn" class="px-3 py-3 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md transition-all text-xs">
-              <i data-lucide="sheet" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sheet" class="w-4 h-4" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="3" x2="21" y1="15" y2="15"></line><line x1="9" x2="9" y1="9" y2="21"></line><line x1="15" x2="15" y1="9" y2="21"></line></svg>
               <span>Export CSV</span>
             </button>
           </div>
@@ -6046,10 +6041,10 @@ video {
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto text-left">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="settings" class="w-4 h-4"></i></div>
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="settings" class="w-4 h-4" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></div>
           <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Nouveau projet</h3>
         </div>
-        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="projectForm" class="space-y-4 text-xs">
@@ -6062,7 +6057,7 @@ video {
             <div class="flex-1 space-y-2">
               <input type="file" id="projectPhotoInput" accept="image/*" class="hidden" />
               <button type="button" id="uploadProjectPhotoBtn" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-1.5 text-xs">
-                <i data-lucide="upload" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-3.5 h-3.5 text-emerald-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 <span>Importer une photo</span>
               </button>
               <button type="button" id="removeProjectPhotoBtn" class="hidden text-rose-500 text-[11px] hover:underline">Supprimer la photo</button>
@@ -6093,7 +6088,7 @@ video {
         <div class="flex items-center justify-end space-x-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelProjectModalBtn" class="px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
           <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 text-white font-medium flex items-center space-x-1.5">
-            <i data-lucide="check" class="w-4 h-4"></i><span>Enregistrer</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" class="w-4 h-4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Enregistrer</span>
           </button>
         </div>
       </form>
@@ -6870,6 +6865,7 @@ video {
         const headers=['Lot','Désignation','Unité','Quantité','PU HT (€)','Total HT (€)'];
         const note='Estimation prévisionnelle à vérifier. Les modèles de démonstration ne constituent ni un métré automatique ni une analyse des pièces jointes.';
         if(format==='docx') {
+          await OrionResources.load('word');
           if(!window.docx)throw Error('La bibliothèque Word n’est pas chargée.');
           const {Document,Packer,Paragraph,Table,TableRow,TableCell,WidthType}=window.docx;
           const paragraph=text=>new Paragraph({text:String(text),spacing:{after:140}});
@@ -6877,6 +6873,7 @@ video {
           const doc=new Document({sections:[{children:[paragraph('ESTIMATIF — '+p.name),paragraph('Client : '+(p.client || '—')),paragraph('Adresse : '+(p.location || '—')),paragraph('Date : '+new Date().toLocaleDateString('fr-FR')),table,paragraph('Total HT : '+money(totals.ht)+' €'),paragraph('TVA : '+money(totals.tax)+' €'),paragraph('Total TTC : '+money(totals.ttc)+' €'),paragraph(note)]}]});
           OrionStore.download(await Packer.toBlob(doc),reportName(p,'docx'));
         } else {
+          await OrionResources.load('pdf');
           if(!window.html2pdf)throw Error('La bibliothèque PDF n’est pas chargée.');
           const sheet=document.createElement('section');sheet.style.cssText='width:185mm;padding:8mm;background:white;color:#172033;font:11px Arial;';
           sheet.innerHTML='<h1>Estimatif — '+escapeHtml(p.name)+'</h1><p>Client : '+escapeHtml(p.client || '—')+'<br>Adresse : '+escapeHtml(p.location || '—')+'</p><table style="width:100%;border-collapse:collapse"><thead><tr>'+headers.map(x=>'<th style="border:1px solid #ccd;padding:6px">'+escapeHtml(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td style="border:1px solid #ccd;padding:6px">'+escapeHtml(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table><p>Total HT : '+money(totals.ht)+' €<br>TVA : '+money(totals.tax)+' €<br><strong>Total TTC : '+money(totals.ttc)+' €</strong></p><p>'+note+'</p>';
@@ -7045,6 +7042,7 @@ video {
 
     // Initialisation
     render();
+    window.OrionLoading.finish();
   
 }).catch(OrionAuth.blocked);</script>
 </body>

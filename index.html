@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html data-orion-module="" lang="fr" class="h-full">
 <head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/orion-loading.css"><script src="assets/orion-loading.js"></script><script src="assets/orion-resources.js"></script>
 <link rel="stylesheet" href="assets/auth.css"><script src="assets/orion-config.js"></script><script src="assets/supabase.js"></script><script src="assets/orion-auth.js"></script><script src="assets/orion-cloud.js"></script><script src="assets/orion-navigation.js"></script>
 <script>window.OrionReady = window.OrionReady.then(async()=>{
 
@@ -309,8 +311,6 @@
 
   await OrionCloud.initialize(OrionStore);
 }).catch(error => { OrionAuth.blocked(error); return new Promise(() => {}); });</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orion BTP | Plateforme d'Outils & Inspiration BTP</title>
   
   <style data-orion-build="tailwind-3.4.17">*, ::before, ::after {
@@ -5392,7 +5392,7 @@ video {
     line-height: 1;
   }
 }</style>
-  <script src="https://unpkg.com/lucide@0.468.0"></script>
+  <script src="assets/lucide-0.468.0.min.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5431,6 +5431,14 @@ video {
 }).catch(OrionAuth.blocked);</script>
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300 flex flex-col">
+  <div id="orionLoading" class="orion-loading" role="status" aria-live="polite">
+    <span class="loading-brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/><path d="M20 2v4M18 4h4"/></svg></span>
+    <strong>Orion BTP</strong>
+    <span class="loading-spinner" aria-hidden="true"></span>
+    <p id="orionLoadingMessage">Préparation de votre espace…</p>
+    <button type="button" id="orionLoadingRetry" hidden>Réessayer</button>
+  </div>
+
 
   <header class="sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -5438,7 +5446,7 @@ video {
       <div class="flex items-center space-x-4 sm:space-x-6">
         <button id="navLogoBtn" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
           </div>
           <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
             <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300">Orion BTP</span>
@@ -5447,23 +5455,23 @@ video {
         </button>
 
         <button id="backToPreviousBtn" class="hidden items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="w-4 h-4 mr-1" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
           <span id="backToPreviousText">Retour</span>
         </button>
       </div>
 
       <div class="flex items-center space-x-2 sm:space-x-3">
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
-          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon" data-lucide="moon" class="w-4 h-4" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
         </button>
 
         <div class="relative">
           <button id="userMenuBtn" aria-label="Profil et accès au compte" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
             <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user" class="w-3.5 h-3.5" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
             <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
           </button>
 
           <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden py-1 apple-glass">
@@ -5474,39 +5482,39 @@ video {
 
             <div class="py-1">
               <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="user-plus" class="w-4 h-4 text-blue-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
                 <span>S'inscrire</span>
               </button>
 
               <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
                 <span>Se connecter</span>
               </button>
 
               <button id="dropdownAccountBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="user" class="w-4 h-4 text-blue-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span>Mon compte et mes accès</span>
               </button>
 
               <button id="dropdownAdminBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
                 <span>Espace Administration</span>
               </button>
 
               <button id="dropdownReportIssueBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-4 h-4 text-amber-500" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
                 <span>Signaler un problème</span>
               </button>
 
               <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="shield-check" class="w-4 h-4 text-blue-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
                 <span>Politique de confidentialité</span>
               </button>
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 py-1">
               <button id="dropdownLogoutBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" class="w-4 h-4" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
                 <span>Se déconnecter</span>
               </button>
             </div>
@@ -5526,7 +5534,7 @@ video {
           
           <div class="lg:col-span-7 space-y-4">
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
-              <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="compass" class="w-3.5 h-3.5 text-indigo-400" aria-hidden="true"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
               <span>Plateforme unifiée d'outils BTP</span>
             </div>
             
@@ -5540,15 +5548,15 @@ video {
 
             <div class="pt-2 flex flex-wrap gap-3 text-xs font-medium text-slate-300">
               <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
-                <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="compass" class="w-4 h-4 text-emerald-400" aria-hidden="true"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
                 <span>Préparation & Métrés (M42)</span>
               </div>
               <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
-                <i data-lucide="orbit" class="w-4 h-4 text-purple-400"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="orbit" class="w-4 h-4 text-purple-400" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><circle cx="19" cy="5" r="2"></circle><circle cx="5" cy="19" r="2"></circle><path d="M10.4 21.9a10 10 0 0 0 9.941-15.416"></path><path d="M13.5 2.1a10 10 0 0 0-9.841 15.416"></path></svg>
                 <span>CCTP & Documents (M43)</span>
               </div>
               <div class="flex items-center space-x-1.5 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
-                <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check-circle-2" class="w-4 h-4 text-blue-400" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
                 <span>Suivi & Réserves (M78)</span>
               </div>
             </div>
@@ -5626,7 +5634,7 @@ video {
             <div class="space-y-4">
               <div class="flex items-center justify-between">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
-                  <i data-lucide="compass" class="w-6 h-6"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="compass" class="w-6 h-6" aria-hidden="true"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
                 </div>
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 uppercase tracking-wider">Outil Actif</span>
               </div>
@@ -5643,7 +5651,7 @@ video {
             <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
               <a id="launchM42Btn" href="m42/index.html" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
                 <span>Accéder à l'outil M42</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
               </a>
             </div>
           </div>
@@ -5652,7 +5660,7 @@ video {
             <div class="space-y-4">
               <div class="flex items-center justify-between">
                 <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/30">
-                  <i data-lucide="orbit" class="w-6 h-6"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="orbit" class="w-6 h-6" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><circle cx="19" cy="5" r="2"></circle><circle cx="5" cy="19" r="2"></circle><path d="M10.4 21.9a10 10 0 0 0 9.941-15.416"></path><path d="M13.5 2.1a10 10 0 0 0-9.841 15.416"></path></svg>
                 </div>
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 uppercase tracking-wider">Outil Actif</span>
               </div>
@@ -5669,7 +5677,7 @@ video {
             <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
               <a id="launchM43Btn" href="m43/index.html" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-purple-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
                 <span>Accéder à l'outil M43</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
               </a>
             </div>
           </div>
@@ -5678,7 +5686,7 @@ video {
             <div class="space-y-4">
               <div class="flex items-center justify-between">
                 <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
-                  <i data-lucide="check-square" class="w-6 h-6"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check-square" class="w-6 h-6" aria-hidden="true"><path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"></path><path d="m9 11 3 3L22 4"></path></svg>
                 </div>
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 uppercase tracking-wider">Outil Actif</span>
               </div>
@@ -5695,7 +5703,7 @@ video {
             <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
               <a id="launchM78Btn" href="m78/index.html" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/25 transition-all active:scale-95 flex items-center justify-center space-x-2">
                 <span>Accéder à l'outil M78</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
               </a>
             </div>
           </div>
@@ -5741,7 +5749,7 @@ video {
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Gestion des comptes utilisateurs et attribution des clés d'accès aux modules M42, M43 et M78.</p>
         </div>
         <button id="closeAdminViewBtn" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all flex items-center space-x-2 w-max shadow-sm active:scale-95">
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-left" class="w-4 h-4" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
           <span>Quitter l'administration</span>
         </button>
       </div>
@@ -5750,21 +5758,21 @@ video {
         <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
             <span>Utilisateurs Inscrits</span>
-            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>
+            <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="users" class="w-4 h-4" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
           </div>
           <div id="adminStatUsersCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
         </div>
         <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
             <span>Clés Actives</span>
-            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"><i data-lucide="key" class="w-4 h-4"></i></div>
+            <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="key" class="w-4 h-4" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg></div>
           </div>
           <div id="adminStatKeysCount" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</div>
         </div>
         <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
             <span>Modules Orion</span>
-            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"><i data-lucide="layers" class="w-4 h-4"></i></div>
+            <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" class="w-4 h-4" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg></div>
           </div>
           <div class="text-2xl font-extrabold text-slate-900 dark:text-white">3 / 3</div>
         </div>
@@ -5777,7 +5785,7 @@ video {
             <p class="text-xs text-slate-400">Rechercher un utilisateur par adresse e-mail pour afficher ses informations et gérer son compte.</p>
           </div>
           <button id="adminAddNewUserBtn" class="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95 shrink-0">
-            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
             <span>Inscrire un utilisateur</span>
           </button>
         </div>
@@ -5785,10 +5793,10 @@ video {
         <form id="adminUserSearchForm" class="flex gap-2 pt-1">
           <div class="relative flex-1">
             <input type="email" id="adminUserSearchInput" placeholder="Saisir une adresse e-mail utilisateur à rechercher..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:ring-2 focus:ring-blue-500" />
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           </div>
           <button type="submit" class="px-4 py-2.5 rounded-2xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold text-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1.5">
-            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="search" class="w-3.5 h-3.5" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
             <span>Rechercher</span>
           </button>
           <button type="button" id="adminUserSearchResetBtn" class="px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-xs transition-all active:scale-95 shrink-0">
@@ -5821,7 +5829,7 @@ video {
             <p class="text-xs text-slate-400">Générez, attribuez et révoquez les clés mono ou multi-accès aux modules M42, M43 et M78.</p>
           </div>
           <button id="adminGenerateKeyBtn" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all flex items-center space-x-1.5 w-max shadow-sm active:scale-95">
-            <i data-lucide="key" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="key" class="w-4 h-4" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg>
             <span>Créer / Attribuer une clé</span>
           </button>
         </div>
@@ -5851,14 +5859,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
-            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Créer un compte</h3>
             <p class="text-xs text-slate-400">Rejoignez la plateforme Orion BTP</p>
           </div>
         </div>
-        <button id="closeRegisterModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeRegisterModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="registerForm" class="space-y-4 text-xs">
@@ -5896,7 +5904,7 @@ video {
 
         <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
           <span>Créer mon compte</span>
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
         </button>
       </form>
     </div>
@@ -5907,14 +5915,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="log-in" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-5 h-5" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Connexion</h3>
             <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
           </div>
         </div>
-        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="loginForm" class="space-y-4 text-xs">
@@ -5931,7 +5939,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center justify-center space-x-2">
           <span>Se connecter</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
       </form>
     </div>
@@ -5942,14 +5950,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
-            <i data-lucide="key-round" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="key-round" class="w-5 h-5" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Mot de passe oublié</h3>
             <p class="text-xs text-slate-400">Réinitialisation de votre accès</p>
           </div>
         </div>
-        <button id="closeForgotPasswordModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeForgotPasswordModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="forgotPasswordForm" class="space-y-4 text-xs">
@@ -5959,7 +5967,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center justify-center space-x-2">
           <span>Envoyer le lien de réinitialisation</span>
-          <i data-lucide="send" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-4 h-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
         </button>
       </form>
     </div>
@@ -5970,14 +5978,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
-            <i data-lucide="key" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="key" class="w-5 h-5" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Générer une clé d'accès</h3>
             <p class="text-xs text-slate-400">Attribuer des droits d'accès mono ou multi-outils</p>
           </div>
         </div>
-        <button id="closeCreateKeyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeCreateKeyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="createKeyForm" class="space-y-4 text-xs">
@@ -6000,7 +6008,7 @@ video {
           <input type="text" id="keyInputCustomCode" placeholder="ORION-M42-XXXX" class="w-full px-4 py-3 rounded-2xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-purple-500 font-mono" />
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus-circle" class="w-4 h-4" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
           <span>Générer et attribuer la clé</span>
         </button>
       </form>
@@ -6012,14 +6020,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-5 h-5" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Signaler un problème</h3>
             <p class="text-xs text-slate-400">Support & Assistance Technique</p>
           </div>
         </div>
-        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="reportIssueForm" class="space-y-4 text-xs">
@@ -6033,7 +6041,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
           <span>Envoyer le signalement</span>
-          <i data-lucide="send" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-4 h-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
         </button>
       </form>
     </div>
@@ -6044,14 +6052,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-5 h-5" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Politique de confidentialité</h3>
             <p class="text-xs text-slate-400">Protection des données & sécurité</p>
           </div>
         </div>
-        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -6069,7 +6077,7 @@ video {
   <div id="futureToolModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/60 apple-glass">
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 space-y-6 text-center">
       <div id="futureToolHeaderIcon" class="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl">
-        <i id="futureToolIcon" data-lucide="sparkles" class="w-8 h-8"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="futureToolIcon" data-lucide="sparkles" class="w-8 h-8" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
       </div>
 
       <div class="space-y-2">
@@ -6589,6 +6597,7 @@ video {
 
     // Initialisation
     render();
+    window.OrionLoading.finish();
   
 }).catch(OrionAuth.blocked);</script>
 </body>

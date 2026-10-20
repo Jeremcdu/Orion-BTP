@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html data-orion-module="m43" lang="fr" class="h-full">
 <head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/orion-loading.css"><script src="../assets/orion-loading.js"></script><script src="../assets/orion-resources.js"></script>
 <link rel="stylesheet" href="../assets/auth.css"><script src="../assets/orion-config.js"></script><script src="../assets/supabase.js"></script><script src="../assets/orion-auth.js"></script><script src="../assets/orion-cloud.js"></script><script src="../assets/orion-navigation.js"></script>
 <script>window.OrionReady = window.OrionReady.then(async()=>{
 
@@ -309,8 +311,6 @@
 
   await OrionCloud.initialize(OrionStore);
 }).catch(error => { OrionAuth.blocked(error); return new Promise(() => {}); });</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orion BTP - M43 | Gestionnaire de chantier</title>
   
   <!-- Script anti-flash (FOUC) -->
@@ -5917,20 +5917,9 @@ video {
     padding-right: 2rem;
   }
 }</style>
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@0.468.0"></script>
-  <!-- PDF.js CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-  <script>window.OrionReady.then(()=>{
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-  
-}).catch(OrionAuth.blocked);</script>
-  <!-- html2pdf.js : génération et téléchargement direct de vrais PDF côté navigateur -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <!-- docx : génération de vrais fichiers Office Open XML (.docx) côté navigateur -->
-  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-
+  <!-- Lucide 0.468.0 hosted with the site; static icons are already SVG. -->
+  <script src="../assets/lucide-0.468.0.min.js"></script>
+  <!-- PDF and Word tools are loaded by OrionResources on first use. -->
   <!-- Google Fonts Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5956,6 +5945,14 @@ video {
   <link rel="stylesheet" href="../assets/orion-responsive.css">
 </head>
 <body class="h-full bg-[#f5f5f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300">
+  <div id="orionLoading" class="orion-loading" role="status" aria-live="polite">
+    <span class="loading-brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/><path d="M20 2v4M18 4h4"/></svg></span>
+    <strong>Orion BTP</strong>
+    <span class="loading-spinner" aria-hidden="true"></span>
+    <p id="orionLoadingMessage">Préparation de votre espace…</p>
+    <button type="button" id="orionLoadingRetry" hidden>Réessayer</button>
+  </div>
+
 
   <!-- TOP NAVIGATION BAR -->
   <header class="orion-module-header sticky top-0 z-40 apple-glass border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 transition-colors duration-300">
@@ -5965,7 +5962,7 @@ video {
       <div class="flex items-center space-x-3 sm:space-x-4">
         <a id="navLogoBtn" aria-label="Orion BTP — Retour à l’accueil" href="../index.html" title="Retourner à l'accueil" class="flex items-center space-x-3 text-left transition-transform active:scale-95">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-            <i data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="w-5 h-5 stroke-[2.2]" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
           </div>
           <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
             <span class="font-bold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-purple-900 to-indigo-900 dark:from-white dark:via-purple-200 dark:to-indigo-300">Orion BTP</span>
@@ -5974,7 +5971,7 @@ video {
         </a>
 
         <button id="backToPreviousBtn" class="hidden flex items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" class="w-4 h-4 mr-1" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
           <span id="backToPreviousText">Retour</span>
         </button>
       </div>
@@ -5982,27 +5979,27 @@ video {
       <!-- Right Header Actions -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <button id="openEditProjectBtn" aria-label="Modifier le projet" title="Modifier le projet" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-1.5 text-xs font-semibold">
-          <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4 text-blue-500" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
           <span class="hidden sm:inline">Modifier le projet</span>
         </button>
 
         <button id="openReportConfigBtn" aria-label="Exports" title="Exports" class="hidden px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-1.5 text-xs font-semibold">
-          <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
           <span id="reportBtnLabel" class="hidden sm:inline">Exports</span>
         </button>
 
         <button id="themeToggleBtn" aria-label="Changer le thème" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-amber-400 transition-all duration-200 active:scale-95 shadow-sm">
-          <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon" data-lucide="moon" class="w-4 h-4" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
         </button>
 
         <!-- Menu Utilisateur Dropdown -->
         <div class="relative">
           <button id="userMenuBtn" aria-label="Menu Utilisateur" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 active:scale-95 shadow-sm flex items-center space-x-2">
             <div class="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user" class="w-3.5 h-3.5" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
             <span id="headerUserName" class="hidden sm:inline text-xs font-semibold">Connexion</span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
           </button>
 
           <!-- Dropdown Menu -->
@@ -6014,29 +6011,29 @@ video {
 
             <div class="py-1">
               <button id="dropdownRegisterBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="user-plus" class="w-4 h-4 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-plus" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
                 <span>S'inscrire</span>
               </button>
 
               <button id="dropdownLoginBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-in" class="w-4 h-4 text-emerald-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
                 <span>Se connecter</span>
               </button>
 
               <button id="dropdownReportIssueBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-4 h-4 text-amber-500" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
                 <span>Signaler un problème</span>
               </button>
 
               <button id="dropdownPrivacyBtn" class="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="shield-check" class="w-4 h-4 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
                 <span>Politique de confidentialité</span>
               </button>
             </div>
 
             <div class="border-t border-slate-100 dark:border-slate-800 py-1">
               <button id="dropdownLogoutBtn" class="hidden w-full text-left px-4 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2.5 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-out" class="w-4 h-4" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
                 <span>Se déconnecter</span>
               </button>
             </div>
@@ -6053,14 +6050,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-            <i data-lucide="log-in" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="log-in" class="w-5 h-5" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Connexion / Inscription</h3>
             <p class="text-xs text-slate-400">Accédez à votre espace professionnel</p>
           </div>
         </div>
-        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeLoginModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="loginForm" class="space-y-4 text-xs">
@@ -6074,7 +6071,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
           <span>Se connecter</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
         </button>
       </form>
     </div>
@@ -6086,14 +6083,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" class="w-5 h-5" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Signaler un problème</h3>
             <p class="text-xs text-slate-400">Support & Assistance Technique</p>
           </div>
         </div>
-        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeReportIssueModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="reportIssueForm" class="space-y-4 text-xs">
@@ -6107,7 +6104,7 @@ video {
         </div>
         <button type="submit" class="w-full py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2">
           <span>Envoyer le signalement</span>
-          <i data-lucide="send" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-4 h-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
         </button>
       </form>
     </div>
@@ -6119,14 +6116,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" class="w-5 h-5" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold">Politique de confidentialité</h3>
             <p class="text-xs text-slate-400">Protection des données & sécurité</p>
           </div>
         </div>
-        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closePrivacyModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -6147,14 +6144,14 @@ video {
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="building-2" class="w-5 h-5" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
           </div>
           <div>
             <h3 id="companyModalTitle" class="text-lg font-bold">Ajouter une entreprise</h3>
             <p class="text-xs text-slate-400">Renseignez les coordonnées de l'intervenant</p>
           </div>
         </div>
-        <button id="closeCompanyModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeCompanyModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="companyForm" class="space-y-4 text-xs">
@@ -6187,7 +6184,7 @@ video {
         <div class="flex items-center justify-end space-x-2 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelCompanyModalBtn" class="px-4 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Annuler</button>
           <button type="submit" class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium flex items-center space-x-1.5 shadow-md shadow-purple-500/20 active:scale-95">
-            <i data-lucide="check" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" class="w-4 h-4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
             <span>Enregistrer</span>
           </button>
         </div>
@@ -6208,18 +6205,18 @@ video {
         
         <div class="flex flex-wrap items-center gap-2">
           <button id="exportProjectsBtn" title="Exporter tous les projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
-            <i data-lucide="download" class="w-4 h-4 text-purple-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
             <span>Exporter</span>
           </button>
           
           <button id="importProjectsBtn" title="Importer des projets (JSON)" class="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium text-xs transition-all shadow-sm active:scale-95 flex items-center space-x-1.5 flex-1 sm:flex-none justify-center">
-            <i data-lucide="upload" class="w-4 h-4 text-purple-500"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
             <span>Importer</span>
           </button>
           <input type="file" id="importProjectsInput" accept=".json" class="hidden" />
 
           <button id="createNewProjectBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs sm:text-sm transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2 shrink-0">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Nouveau projet</span>
           </button>
         </div>
@@ -6236,13 +6233,13 @@ video {
             <span id="hubStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600"></span>
             <h1 id="hubProjectName" class="text-2xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p id="hubProjectLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1 mt-1">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span id="hubLocationText"></span>
             </p>
           </div>
           <div class="flex items-center space-x-3">
             <button id="hubEditProjectBtn" class="px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-all flex items-center space-x-2 shadow-sm">
-              <i data-lucide="edit-3" class="w-4 h-4 text-purple-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
               <span>Modifier le projet</span>
             </button>
           </div>
@@ -6259,7 +6256,7 @@ video {
         <div id="selectModuleReunion" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-purple-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="file-pen-line" class="w-7 h-7"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-pen-line" class="w-7 h-7" aria-hidden="true"><path d="m18 5-2.414-2.414A2 2 0 0 0 14.172 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"></path><path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"></path><path d="M8 18h1"></path></svg>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">CCTP</h3>
@@ -6270,7 +6267,7 @@ video {
           </div>
           <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-purple-600 dark:text-purple-400">
             <span>Ouvrir le module</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </div>
         </div>
 
@@ -6278,7 +6275,7 @@ video {
         <div id="selectModuleReserves" class="group relative p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm hover:shadow-2xl hover:border-purple-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-6">
           <div class="space-y-4">
             <div class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i data-lucide="folders" class="w-7 h-7"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folders" class="w-7 h-7" aria-hidden="true"><path d="M20 17a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.9a2 2 0 0 1-1.69-.9l-.81-1.2a2 2 0 0 0-1.67-.9H8a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2Z"></path><path d="M2 8v11a2 2 0 0 0 2 2h14"></path></svg>
             </div>
             <div>
               <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Documents</h3>
@@ -6289,7 +6286,7 @@ video {
           </div>
           <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-semibold text-purple-600 dark:text-purple-400">
             <span>Ouvrir le module</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </div>
         </div>
       </div>
@@ -6308,7 +6305,7 @@ video {
             </div>
             <h1 id="reunionProjectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span id="reunionProjectLocationDisplay"></span>
             </p>
           </div>
@@ -6329,15 +6326,15 @@ video {
       <!-- BARRE D'ONGLETS NAVIGATION MODULE REUNION -->
       <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-2">
         <button id="reunionTabCrBtn" type="button" class="px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-purple-600 text-white shadow-md flex items-center space-x-2">
-          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
           <span>Compte-rendu & Réunion</span>
         </button>
         <button id="reunionTabConvocationsBtn" type="button" class="px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2">
-          <i data-lucide="send" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-4 h-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
           <span>Convocations</span>
         </button>
         <button id="reunionTabLayoutBtn" type="button" class="px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2">
-          <i data-lucide="layout-template" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layout-template" class="w-4 h-4" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"></rect><rect width="9" height="7" x="3" y="14" rx="1"></rect><rect width="5" height="7" x="16" y="14" rx="1"></rect></svg>
           <span>Mise en page</span>
         </button>
       </div>
@@ -6349,13 +6346,13 @@ video {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
               <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-                <i data-lucide="building-2" class="w-5 h-5 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="building-2" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
                 <span>Annuaire des Entreprises & Intervenants du chantier</span>
               </h3>
               <p class="text-xs text-slate-400 mt-0.5">Gérez la liste globale des entreprises, leur lot et la présence en réunion</p>
             </div>
             <button type="button" id="openCompanyModalBtn" class="px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2 shrink-0">
-              <i data-lucide="plus" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
               <span>Ajouter une entreprise</span>
             </button>
           </div>
@@ -6367,7 +6364,7 @@ video {
         <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-              <i data-lucide="history" class="w-5 h-5 text-amber-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="history" class="w-5 h-5 text-amber-500" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
               <span>Remarques des réunions précédentes</span>
             </h3>
           </div>
@@ -6378,11 +6375,11 @@ video {
         <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-5">
           <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-              <i data-lucide="calendar" class="w-5 h-5 text-purple-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
               <span>Détails de la Réunion</span>
             </h3>
             <button type="button" id="startNewReunionBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5 shrink-0" title="Archive la réunion actuelle et prépare la suivante">
-              <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="rotate-cw" class="w-3.5 h-3.5" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
               <span>Nouvelle réunion</span>
             </button>
           </div>
@@ -6415,7 +6412,7 @@ video {
                 <span class="text-[11px] text-slate-400">Cochez une remarque pour l'inclure dans la réunion. Le titre et le contenu sélectionnés seront repris dans le rapport.</span>
               </div>
               <button type="button" id="addGeneralReunionNoteBtn" class="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 font-semibold text-xs hover:underline flex items-center justify-center space-x-1 shrink-0">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
                 <span>Ajouter une remarque</span>
               </button>
             </div>
@@ -6427,7 +6424,7 @@ video {
             <div class="flex items-center justify-between">
               <h4 class="font-bold text-xs uppercase text-slate-500 tracking-wider">Remarques & Actions par entreprise</h4>
               <button type="button" id="addReunionNoteBtn" class="px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 font-semibold text-xs hover:underline flex items-center space-x-1">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
                 <span>Ajouter une remarque</span>
               </button>
             </div>
@@ -6443,7 +6440,7 @@ video {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
             <div>
               <h3 class="font-bold text-lg tracking-tight flex items-center space-x-2">
-                <i data-lucide="send" class="w-5 h-5 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="send" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg>
                 <span>Convocations pour la prochaine réunion de chantier</span>
               </h3>
               <p class="text-xs text-slate-400 mt-1">Préparez et envoyez les convocations aux intervenants à partir des données enregistrées.</p>
@@ -6483,11 +6480,11 @@ video {
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button type="button" id="copyConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
-                <i data-lucide="copy" class="w-4 h-4 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" class="w-4 h-4 text-purple-500" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
                 <span>Copier la liste</span>
               </button>
               <button type="button" id="printConvocationBtn" class="px-4 py-2.5 rounded-2xl border dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all shadow-sm flex items-center space-x-1.5 active:scale-95">
-                <i data-lucide="printer" class="w-4 h-4 text-emerald-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="printer" class="w-4 h-4 text-emerald-500" aria-hidden="true"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>
                 <span>Imprimer / PDF</span>
               </button>
             </div>
@@ -6500,7 +6497,7 @@ video {
         <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
           <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
             <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-              <i data-lucide="users" class="w-5 h-5 text-purple-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="users" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               <span>Présentation de la Maîtrise d'œuvre (MOE)</span>
             </h3>
             <p class="text-xs text-slate-400 mt-0.5">Ces intervenants apparaîtront dans le tableau "Présentation de la maîtrise d'œuvre" du compte rendu.</p>
@@ -6511,7 +6508,7 @@ video {
         <section class="p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-sm space-y-4">
           <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
             <h3 class="font-bold text-base tracking-tight flex items-center space-x-2">
-              <i data-lucide="file-text" class="w-5 h-5 text-purple-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
               <span>Administratif & Marché</span>
             </h3>
             <p class="text-xs text-slate-400 mt-0.5">Textes réglementaires et consignes repris dans le compte rendu.</p>
@@ -6533,7 +6530,7 @@ video {
             </div>
             <h1 id="projectNameDisplay" class="text-xl sm:text-3xl font-extrabold tracking-tight"></h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-4 h-4 shrink-0 text-slate-400" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span id="projectLocationDisplay"></span>
             </p>
           </div>
@@ -6561,22 +6558,22 @@ video {
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <div class="relative flex-1 sm:w-80 min-w-[220px]">
-              <i id="selectLotIcon" data-lucide="building-2" class="w-4 h-4 text-purple-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="selectLotIcon" data-lucide="building-2" class="w-4 h-4 text-purple-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
               <select id="lotSelect" class="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-purple-500 appearance-none shadow-sm cursor-pointer transition-all">
               </select>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
             </div>
 
             <button id="quickEditLotBtn" title="Modifier la zone" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-all shadow-sm active:scale-95 shrink-0">
-              <i data-lucide="edit-3" class="w-4 h-4 text-purple-500"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4 text-purple-500" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
             </button>
 
             <button id="quickDeleteLotBtn" title="Supprimer la zone" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-rose-500/10 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 transition-all shadow-sm active:scale-95 shrink-0">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" class="w-4 h-4" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
             </button>
 
             <button id="addNewLotBtn" class="px-3.5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all shadow-md shadow-purple-500/20 active:scale-95 flex items-center space-x-1.5 shrink-0">
-              <i data-lucide="plus" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
               <span>Nouvelle zone</span>
             </button>
           </div>
@@ -6590,22 +6587,22 @@ video {
             
             <div id="canvasToolbar" class="hidden absolute top-4 left-4 z-20 items-center gap-1 sm:gap-2 flex-wrap p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md text-white border border-slate-700/50 shadow-xl max-w-[calc(100%-80px)]">
               <button id="toolSelectBtn" class="p-2 rounded-xl text-xs flex items-center space-x-1.5 bg-purple-600 shadow transition-all">
-                <i data-lucide="move" class="w-3.5 h-3.5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="move" class="w-3.5 h-3.5" aria-hidden="true"><path d="M12 2v20"></path><path d="m15 19-3 3-3-3"></path><path d="m19 9 3 3-3 3"></path><path d="M2 12h20"></path><path d="m5 9-3 3 3 3"></path><path d="m9 5 3-3 3 3"></path></svg>
                 <span class="hidden sm:inline">Déplacer</span>
               </button>
               <button id="toolPinBtn" class="p-2 rounded-xl text-xs flex items-center space-x-1.5 hover:bg-slate-800 text-slate-300 transition-all">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="w-3.5 h-3.5" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 <span class="hidden sm:inline">Placer un repère</span>
               </button>
               <div class="h-4 w-px bg-slate-700 mx-1"></div>
-              <button id="zoomInBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="zoom-in" class="w-4 h-4"></i></button>
-              <button id="zoomOutBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="zoom-out" class="w-4 h-4"></i></button>
-              <button id="zoomResetBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
+              <button id="zoomInBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zoom-in" class="w-4 h-4" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line><line x1="11" x2="11" y1="8" y2="14"></line><line x1="8" x2="14" y1="11" y2="11"></line></svg></button>
+              <button id="zoomOutBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zoom-out" class="w-4 h-4" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line><line x1="8" x2="14" y1="11" y2="11"></line></svg></button>
+              <button id="zoomResetBtn" class="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="rotate-ccw" class="w-3.5 h-3.5" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></button>
             </div>
 
             <div id="replacePlanContainer" class="hidden absolute top-4 right-4 z-20">
               <button id="replacePlanBtn" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-md hover:bg-slate-800 text-white text-[10px] sm:text-xs border border-slate-700/50 shadow-lg flex items-center space-x-1.5 transition-all">
-                <i data-lucide="upload" class="w-3.5 h-3.5 text-purple-400"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-3.5 h-3.5 text-purple-400" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 <span class="hidden sm:inline">Remplacer</span>
               </button>
             </div>
@@ -6616,7 +6613,7 @@ video {
               <div class="relative inline-flex items-center justify-center">
                 <div class="absolute -inset-4 bg-gradient-to-r from-purple-600 via-purple-500 to-sky-400 rounded-full blur-2xl opacity-20 animate-pulse"></div>
                 <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-purple-600 flex items-center justify-center shadow-2xl transition-transform hover:scale-105">
-                  <i data-lucide="upload" class="w-8 h-8 sm:w-10 sm:h-10 stroke-[1.8]"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-8 h-8 sm:w-10 sm:h-10 stroke-[1.8]" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 </div>
               </div>
               <div class="space-y-2">
@@ -6624,7 +6621,7 @@ video {
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 px-4">Glissez-déposez votre fichier ici, ou parcourez.</p>
               </div>
               <button id="importPlanBtn" class="w-[90%] sm:w-auto px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-all shadow-lg shadow-purple-600/25 flex items-center justify-center space-x-2 mx-auto">
-                <i data-lucide="upload" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-4 h-4" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 <span>Importer un fichier</span>
               </button>
               <div class="text-[10px] sm:text-xs text-slate-400 pt-2">Formats : PDF, PNG, JPG, WebP</div>
@@ -6644,10 +6641,10 @@ video {
           <div class="p-5 sm:p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 apple-glass bg-white dark:bg-slate-900/60 shadow-md space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
               <div class="flex items-center space-x-2">
-                <i id="sidebarLotIcon" data-lucide="building-2" class="w-5 h-5 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="sidebarLotIcon" data-lucide="building-2" class="w-5 h-5 text-purple-500" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
                 <h3 id="sidebarLotTitle" class="font-bold text-base tracking-tight truncate max-w-[160px]"></h3>
               </div>
-              <button id="editActiveLotBtn" class="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+              <button id="editActiveLotBtn" class="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg></button>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div class="p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 text-xs">
@@ -6677,13 +6674,13 @@ video {
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b dark:border-slate-800 pb-3">
         <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg></div>
           <div>
             <h3 id="reportConfigTitle" class="text-base sm:text-lg font-bold leading-tight">Exports et options</h3>
             <p id="reportConfigSubtitle" class="text-[10px] sm:text-xs text-slate-400">Intégrez votre logo et exportez votre rapport</p>
           </div>
         </div>
-        <button id="closeReportConfigBtn" aria-label="Fermer les options de rapport" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeReportConfigBtn" aria-label="Fermer les options de rapport" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <div class="space-y-4 text-xs sm:text-sm">
@@ -6696,7 +6693,7 @@ video {
             <div class="flex-1 space-y-2">
               <input type="file" id="logoFileInput" accept="image/png,image/jpeg" class="hidden" />
               <button type="button" id="uploadLogoBtn" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-1.5 text-xs">
-                <i data-lucide="upload" class="w-3.5 h-3.5 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-3.5 h-3.5 text-purple-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 <span>Importer un logo (PNG/JPG)</span>
               </button>
               <button type="button" id="removeLogoBtn" class="hidden text-rose-500 text-[11px] hover:underline">Supprimer le logo</button>
@@ -6715,15 +6712,15 @@ video {
           <span class="block font-semibold text-slate-700 dark:text-slate-300 text-sm">Générer le rapport :</span>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <button type="button" id="exportPdfReportBtn" class="px-3 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-rose-500/20 transition-all text-xs sm:text-sm">
-              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" class="w-4 h-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
               <span>Valider et exporter PDF</span>
             </button>
             <button type="button" id="exportWordReportBtn" class="px-3 py-3 rounded-2xl bg-blue-600 hover:bg-purple-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-blue-500/20 transition-all text-xs sm:text-sm">
-              <i data-lucide="file-code" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-code" class="w-4 h-4" aria-hidden="true"><path d="M10 12.5 8 15l2 2.5"></path><path d="m14 12.5 2 2.5-2 2.5"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path></svg>
               <span>Valider et exporter Word</span>
             </button>
             <button type="button" id="exportExcelReportBtn" class="px-3 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-500/20 transition-all text-xs sm:text-sm">
-              <i data-lucide="sheet" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sheet" class="w-4 h-4" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="3" x2="21" y1="15" y2="15"></line><line x1="9" x2="9" y1="9" y2="21"></line><line x1="15" x2="15" y1="9" y2="21"></line></svg>
               <span>Valider et exporter Excel</span>
             </button>
           </div>
@@ -6743,7 +6740,7 @@ video {
             <p class="text-xs text-slate-400">Saisissez les détails, assignez les entreprises et ajoutez vos photos</p>
           </div>
         </div>
-        <button id="closePinModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closePinModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="pinForm" class="space-y-5 text-xs">
@@ -6803,12 +6800,12 @@ video {
               <label class="block text-slate-500 font-semibold text-xs mb-2">Photos de la réserve (Annotables avec dessin)</label>
               <div class="flex flex-wrap items-center gap-2 mb-2">
                 <label class="flex-1 sm:flex-none justify-center px-4 py-2.5 rounded-xl bg-purple-50 dark:bg-slate-800 text-purple-600 dark:text-purple-400 font-semibold text-xs cursor-pointer hover:bg-purple-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm active:scale-95">
-                  <i data-lucide="image" class="w-4 h-4 shrink-0"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="image" class="w-4 h-4 shrink-0" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
                   <span>Importer galerie</span>
                   <input type="file" id="pinGalleryInput" accept="image/*" multiple class="hidden" />
                 </label>
                 <label class="flex-1 sm:flex-none justify-center px-4 py-2.5 rounded-xl bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold text-xs cursor-pointer hover:bg-emerald-100 dark:hover:bg-slate-700 transition-all flex items-center space-x-1.5 shadow-sm active:scale-95">
-                  <i data-lucide="camera" class="w-4 h-4 shrink-0"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="camera" class="w-4 h-4 shrink-0" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
                   <span>Capture directe</span>
                   <input type="file" id="pinCameraInput" accept="image/*" capture="environment" class="hidden" />
                 </label>
@@ -6820,14 +6817,14 @@ video {
 
         <div class="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="deletePinFromModalBtn" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-semibold flex items-center space-x-1.5 transition-colors">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" class="w-4 h-4" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
             <span>Supprimer</span>
           </button>
 
           <div class="flex items-center space-x-2 w-full sm:w-auto">
             <button type="button" id="cancelPinModalBtn" class="flex-1 sm:flex-none justify-center px-4 py-2.5 rounded-2xl border font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Annuler</button>
             <button type="submit" class="flex-1 sm:flex-none justify-center px-6 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center space-x-1.5 shadow-md shadow-purple-500/20 transition-all">
-              <i data-lucide="check" class="w-4 h-4"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" class="w-4 h-4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
               <span>Enregistrer</span>
             </button>
           </div>
@@ -6843,27 +6840,27 @@ video {
       <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b dark:border-slate-800">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg>
           </div>
           <h3 class="font-bold text-sm sm:text-base">Annoter la photo</h3>
         </div>
 
         <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl text-xs">
           <button type="button" id="toolPen" class="draw-tool-btn active px-2.5 py-1.5 rounded-xl bg-purple-600 text-white flex items-center space-x-1 font-medium shadow transition-all">
-            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" class="w-3.5 h-3.5" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
             <span class="hidden sm:inline">Crayon</span>
           </button>
           <button type="button" id="toolArrow" class="draw-tool-btn px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all">
-            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-up-right" class="w-3.5 h-3.5" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
             <span class="hidden sm:inline">Flèche</span>
           </button>
           <button type="button" id="toolCircle" class="draw-tool-btn px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all">
-            <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" class="w-3.5 h-3.5" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
             <span class="hidden sm:inline">Cercle</span>
           </button>
           <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-0.5"></div>
           <button type="button" id="toolUndo" class="px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1 font-medium transition-all" title="Réinitialiser les dessins">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="rotate-ccw" class="w-3.5 h-3.5" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
             <span class="hidden sm:inline">Effacer</span>
           </button>
         </div>
@@ -6897,10 +6894,10 @@ video {
     <div class="w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0"><i data-lucide="edit-3" class="w-4 h-4"></i></div>
+          <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" class="w-4 h-4" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"></path></svg></div>
           <h3 id="projectModalTitle" class="text-base sm:text-lg font-bold">Nouveau projet</h3>
         </div>
-        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeProjectModalBtn" type="button" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
 
       <form id="projectForm" class="space-y-4 text-xs">
@@ -6913,7 +6910,7 @@ video {
             <div class="flex-1 space-y-2">
               <input type="file" id="projectPhotoInput" accept="image/*" class="hidden" />
               <button type="button" id="uploadProjectPhotoBtn" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium transition-all flex items-center justify-center space-x-1.5 text-xs">
-                <i data-lucide="upload" class="w-3.5 h-3.5 text-purple-500"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="upload" class="w-3.5 h-3.5 text-purple-500" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
                 <span>Importer une photo</span>
               </button>
               <button type="button" id="removeProjectPhotoBtn" class="hidden text-rose-500 text-[11px] hover:underline">Supprimer la photo</button>
@@ -6944,7 +6941,7 @@ video {
         <div class="flex items-center justify-end space-x-2 sm:space-x-3 pt-4 border-t dark:border-slate-800">
           <button type="button" id="cancelProjectModalBtn" class="flex-1 sm:flex-none justify-center px-4 sm:px-5 py-2.5 rounded-2xl border font-medium text-slate-600 dark:text-slate-300">Annuler</button>
           <button type="submit" class="flex-1 sm:flex-none justify-center px-5 sm:px-6 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-medium flex items-center space-x-1.5">
-            <i data-lucide="check" class="w-4 h-4"></i><span>Enregistrer</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" class="w-4 h-4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg><span>Enregistrer</span>
           </button>
         </div>
       </form>
@@ -6956,7 +6953,7 @@ video {
     <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-5 sm:p-6 space-y-6">
       <div class="flex items-center justify-between">
         <h3 id="lotModalTitle" class="text-base sm:text-lg font-bold">Personnaliser la zone</h3>
-        <button id="closeLotModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button id="closeLotModalBtn" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
       <form id="lotForm" class="space-y-4 text-xs">
         <div>
@@ -8733,6 +8730,7 @@ video {
       try {
         let image,pageNumber=1,pageCount=1;
         if(file.type==='application/pdf' || /\.pdf$/i.test(file.name)) {
+          await OrionResources.load('plan');
           pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer()),isEvalSupported:false}).promise;
           pageCount=pdf.numPages;pageNumber=await choosePdfPage(pageCount);if(!pageNumber)return;
           const page=await pdf.getPage(pageNumber),original=page.getViewport({scale:1});
@@ -9845,6 +9843,7 @@ video {
     }
 
     async function exportReportAsPdf(proj) {
+      await OrionResources.load('pdf');
       const reportKind = state.currentView === 'reunion' ? 'CR' : 'Rapport';
       if (typeof window.html2pdf !== 'function') {
         throw new Error("La bibliothèque de génération PDF n'est pas disponible.");
@@ -10026,6 +10025,7 @@ video {
     }
 
     async function buildWordReportDocument(proj) {
+      await OrionResources.load('word');
       if (!window.docx) throw new Error("La bibliothèque DOCX n'est pas disponible.");
 
       const children = [];
@@ -10911,6 +10911,7 @@ video {
       try {
         const filename = `CCTP-${sanitizeFilenamePart(project.name)}-${documentDate()}.${format}`; let blob;
         if (format === 'docx') {
+          await OrionResources.load('word');
           if (!window.docx) throw new Error('La bibliothèque Word est indisponible.');
           const children = [docxHeading('CCTP — '+project.name,1),docxParagraph('Brouillon — '+documentDate()),docxParagraph('Client : '+(project.client || '—')),docxParagraph('Adresse : '+(project.location || '—'))];
           if (logoUrl) { const logo = await createDocxImageParagraph(logoUrl,180,80); if (logo) children.unshift(logo); }
@@ -10930,6 +10931,7 @@ video {
         } else if (format === 'xls') {
           blob = buildCctpExcelBlob(project,c);
         } else {
+          await OrionResources.load('pdf');
           if (typeof window.html2pdf !== 'function') throw new Error('La bibliothèque PDF est indisponible.');
           const host = document.createElement('div'); host.setAttribute('aria-hidden','true'); host.style.cssText = 'position:fixed;left:-100000px;top:0;width:190mm;background:white;color:#222;';
           const style = document.createElement('style'); style.textContent = '.cctp-export{font:11pt Arial,sans-serif;color:#222;background:#fff;line-height:1.5;width:190mm}.cctp-export *{box-sizing:border-box}.cctp-export h1{font-size:25pt;color:#7e22ce}.cctp-export h2{font-size:17pt;color:#7e22ce;margin-top:22px}.cctp-export h3{font-size:14pt}.cctp-export h4{font-size:12pt}.cctp-export h5{font-size:11pt}.cctp-export h1,.cctp-export h2,.cctp-export h3,.cctp-export h4,.cctp-export h5{break-after:avoid;page-break-after:avoid}.cctp-export .prescription{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 16px}.cctp-export .meta{font-size:10pt;color:#555}.cctp-export .lot{border-bottom:1px solid #e9d5ff;padding-bottom:8px}';
@@ -10946,6 +10948,7 @@ video {
 
     // INITIALISATION
     render();
+    window.OrionLoading.finish();
   
 }).catch(OrionAuth.blocked);</script>
 </body>
