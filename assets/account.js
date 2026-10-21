@@ -1,5 +1,12 @@
 (async()=>{
 'use strict';
+// Keep account startup compatible with older/cached OrionAuth exports.
+function waitFor(operation, timeout=15000){
+ return new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(new Error('Connexion interrompue (timeout). Réessayez après avoir vérifié votre réseau.')),timeout);
+  Promise.resolve(operation).then(value=>{clearTimeout(timer);resolve(value);},error=>{clearTimeout(timer);reject(error);});
+ });
+}
 const {client,rpc,access,root}=OrionAuth, content=document.getElementById('content'),message=document.getElementById('message');
 const mode=new URLSearchParams(location.search).get('mode')||'login';
 const say=s=>message.textContent=s;
@@ -51,7 +58,7 @@ async function mfa(parent){
  function codeForm(){const f=el('form',null,parent),i=field(f,'Code à 6 chiffres','code');i.pattern='[0-9]{6}';i.inputMode='numeric';i.autocomplete='one-time-code';const b=el('button','Vérifier',f);f.onsubmit=async e=>{e.preventDefault();b.disabled=true;try{await checked(client.auth.mfa.challengeAndVerify({factorId:factor.id,code:i.value}));await dashboard();}catch(e){say(e.message);}finally{b.disabled=false;}};}
 }
 async function dashboard(){
- const a=await access();if(!a){authForm();return;}setView(true);content.replaceChildren();say('');
+ const a=await waitFor(access());if(!a){authForm();return;}setView(true);content.replaceChildren();say('');
  const s=el('section',null,content),top=el('div',null,s);top.className='profile-top';const avatar=el('span',(a.user.full_name||a.user.email||'O').trim().slice(0,1).toUpperCase(),top);avatar.className='profile-avatar';avatar.setAttribute('aria-hidden','true');const identity=el('div',null,top);el('h2',a.user.full_name||a.user.email,identity);el('p',a.user.email,identity);
  button('Se déconnecter',async()=>{await checked(client.auth.signOut());location.href='compte.html?mode=login';},s);
  if(!a.user.enabled){el('p','Votre compte est suspendu. Contactez l’administrateur.',s);return;}
@@ -90,8 +97,8 @@ async function admin(){
 }
 try{
  // Initialization processes the PKCE email callback before choosing the screen.
- await OrionAuth.waitFor(client.auth.getSession());
- if(recovery||mode==='reset'){const a=await access();if(a)passwordForm();else{say('Lien expiré ou ouvert dans un autre navigateur. Demandez un nouveau lien.');authForm();}}
+ await waitFor(client.auth.getSession());
+ if(recovery||mode==='reset'){const a=await waitFor(access());if(a)passwordForm();else{say('Lien expiré ou ouvert dans un autre navigateur. Demandez un nouveau lien.');authForm();}}
  else if(mode==='register'||mode==='recover')authForm();else await dashboard();
 }catch(e){content.querySelector('.loading-card')?.remove();say(e.message||'Connexion interrompue. Réessayez.');const retry=button('Réessayer',()=>location.reload(),content);retry.classList.add('account-retry');}
 })();
