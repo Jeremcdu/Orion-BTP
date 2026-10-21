@@ -19,13 +19,21 @@
   const portal = (mode='login') => new URL('compte.html?mode='+encodeURIComponent(mode),root).href;
   const readyDOM = fn => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded',fn,{once:true}) : fn();
   window.OrionDomReady=readyDOM;
+  // Bound read-only startup checks. Mutating RPCs are deliberately not retried.
+  function waitFor(operation, timeout=15000) {
+    return new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('Connexion interrompue (timeout). Réessayez après avoir vérifié votre réseau.')),timeout);
+      Promise.resolve(operation).then(value=>{clearTimeout(timer);resolve(value);},error=>{clearTimeout(timer);reject(error);});
+    });
+  }
   async function rpc(name,args={}) {
     if(!client) throw new Error(configError||'Renseignez le projet Supabase dans assets/orion-config.js.');
-    const {data,error}=await client.rpc(name,args); if(error) throw error; return data;
+    const operation=client.rpc(name,args);
+    const {data,error}=await (['orion_my_access','orion_require_module'].includes(name)?waitFor(operation):operation); if(error) throw error; return data;
   }
   async function access() {
     if(!client) return null;
-    const {data,error}=await client.auth.getUser(); if(error || !data.user) return null;
+    const {data,error}=await waitFor(client.auth.getUser()); if(error || !data.user) return null;
     const result=await rpc('orion_my_access');
     if(result?.user)result.user={...result.user,name:result.user.full_name||result.user.email||'Mon compte',isAdmin:result.is_admin};
     return result;
@@ -43,7 +51,7 @@
       if(!box){box=document.createElement('main');box.id='orionGate';document.body.append(box);}
       box.replaceChildren();box.setAttribute('aria-labelledby','orionGateTitle');
       const node=(tag,text,parent,className)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(className)n.className=className;if(parent)parent.append(n);return n;};
-      const icon=(parent,kind)=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',kind==='brand'?'m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z':'M7 10V7a5 5 0 0 1 10 0v3M6 10h12v11H6V10Zm6 5v2');svg.append(path);parent.append(svg);};
+      const icon=(parent,kind)=>{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',kind==='brand'?'m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z':'M7 10V7a5 5 0 0 1 10 0v3M6 10h12v11H6V10Zm6 5v2');if(kind==='brand'){const use=document.createElementNS(svg.namespaceURI,'use');use.setAttribute('href',new URL('assets/orion-brand.svg#orion-logo',root).href);svg.append(use);}else svg.append(path);parent.append(svg);};
       const header=node('header',null,box,'gate-header'),brand=node('a',null,header,'gate-brand');brand.href=new URL('index.html',root).href;icon(node('span',null,brand,'gate-brand-icon'),'brand');node('span','Orion BTP',brand);
       const home=node('a','← Retour à l’accueil',header,'gate-home');home.href=new URL('index.html',root).href;
       const layout=node('div',null,box,'gate-layout'),intro=node('aside',null,layout,'gate-intro');
@@ -72,7 +80,7 @@
     if(moduleName && window.OrionAccountId && (event==='SIGNED_OUT'||(session?.user?.id && session.user.id!==window.OrionAccountId)))
       setTimeout(()=>blocked(new Error('La session a changé. Revenez à votre espace compte.')),0);
   });
-  window.OrionAuth={client,configError,rpc,access,guard,portal,root,blocked};
+  window.OrionAuth={client,configError,rpc,access,guard,portal,root,blocked,waitFor};
   window.OrionReady=(async()=>{
     if(!moduleName){try{window.OrionSession=await access();window.OrionAccountId=window.OrionSession?.user?.id;}catch{}return;}
     document.documentElement.classList.add('orion-locked');

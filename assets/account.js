@@ -12,7 +12,7 @@ const themeLabel=()=>themeButton.setAttribute('aria-label',document.documentElem
 themeLabel();themeButton.onclick=()=>{const dark=document.documentElement.classList.toggle('dark');try{localStorage.setItem('theme',dark?'dark':'light');}catch{}themeLabel();};
 const el=(tag,text,parent)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(tag==='section')n.className='account-card';if(parent)parent.append(n);return n;};
 const button=(text,fn,parent)=>{const b=el('button',text,parent);b.type='button';b.className='secondary-button';b.onclick=async()=>{b.disabled=true;try{await fn();}catch(e){say(e.message||'Opération impossible');}finally{b.disabled=false;}};return b;};
-function field(form,title,name,type='text',required=true){const l=el('label',title,form),i=el('input',null,l);i.name=name;i.type=type;i.required=required;if(type==='email'){i.autocomplete='email';i.placeholder='vous@entreprise.fr';}else if(name==='name')i.autocomplete='name';if(type==='password'){i.minLength=12;i.autocomplete=mode==='login'?'current-password':'new-password';}return i;}
+function field(form,title,name,type='text',required=true){const l=el('label',title,form),i=el('input',null,l);i.name=name;i.type=type;i.required=required;if(type==='email'){i.autocomplete='email';i.placeholder='vous@entreprise.fr';}else if(name==='name')i.autocomplete='name';if(type==='password'){const creating=mode==='register'||mode==='reset'||recovery;if(creating)i.minLength=12;i.autocomplete=creating?'new-password':'current-password';}return i;}
 function form(title,fields,submit,fn){setView(false);content.replaceChildren();const s=el('section',null,content);el('h2',title,s);el('p',mode==='register'?'Créez votre compte. Votre administrateur activera ensuite vos modules.':mode==='recover'?'Recevez un lien pour choisir un nouveau mot de passe.':mode==='reset'?'Définissez un mot de passe de 12 caractères minimum.':'Bienvenue. Connectez-vous à votre espace Orion.',s).className='card-description';const f=el('form',null,s);const inputs={};for(const [label,name,type] of fields)inputs[name]=field(f,label,name,type);const b=el('button',submit,f);b.type='submit';el('p',mode==='register'?'Une confirmation par email sera nécessaire. Aucun module n’est accordé automatiquement.':'Vos accès sont gérés par votre administrateur.',s).className='form-note';f.onsubmit=async e=>{e.preventDefault();b.disabled=true;say('Traitement…');try{await fn(Object.fromEntries(Object.entries(inputs).map(([k,v])=>[k,v.value])));}catch(e){say(e.message);}finally{b.disabled=false;}};return inputs;}
 async function checked(result){const {data,error}=await result;if(error)throw error;return data;}
 if(!client){content.replaceChildren();say(OrionAuth.configError||'Configuration nécessaire : ajoutez l’URL et la clé publique Supabase dans assets/orion-config.js, puis rechargez.');return;}
@@ -90,8 +90,8 @@ async function admin(){
 }
 try{
  // Initialization processes the PKCE email callback before choosing the screen.
- await client.auth.getSession();
+ await OrionAuth.waitFor(client.auth.getSession());
  if(recovery||mode==='reset'){const a=await access();if(a)passwordForm();else{say('Lien expiré ou ouvert dans un autre navigateur. Demandez un nouveau lien.');authForm();}}
  else if(mode==='register'||mode==='recover')authForm();else await dashboard();
-}catch(e){content.querySelector('.loading-card')?.remove();say(e.message);}
+}catch(e){content.querySelector('.loading-card')?.remove();say(e.message||'Connexion interrompue. Réessayez.');const retry=button('Réessayer',()=>location.reload(),content);retry.classList.add('account-retry');}
 })();

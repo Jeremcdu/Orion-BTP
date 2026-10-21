@@ -4,6 +4,7 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 const read = filename => fs.readFileSync(path.join(root, filename), 'utf8');
+const foundationSource = filename => read(filename).includes('orion-foundation.js') ? read('assets/orion-foundation.js') : read(filename);
 const clone = value => structuredClone(value);
 const tests = [];
 function test(name, fn) { tests.push({ name, fn }); }
@@ -77,7 +78,7 @@ async function device(server, id = 'user-a', storage = disk(), local = []) {
   });
   context.window = context;
   vm.runInContext(read('assets/orion-cloud.js'), context);
-  const html = read('m78/index.html'), start = html.indexOf('(() => {', html.indexOf('foundation v2'));
+  const html = foundationSource('m78/index.html'), start = html.indexOf('(() => {', html.indexOf('foundation v2'));
   vm.runInContext(html.slice(start, html.indexOf('})();', start) + 5), context);
   context.OrionUI.notify = (message, error) => notices.push({ message, error });
   await context.OrionCloud.initialize(context.OrionStore);
@@ -95,6 +96,37 @@ test('Autre appareil sans cache et autre compte sans accès aux projets', async 
   const server = backend(); await device(server, 'user-a', disk(), initial());
   const otherDevice = await device(server), otherAccount = await device(server, 'user-b');
   assert.equal(otherDevice.state.projects[0].name, 'Chantier A'); assert.equal(otherAccount.state.projects.length, 0);
+});
+
+test('Cache plein : lecture et succès serveur distincts, avertissement unique, brouillon conservé', async () => {
+  const server = backend(), storage = disk();
+  server.accounts.set('user-a', { projects: initial(), revision: 1 });
+  storage.localStorage.setItem = () => { const error = Error('quota'); error.name = 'QuotaExceededError'; throw error; };
+  const d = await device(server, 'user-a', storage);
+  assert.equal(server.saves, 0);
+  assert.match(d.notices[0].message, /chargés depuis votre compte/);
+  assert.match(d.notices[0].message, /cache.*plein/);
+  assert.equal(d.notices[0].error, false);
+  await change(d, { name: 'Sauvegarde avec cache plein' });
+  assert.equal(server.accounts.get('user-a').projects[0].name, 'Sauvegarde avec cache plein');
+  assert.equal(d.notices.length, 1);
+  server.fail = true;
+  await assert.rejects(() => change(d, { name: 'Brouillon hors ligne' }), /Network/);
+  let backup;
+  d.store.download = blob => { backup = blob; };
+  await d.cloud.exportDraft();
+  const draft = JSON.parse(await backup.text());
+  assert.equal(draft.projects[0].name, 'Brouillon hors ligne');
+});
+
+test('Stockage interdit : avertissement exact sans faux quota ni échec distant', async () => {
+  const server = backend(), d = await device(server, 'user-a', disk(), initial());
+  d.storage.localStorage.setItem = () => { const error = Error('blocked'); error.name = 'SecurityError'; throw error; };
+  await change(d, { client: 'Client enregistré' });
+  assert.equal(server.accounts.get('user-a').projects[0].client, 'Client enregistré');
+  assert.match(d.notices[0].message, /enregistrés sur votre compte/);
+  assert.match(d.notices[0].message, /stockage local est indisponible/);
+  assert.doesNotMatch(d.notices[0].message, /cache.*plein/);
 });
 test('Deux appareils fusionnent les champs modifiés distincts', async () => {
   const server = backend(), a = await device(server, 'user-a', disk(), initial()), b = await device(server);
@@ -215,14 +247,15 @@ test('Préchargement dédupliqué et respect de l’économie de données et des
 test('404 : liens accueil et compte corrects depuis une URL inconnue imbriquée', () => {
   const html = read('404.html'), scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
   for (const pathname of ['/Orion-BTP/m78/page-inconnue', '/page-inconnue']) {
-    const homes = [{}, {}], account = {}, base = pathname.startsWith('/Orion-BTP/') ? '/Orion-BTP/' : '/';
-    vm.runInNewContext(scripts.at(-1)[1], { location: { pathname }, document: { querySelectorAll: () => homes, getElementById: () => account } });
+    const homes = [{}, {}], account = {}, brand = { setAttribute(name, value) { this[name] = value; } }, base = pathname.startsWith('/Orion-BTP/') ? '/Orion-BTP/' : '/';
+    vm.runInNewContext(scripts.at(-1)[1], { location: { pathname }, document: { querySelectorAll: () => homes, getElementById: id => id === 'brandLogo' ? brand : account } });
     assert.equal(homes[0].href, base); assert.equal(homes[1].href, base); assert.equal(account.href, base + 'compte.html');
+    assert.equal(brand.href, base + 'assets/orion-brand.svg#orion-logo');
   }
 });
 test('Quatre fondations identiques, scripts syntaxiquement valides, liens et 404 présents', () => {
   const snippets = ['index.html', 'm42/index.html', 'm43/index.html', 'm78/index.html'].map(filename => {
-    const html = read(filename), start = html.indexOf('(() => {', html.indexOf('foundation v2')); const text = html.slice(start, html.indexOf('})();', start) + 5);
+    const html = read(filename), source = foundationSource(filename), start = source.indexOf('(() => {', source.indexOf('foundation v2')); const text = source.slice(start, source.indexOf('})();', start) + 5);
     for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) if (match[1].trim()) new vm.Script(match[1]);
     return text;
   }); assert.equal(new Set(snippets).size, 1);

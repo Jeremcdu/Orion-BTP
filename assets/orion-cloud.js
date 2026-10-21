@@ -6,6 +6,7 @@
   let store, userId, key, enabled = false, ready = false, projects = [], initialLocal = [];
   let journalDb, queue = Promise.resolve();
   const uploaded = new Set();
+  const cacheWarnings = new Set();
 
   async function journal(action, value) {
     if (!journalDb) journalDb = new Promise((resolve, reject) => {
@@ -38,10 +39,17 @@
     return data || { projects: [], revision: 0 };
   }
 
-  function cache(value) {
+  function cache(value, saved = false) {
     projects = clone(value);
-    try { localStorage.setItem(key, JSON.stringify(value)); }
-    catch { OrionUI.notify('Projets enregistrés sur votre compte. Le cache de cet appareil est plein.', true); }
+    try { localStorage.setItem(key, JSON.stringify(value)); cacheWarnings.clear(); }
+    catch (error) {
+      const quota = error?.name === 'QuotaExceededError' || error?.name === 'NS_ERROR_DOM_QUOTA_REACHED' || error?.code === 22 || error?.code === 1014;
+      const reason = quota ? 'quota' : 'unavailable';
+      if (cacheWarnings.has(reason)) return;
+      cacheWarnings.add(reason);
+      const remote = saved ? 'Projets enregistrés sur votre compte.' : 'Projets chargés depuis votre compte.';
+      OrionUI.notify(remote + (quota ? ' Le cache de cet appareil est plein.' : ' Le stockage local est indisponible sur cet appareil.') + ' Vous pouvez continuer en ligne ; conservez un export complet avant de supprimer des données.', false);
+    }
   }
 
   const filePath = id => {
@@ -92,7 +100,7 @@
         p_expected_revision: remote.revision, p_projects: merged
       });
       if (!result.saved) continue;
-      cache(merged);
+      cache(merged, true);
       await journal('put', { base: clone(merged), draft: null, revision: result.revision });
       return clone(merged);
     }

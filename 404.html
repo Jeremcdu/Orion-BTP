@@ -11,7 +11,7 @@
   </style>
 </head>
 <body>
-  <header><a class="brand" data-home href="/Orion-BTP/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/></svg>Orion BTP</a></header>
+  <header><a class="brand" data-home href="/Orion-BTP/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use id="brandLogo" href="/Orion-BTP/assets/orion-brand.svg#orion-logo"></use></svg>Orion BTP</a></header>
   <main>
     <div class="code" aria-hidden="true">404</div>
     <h1>Cette page est introuvable.</h1>
@@ -23,6 +23,7 @@
     const base = location.pathname === '/Orion-BTP' || location.pathname.startsWith('/Orion-BTP/') ? '/Orion-BTP/' : '/';
     document.querySelectorAll('[data-home]').forEach(a => a.href = base);
     document.getElementById('accountLink').href = base + 'compte.html';
+    document.getElementById('brandLogo').setAttribute('href', base + 'assets/orion-brand.svg#orion-logo');
   </script>
 </body>
 </html>

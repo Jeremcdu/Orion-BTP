@@ -18,7 +18,7 @@ function page(profile, deferred = false) {
   let release;
   const wait = deferred ? new Promise(resolve => { release = resolve; }) : Promise.resolve();
   const context = {
-    URL, setTimeout, localStorage: { getItem: () => null },
+    URL, setTimeout, clearTimeout, localStorage: { getItem: () => null },
     document: { readyState: 'complete', currentScript: { src: 'https://example.invalid/Orion-BTP/assets/orion-auth.js' }, documentElement: { dataset: { orionModule: '' }, classList: { toggle() {} } }, addEventListener() {}, getElementById: id => nodes.get(id), createElement: () => make() },
     ORION_CONFIG: { url: 'https://example.invalid', publishableKey: 'sb_publishable_test' },
     supabase: { createClient: () => ({ auth: { onAuthStateChange() {}, getUser: async () => { await wait; return { data: { user: profile ? { id: 'qa-user' } : null } }; } }, rpc: async () => ({ data: profile }) }) },
@@ -42,6 +42,8 @@ const actions = menu => menu.children.flatMap(child => child.children).map(child
   const p = page({ user: { id: 'qa-user' }, is_admin: true }, true);
   assert.deepEqual(actions(p.menu), ['orionMenuAccountLink', 'dropdownPrivacyBtn', 'dropdownLogoutBtn']);
   p.release(); await p.context.OrionReady; await Promise.resolve();
+  await assert.rejects(p.context.OrionAuth.waitFor(new Promise(()=>{}), 1), /timeout/);
+  assert.equal(await p.context.OrionAuth.waitFor(Promise.resolve('ready'), 100), 'ready');
   assert.deepEqual(actions(p.menu), ['orionMenuAccountLink', 'orionMenuAdminLink', 'dropdownPrivacyBtn', 'dropdownLogoutBtn']);
   console.log('PASS Administration reçue après chargement : reste avant les autres commandes'); count++;
   console.log(count + '/' + count + ' tests passed');
